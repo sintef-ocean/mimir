@@ -22,7 +22,7 @@ jobs:
       image: conanio/gcc${{ matrix.compiler_version }}
       options: -u 0
     strategy:
-      fail-fase: false
+      fail-fast: false
       matrix:
         compiler_version: [8]
     steps:
