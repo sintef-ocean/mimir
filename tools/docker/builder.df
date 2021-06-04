@@ -1,0 +1,96 @@
+FROM debian:buster-slim as builder-base
+MAINTAINER Joakim Haugen <joakim.haugen@sintef.no>
+ENV TERM=xterm-256color
+
+# Java update-alternatives assumes these folders present
+RUN seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{}
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+ apt-utils \
+ build-essential \
+ cmake \
+ curl \
+ doxygen \
+ emacs-nox \
+ git \
+ gnupg \
+ gnuplot \
+ graphviz \
+ htop \
+ jq \
+ libboost-all-dev \
+ libgfortran5 \
+ libgomp1 \
+ libyaml-cpp-dev \
+ pkg-config \
+ plantuml \
+ python3-pip \
+ wget \
+ zile \
+ && \
+ rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install setuptools wheel
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  libxml2-dev \
+  libxslt1-dev \
+  python3-lxml \
+  && \
+  rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install \
+  breathe \
+  doc2dash \
+  exhale \
+  sphinx \
+  sphinx-rtd-theme \
+  sphinxcontrib-plantuml \
+  sphinxcontrib-bibtex
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+ libgnuplot-iostream-dev \
+ && \
+ rm -rf /var/lib/apt/lists/*
+
+ARG CACHE_BUST=unknown
+
+# Install newest version of plantuml for C4 model
+RUN wget https://sourceforge.net/projects/plantuml/files/plantuml.jar
+RUN mv plantuml.jar /usr/share/plantuml/
+
+ADD docs/emacs-install-pkgs.el /
+RUN emacs -Q --batch -l emacs-install-pkgs.el
+
+RUN pip3 install --upgrade sphinxcontrib-bibtex
+
+FROM builder-base as gitlab-builder
+
+ARG APTLY_URL
+ARG APTLY_USR
+ARG APTLY_PWD
+ARG APTLY_PREFIX
+ARG APTLY_DIST
+ARG APTLY_COMP
+
+RUN wget https://sourceforge.net/projects/plantuml/files/plantuml.jar
+RUN mv plantuml.jar /usr/share/plantuml/
+
+RUN wget http://${APTLY_USR}:${APTLY_PWD}@${APTLY_URL}/gpg-key.pub \
+  && apt-key add gpg-key.pub \
+  && rm gpg-key.pub
+RUN echo "deb http://${APTLY_URL}${APTLY_PREFIX} ${APTLY_DIST} ${APTLY_COMP}" > /etc/apt/sources.list.d/kluster.list
+RUN echo "machine ${APTLY_URL} login ${APTLY_USR} password ${APTLY_PWD}" >> /etc/apt/auth.conf
+
+RUN apt-get -q update \
+  && apt-get install -y \
+  casadi \
+  casadi-dep \
+  opensplice-hde \
+  kluster-scripts \
+  ratatosk-idl \
+  && \
+  rm -rf /var/lib/apt/lists/*
+
+ENV LD_LIBRARY_PATH=/opt/fkin/lib \
+  PATH=${PATH:+${PATH}:}/opt/fkin/bin

@@ -1,0 +1,955 @@
+#+LaTeX_HEADER: \input{../tex/defs}
+
+* Path planner for deployment
+
+** Motivation and rationale
+
+   During the phase before purse seine deployment the purse seine master ("the purser") needs to acquire and maintain a situational awareness.
+   This is a key success factor in purse seining.
+   Elements of the situational awareness include a comprehension of the main process components in play.
+   A firm comprehension increases the rate of success and the diminishes the probability of disastrous failure due to malpractice.
+   Mastery of purse seining is often correlated with experience.
+   Regardless of the level of experience, there is a fair amount of burden placed on the purser.
+   For this reason, a useful aid would be a tool that could both ease the burden and help acquire the necessary situational awareness.
+   Let us for now denote this tool as an /on-board decision support system/ (ODSS) cite:Skjong2019.
+
+   Modern purse seiners are equipped with sophisticated instruments, which help the captain in executing their job.
+   The wheel house has many monitors with diverse and scattered information, from which some are very important during the pre-deployment phase.
+   A proficient purser possesses both perceptive and predictive abilities.
+   This means that based on the available sensory information about the processes in play, the purser is capable of predicting ahead in time a plausible outcome based on a series of actions.
+   These actions are typically, i) to purposefully maneuver the vessel, and ii) to determine an appropriate time point for purse deployment in such a way that the fish is caught as intended.
+
+   The procedure has several similarities with a typical optimal control problem, which help justify our chosen plan of attack in developing a tool in form of an ODSS.
+   This is because, in many aspects, the purser is a /model predictive controller/ with the /objective/ to optimally execute a purse seine deployment.
+   From the above description it is clear that the following *features* are important:
+     + Ability to make use of available sensory information;
+     + Comprehension of the main process components;
+     + Possess predictive capabilities;
+     + Devising a set of purposeful actions;
+     + Fulfill a well-defined purpose, which has a specific objective.
+   Coincidentally, these features also signify successful building blocks in an optimal control problem cite:Betts2010.
+   Our rationale for choosing mathematical optimization as the problem solving approach is mainly due to the likeness of features, but it is not the sole reason.
+   One other important justification is the flexibility in problem formulation and, in effect, the possible solution space.
+   With this, we mean that there may be user-specific preferences, which have implications for the decision support presented to the user.
+   Moreover, the flexibility in problem description also facilitates adaptations and improvements with little additional effort.
+   This effort may include better model descriptions based on new data or other tweaks to the mathematical modeling.
+
+** Problem statement of the purse seine path planner
+
+   The goal is to create an ODSS for purse seine deployment.
+   We proceed by establishing central building blocks for the optimal control problem formulation.
+   Specifically, we need to describe in detail the *features* as listed above.
+   We pose the formulation as a so-called path planning problem.
+   A solution to this problem contains the following:
+     + A suggested planar path for the fishing vessel to follow;
+     + An indicated point in time and space for initiation of purse deployment;
+     + Auxiliary information about the involved actors, which helps situational awareness.
+   Typically, such solutions should be presented to the purser in an informative manner, such as a graphical visualization including a map plot [fn:: The sibling project codenamed "Balder" takes care of graphical visualization].
+   The arrows in cref:fig:overview indicate information flow and interactions between important elements of the presented decision support.
+   Instruments are capable of acquiring relevant environmental data together with vessel-specific measurements in real time.
+   We assume that there exists a machine-to-machine application programming interface that are capable of sharing this information, for instance "Ratatosk" cite:Reite2017data [fn:: Data collection and sharing is achieved with a supporting software named "Ratatosk"].
+   Herein, we focus on the mathematical modeling of the /Online path planner/ indicated in cref:fig:overview.
+
+   #+CAPTION: Main elements in a purse seine deployment process.
+   #+name: fig:overview
+   #+ATTR_RST: :align center :scale 100
+   [[../static/overview.png]]
+
+   From a path planning perspective, the relevant phases of a purse seine deployment are the pre-deployment positioning and the purse deployment circling cite:Ben1994purse.
+   Questions in need of answers are, where is the school, where will it go, what is the current, how should we maneuver the vessel, where and when should we initiate deployment, will the net sink quick and deep enough.
+   The path planner problem is stated in cref:prob:deploy.
+
+   #+caption: Purse Seine.
+   #+name: fig:purseseine
+   #+ATTR_RST: :align center
+   [[../static/purse.png]]
+
+   #+ATTR_RST: :title Purse seine path planning
+   #+ATTR_LATEX: :options [Purse seine path planning]
+   #+name: prob:deploy
+   #+begin_problem
+   Find an ideal vessel trajectory to surround the targeted fish school, subject to:
+   #+name: prob:deploy
+   \begin{equation}
+   \begin{array}{ll}
+     \bullet & \text{Vessel maneuverability constraints;}\\
+     \bullet & \text{Expected fish school movement;}\\
+     \bullet & \text{Anticipated sinking response;}\\
+     \bullet & \text{Environmental conditions;}\\
+     \bullet & \text{Setting orientation and other user preferences.}
+   \end{array}
+   \end{equation}
+   #+end_problem
+
+** Purse planner formulation
+
+   Our hypothesis is that an optimization-based algorithm can conceive a sound course of actions based on predictive capabilities.
+   The conception takes form by mathematically describing principal components of the system to a sufficient fidelity.
+   Hence, we formalize cref:prob:deploy by utilizing common modeling techniques such as first principles, datasets and engineering cleverness.
+   We should arrive at an optimal control problem formulation, which can be efficiently solved using numerical techniques for nonlinear programming problems cite:Betts2010,Biegler2010,Andersson2019casadi.
+   The principal components in need of scrutiny are:
+
+   1) Fishing vessel;
+   2) Fish school;
+   3) Leadline sinking response;
+   4) Environment's impact on above components;
+   5) Criteria for ideal vessel trajectory and deployment initiation.
+
+   An important aspect of the formulation is that of timing with respect to the leadline sinking in relation to fish school and vessel trajectories.
+   We identify four time points that signify key events of the purse deployment process, namely:
+   1) Deployment initiation at deployment point $p_d$, at time point $t_d$;
+   2) Leadline enters waters at collision point $p_c$, at time point $t_s$;
+   3) Fish is surrounded, at time point $t_{pd}$.
+   4) Fish arrives at collision point $p_c$, at time point $t_c$;
+
+   #+caption: Overview of key time points of the deployment process.
+   #+name: fig:overview_points
+   #+ATTR_RST: :align center
+   [[../static/overview_points.png]]
+
+   At these time points, the vessel and the fish school are located at various positions in relation to each other and is indicated in cref:fig:overview_points.
+   The *main objective* of the planner is to determine the deployment time while fulfilling various criteria for a successful deployment.
+   In the following sections, we will describe the principal components and combine them with additional descriptions to solve the timing and trajectory planning problem.
+   Some descriptions are located in [[Appendix]].
+
+*** Notation
+
+    + We denote an inertial reference frame with axes $x$, $y$, and $z$ pointing north, east, down as $\{\text{NED}\}$.
+    + Define a limited time horizon $\mathbb{T} := \{t \in \mathbb{R} : t_0 \leq t \leq t_f\}$, where $t_f>t_0\geq 0$.
+    + The partial derivative of a function $f(x,y)$ is written with a superscript $\frac{d f(x)}{dx} = f^x(x,y)$.
+    + If the argument is time, we use the common dot notation, i.e. $\frac{dx(t)}{dt} = \dat x(t)$.
+    + The orientation space is defined by $\mathbb{S} \in [-\pi,\pi)$.
+    + $I_n$ is the $n\times n$ identity matrix.
+    + $1_{n\times m}$ is an $n\text{-by-}m$ matrix of ones.
+    + $0_{n\times m}$ is an $n\text{-by-}m$ matrix of zeros.
+    + A block diagonal matrix of other matrices $X_{i\in \mathbb{I}_{>,s}} \in \mathbb{R}^{m_i\times n_i}$ is defined as
+      $\bdiag_{i \in \mathbb{I}_{>,s}}(X_i) := \bigoplus_{i \in \mathbb{I}_{>,s}} X_i$, where $\oplus$ is the direct sum.
+    + The symbol $\otimes$ is the Kronecker product.
+    + The vertically stacked matrix of other matrices $X_{i \in \mathbb{I}_{>,s}} \in \mathbb{R}^{m_i \times n}$ is denoted
+      $\col_{i \in \mathbb{I}_{>,s}}(X_i) := \bdiag_{i\in \mathbb{I}_{>,s}}(X_i) \cdot (1_{s \times 1} \otimes I_n)$.
+    + The horizontally stacked matrix of other matrices $X_{i \in \mathbb{I}_{>,s}} \in \mathbb{R}^{m \times n_i}$ is denoted
+      $\row_{i \in \mathbb{I}_{>,s}}(X_i) := \col_{i\in \mathbb{I}_{>,s}}(X_i^T)^T$.
+
+
+*** Sea current and surface current water frame
+
+    Suppose the sea current is given by $v_c(p,t): \mathbb{R}^3 \times \mathbb{R} \to \mathbb{R}^3$, where $p$ is a position in $\{\text{NED}\}$.
+    We assume that the current is slowly-varying and can be approximated in a region of interest by a vertical vector field, which is independent of planar position.
+    The sea current is thus assumed constant in each depth layer for a limited time horizon,
+    and is approximated by $w_c(p_z; t_0) \approx v_c(p,t)\, \forall t \in \mathbb{T}$.
+
+    We will make use of a reference frame that moves with the surface current,
+    denoted /water frame/, $\{\text{WF}\}$, with axes aligned with $\{\text{NED}\}$.
+    The constant planar surface current can be written in polar form as
+    \begin{equation}
+    w_c(0; t_0) = W \begin{bmatrix}\cos(\alpha)\\ \sin(\alpha)\\ 0\end{bmatrix},
+    \end{equation}
+    where the origin of the water frame in $\{\text{NED}\}$ is written as an initial value problem
+    #+name: eq:water_ivp
+    \begin{equation}
+    \begin{array}{ll}
+    \dot p_w (t) &= W \begin{bmatrix}\cos(\alpha)\\ \sin(\alpha)\end{bmatrix},\\
+    p_w(t_0) &= \begin{bmatrix}0\\ 0\end{bmatrix}.
+    \end{array} \qquad \forall \, t \in \mathbb{T}
+    \end{equation}
+    Notice that the initial value of the water frame is always set to the origin.
+
+*** Fishing vessel
+
+    We need a dynamic model that has enough fidelity to allow us to devise maneuverable paths.
+    The fishing vessel is described as a planar kinematic vehicle under the influence of
+    sea current. The planar position of the vessel on the $xy\text{-plane}$ of
+    $\{\text{NED}\}$ is $p_v(t) \in \mathbb{R}^2$. Define $U_v>0$ as the speed in water.
+    Let $\psi_v(t) \in \mathbb{R}$ be the heading of the vessel, that is, the angle
+    between the vessel's body frame and $\{\text{NED}\}$.  Further, let $r_v(t)$ be the
+    rate of turn. Define $x_v(t) = \col(p_v,\psi_v,r_v) \in \mathbb{R}^4$
+    as the vessel state vector. We state the dynamic model as a constrained
+    initial value problem with ordinary differential equations (ODEs) in eqref:eq:vessel_ivp.
+    #+name: eq:vessel_ivp
+    \begin{equation}
+    \begin{array}{ll}
+     \dot p_v (t) &= U_v \begin{bmatrix}\cos(\psi_v)\\ \sin(\psi_v)\end{bmatrix} + W\begin{bmatrix} \cos(\alpha)\\ \sin(\alpha) \end{bmatrix}, \\
+     \dot \psi_v (t) &= r_v, \\
+     \dot r_v (t) &= u_r, \\
+     p_v (t_0) &= p_{v,0}, \quad \psi_v (t_0) = \psi_{v,0}, \quad r_v (t_0) = r_{v,0}, \\
+     u_r (t) & \in \mathcal{U}_v := [u_{r,\min}, u_{r,\max}], \\
+     x_v(t) &\in \mathcal{X}_v \subseteq \mathbb{R}^4,
+    \end{array} \qquad \forall \, t \in \mathbb{T}
+    \end{equation}
+    where $u_r(t)$ is a constrained control input, and given initial conditions $p_{v,0}$,
+    $\psi_{v,0}$, $r_{v,0}$. Remark that the state vector is constrained, and especially
+    the rate of turn may be bounded to retain realistic maneuvers.
+
+    #+begin_note
+    This dynamic model is currently not used in the optimization problem. We use instead trajectories from a path following algorithm, described in [[Path following]].
+    #+end_note
+
+*** Fish school
+
+    A purse seine master uses a multi-beam sonar to evaluate a fish school size and biomass cite:Vatnehol2016.
+    Fish schools takes many different shapes and its geometry changes based on complex internal and external factors,
+    such as vessel disturbance, sea currents, and individual-level behavior cite:Gerlotto2003.
+    However, once a fish school has been singled out for targeting, its extent, center of mass,
+    depth, direction, and speed are the most relevant attributes when devising a deployment path.
+    A sonar can typically provide intermittent estimates of this type of information as a datagram cite:Haugen2019.
+    To secure a computationally efficient model, we deliberately describe the model with limited inter-connectivity with external factors.
+    In particular, we assume that the vessel does not influence the fish school movements in our planning description.
+    Let $p_s(t) \in \mathbb{R}^2$ in the $\{\text{NED}\}$ frame be a point mass representing the fish school.
+    The dynamic fish school model is a constant planar velocity model under influence of sea current.
+    Define $U_s>0$ as the speed in water and $\psi_s \in \mathbb{S}$ the fish heading.
+    The dynamic fish school model at depth $z_s$ is an ODE with given initial conditions as described in eqref:eq:fish_ivp.
+    #+name: eq:fish_ivp
+    \begin{equation}
+     \begin{array}{ll}
+     \dot p_s (t) &= U_s \begin{bmatrix}\cos(\psi_s)\\ \sin(\psi_s)\end{bmatrix} + \begin{bmatrix} I_2 & 0_{2\times 1} \end{bmatrix} w_c(z_s; t_0), \\
+     p_s (t_0) & = p_{s,0},
+     \end{array} \qquad \forall \, t \in \mathbb{T}
+    \end{equation}
+    where $p_{s,0}$, $\psi_s$, $z_s$, $U_s$ are given values. It is straightforward to expand $\psi_s$ to become non-constant, as to allow a turning fish school.
+    Note that $V_s$ and $\chi_s$ are the school speed and course over ground,
+    which can be obtained using eqref:eq:chi_of_beta, eqref:eq:voft, and eqref:eq:beta_of_t.
+
+*** Leadline sinking response
+
+    Comprehension of the sinking response of the purse seine is an important part of the deployment planning.
+    There exists high-fidelity models that are capable of modeling the sinking response of a purse seine under influence of sea currents cite:Kim2007.
+    The sinking dynamics is highly influenced by gear configuration, such as mesh size, lead weights, twine thickness, and more.
+    Unfortunately, such models are too computationally demanding to be used in our setup.
+    A study using multivariate regression models cite:Zhou2015 conclude that differences in sinking depths are caused by current speeds, shooting duration, included angle of currents, and shooting angle.
+    We choose a practical approach where a simple, but adaptable model is used to estimate the leadline sinking response.
+    The leadline is the bottom sinking part of a purse seine, see cref:fig:purseseine.
+    Let $z_l(t) \in \mathbb{R}$ be the depth at a point somewhere along the leadline in $\{\text{NED}\}$ frame.
+    The leadline is modeled as a first-order response, which depends on a time constant
+    $\tau_l>0$ and set-point depth $z_{l,d}>0$, as defined in eqref:eq:leadline.
+    #+name: eq:leadline
+    \begin{equation}
+     \begin{array}{ll}
+     \begin{array}{l}
+     \dot z_{l}(t) = \frac{1}{\tau_l}(z_l - z_{l,d})\\
+     z_l(t_s) = 0.
+     \end{array} & \text{for} \, t_s \le t \le t_{s,f}
+     \end{array}
+    \end{equation}
+    Note the time $t_s>t_0$, which is the time point at which the leadline point enters the water.
+    This overly simplistic model can be made somewhat dependent on the sea current.
+    For instance, by letting the time constant $\tau_l = \tau_l(w_c(p_z; t_0))$ and set-point $z_{l,d}(w_c(p_z; t_0))$
+    be evaluated constants for a given sea current profile,
+    the sinking response may display various responses, albeit only with linear dynamics.
+
+    Due to the simplicity of the model, we may exploit the explicit solution to
+    eqref:eq:leadline instead of numerically integrating. The solution is
+    #+name: eq:leadline_of_t
+    \begin{equation}
+    z_{l}(t) = \left(1-e^{-(t-t_s)/\tau_l}\right)z_{l,d}.
+    \end{equation}
+
+
+    It should be noted that based on our datasets of sinking responses and current
+    profiles, we have not been able to establish a consistent correlation between current
+    speeds and sinking depths. We suspect that there are other unobserved phenomena
+    affecting the sinking response, for instance the operation of the purse winches.
+
+*** Purse planner criteria
+
+    cref:prob:deploy states that we need to "find an ideal vessel trajectory to surround the fish school".
+    The definition of an /ideal trajectory/ is debatable.
+    In our proposed path planner, we add both constraint expressions and objective function terms, which result in a vessel trajectory that meets certain criteria.
+    We make the criteria adjustable through configurable parameters.
+    The purpose of having tunable parameters is -- to some extent -- to accommodate individual preferences in what is perceived as an /ideal trajectory/.
+    The configurable parameters are not only for the algorithm implementer, but also for the purse seine master practitioner.
+    Below we define these expressions and terms, and specify which criterion they intend to meet.
+
+    #+ATTR_RST: :title Vessel speed in water is constant
+    #+ATTR_LATEX: :options [Vessel speed in water is constant]
+    #+name: ass:speed
+    #+begin_assumption
+    The vessel speed in water is assumed to be constant
+    #+name: ass:speed
+    \begin{equation}
+    U_v(t) = U_v\quad \forall t \in \mathbb{T}.
+    \end{equation}
+    The speed is user configurable. Constant speed simplifies timing estimates.
+    Note that this can be relaxed with little additional effort, especially in the pre-deployment phase.
+    #+end_assumption
+
+    #+ATTR_RST: :title Ellipse in water frame
+    #+ATTR_LATEX: :options [Ellipse in water frame]
+    #+name: crit:ellipse
+    #+begin_criterion
+    The /ideal deployment trajectory/ follows an ellipse as defined by eqref:eq:p_ellipse.
+    The placement of the ellipse is a key task of the purse planner.
+    The ellipse parameter vector $\theta_e$ contains both initial conditions,
+    user parameters, configuration parameters, and decision parameters.
+    We declare the elements of $\theta_e$ as follows
+    #+name: crit:ellipse
+    \begin{equation}
+    \begin{array}{lll}
+    p_{e,0} &= p_{s,0} & \text{School initial position; initial condition}\\
+    \vartheta &= \psi_{s,w} & \text{School direction in water frame; initial condition}\\
+    \col(L_x, L_y) &= & \text{Ellipse translation; decision parameters}\\
+    \col(R_x, R_y) &= & \text{Ellipse radii; user parameters}\\
+    d_o &= & \text{Setting orientation; configuration parameter}.
+    \end{array}
+    \end{equation}
+    Note that $\psi_{s,w}$ is evaluated as $\{NED\}$ velocity minus water surface velocity, using equations defined in [[Slip angle]].
+    #+end_criterion
+
+    #+ATTR_RST: :title Collision point
+    #+ATTR_LATEX: :options [Collision point]
+    #+name: crit:collision
+    #+begin_criterion
+    The collision point $p_c$ is the anticipated point at which the purse deployment
+    intersects the fish trajectory. Let $p_{p}(\varpi_c)$ be a particle on the ellipse defined in cref:crit:ellipse
+    and $p_{s,c}(\tau_c)$ a particle along the fish trajectory.
+    The fish trajectory is the solution to eqref:eq:fish_ivp,
+    which is parameterized as eqref:eq:p_line, with $\theta_l = \col(p_{s,0}, V_{s,w},\psi_{s,w})$,
+    where $V_{s,w}$ and $\psi_{s,w}$ is speed and orientation of the
+    constant fish velocity in water frame.
+    The overall objective is $\min_{\varpi_c,\tau_c} \|p_{p}(\varpi_c) - p_{s,c}(\tau_c)\|$.
+    By letting both particles collaborate to solve the objective, we use
+    mutual particle projections eqref:eq:particle_projection, with $\sigma_c(t)$ and $\sigma_{\tau}(t)$
+    defined according to eqref:eq:particle_error, so that the closed-loop dynamics of the
+    parametrization variables is an initial value problem
+    #+name: crit:collision
+    \begin{equation}
+    \begin{array}{ll}
+    \dot \varpi_c &= \frac{\gamma \sigma_c}{\|p_{p}^{\varpi_c}(\varpi_c)\|}\\
+    \dot \tau_c &= \frac{\gamma \sigma_{\tau}}{\|p_{s,c}^{\tau_c}(\tau_c)\|}\\
+    \varpi_c(t_0) &= 0,\, \tau_c(t_0) = 0.
+    \end{array}
+    \end{equation}
+    With sufficiently large $t=t_{\text{end}}$, both $\varpi_c$ and $\tau_c$ have converged so that the objective is fulfilled.
+    The collision point $p_c = p_{p}(\varpi_c(t_{\text{end}}))$.
+    #+end_criterion
+
+    #+ATTR_RST: :title Deployment point
+    #+ATTR_LATEX: :options [Deployment point]
+    #+name: crit:deployment
+    #+begin_criterion
+    The deployment point $p_d$ is point at which the purse deployment is initiated.
+    A user parameter $D_s$ is the arc length along the ellipse from the deployment point to the collision point.
+    We can use the [[Arc length control objective]] eqref:eq:arcobjective, with $p_d$ as particle 1 and $p_c$ as particle 2
+    to find the deployment point.
+    We substitute our particles in eqref:eq:arcobjective and restate the initial value problem as
+    #+name: crit:deployment
+    \begin{equation}
+    \begin{array}{ll}
+      \dot s_d &= -k_d(s_d - (s_c - D_s))\\
+      \dot \varpi_d &= \frac{\dot s_d}{\|p_p^\varpi(\varpi_d)\|}\\
+      \dot s_c &= U_{p,c}(t) = \gamma \sigma_c(t) \\
+      & \varpi_d(t_0) = \varpi_c(t_0) = 0,\, s_d(t_0) = 0,\, s_c(t_0)=0,
+    \end{array}
+    \end{equation}
+    where $k_d > 0$ and we notice that $\dot \varpi_c$ is defined in eqref:crit:collision and therefore skipped in the restatement.
+    The particle speed diminishes when $s_d - s_c \to D_s$
+    and we obtain the deployment point $p_d = p_p(\varpi_d(t_{\text{end}}))$.
+    Notice that $s_d < s_c$, i.e. $\varpi_d < \varpi_c$, and indicates that the deployment occurs /before/ collision, which is what we want.
+    #+end_criterion
+
+    #+ATTR_RST: :title Fish surrounded
+    #+ATTR_LATEX: :options [Fish surrounded]
+    #+name: crit:surround
+    #+begin_criterion
+    The point at which the fish is surrounded is chosen as half a circumference from the collision point.
+    This means that $\varpi_{pd} = \varpi_c + \pi$ because the parametrization is given in radians.
+    The point $p_{pd} = p_p(\varpi_{pd})$ can be evaluated once $\varpi_c(t_{\text{end}})$ is known.
+    We also approximate the arc length from the collision point using arc length dynamics eqref:eq:arc
+    #+name: crit:surround
+    \begin{equation}
+    \begin{array}{ll}
+    \dot s_{pd} &= k_{pd}(\varpi_c + \pi - \varpi_{pd})\\
+    \dot \varpi_{pd} &= \frac{\dot s_{pd}}{\|p_{p}^\varpi(\varpi_{pd})\|},
+    \end{array}
+    \end{equation}
+    since ellipse circumference does not have an analytic solution and we need it for timing evaluation purposes.
+    #+end_criterion
+
+    #+ATTR_RST: :title Timing evaluations
+    #+ATTR_LATEX: :options [Timing evaluations]
+    #+name: crit:timing
+    #+begin_criterion
+    We need to estimate key time points to determine ellipse placement in relation to the fish trajectory.
+    Since the ellipse is defined in water frame and the vessel speed in water is constant as per cref:ass:speed,
+    it is simple to determine several of the requested time points. The timings are
+    #+name: crit:timing
+    \begin{equation}
+    \begin{array}{lll}
+    t_d & & \text{Deployment initiation}\\
+    t_s &= t_d + D_s/U_v,& \text{Leadline in water at collision point}\\
+    t_c &= \tau_c,& \text{Fish arrives at collision point}\\
+    t_{pd} &= t_s + s_{pd}/U_v, & \text{Fish is surrounded}\\
+    t_{s,\Delta} &= t_c - t_s, & \text{Duration of leadline sinking before fish arrives}.
+    \end{array}
+    \end{equation}
+    For given ambient conditions and ellipse parametrization all except $t_d$ are easily evaluated with the help of the previous criteria.
+    $t_d$ is related to the pre-deployment positioning of the vessel and is found based on cref:crit:t_deployment, cref:crit:predeploy, and eqref:eq:t_d_def.
+    #+end_criterion
+
+    #+ATTR_RST: :title Pre-deployment positioning
+    #+ATTR_LATEX: :options [Pre-deployment positioning]
+    #+name: crit:predeploy
+    #+begin_criterion
+    There is an algorithm that creates a trajectory for pre-deployment positioning.
+    We make use of a path following controller to converge to and follow the ellipse in cref:crit:ellipse,
+    which is described in [[Path following]] using eqref:eq:pathfollow_varpi,
+    eqref:eq:pathfollow_tildechi, eqref:eq:pathfollow_chid, eqref:eq:pathfollow_chi.
+    The initial value problem for the path following algorithm is
+    #+name: crit:predeploy
+    \begin{equation}
+    \begin{array}{ll}
+    \dot p_v &= V_v(t)\begin{bmatrix}\cos \chi_v\\ \sin \chi_v\end{bmatrix},\\
+    \dot \varpi_v &= \frac{V_v(t)\cos \chi_r(e_v) + \gamma \sigma_v(t)}{\| p_p^\varpi(\varpi_v)\|},\\
+    \dot \chi_v &= \omega_{\max} \frac{\tilde \chi_v}{\sqrt{\tilde \chi_v^2 + \Delta_{\dot \chi}^2}},\\
+    p_v(t_0) &= p_{v,0},\, \varpi_v(t_0) = \varpi_0(t_{\text{end}}),\, \chi_v(t_0) = \chi_{v,0},
+    \end{array}
+    \end{equation}
+    where $\varpi_0(t_{\text{end}})$ is given by cref:crit:presolve, and $\chi_{v,0}$ is calculated with eqref:eq:chi_of_t0,
+    and $V_v(t)$ is evaluated using eqref:eq:voft.
+    #+end_criterion
+
+    #+ATTR_RST: :title Deployment initiation
+    #+ATTR_LATEX: :options [Deployment initiation]
+    #+name: crit:t_deployment
+    #+begin_criterion
+    We consider the pre-deployment positioning as finished when the vessel enters within a radius
+    $R_{\text{deploy}}$ of the calculated deployment point $p_d$. This criterion is stated as
+    #+name: crit:t_deployment
+    \begin{equation}
+    \| p_v(t_d) - p_w(t_d) - p_d \| \leq R_{\text{deploy}},
+    \end{equation}
+    where $R_{\text{deploy}} > 0$ is the deployment vicinity radius and $p_v(t)$ is the vessel $\{\text{NED}\}$ position.
+    #+end_criterion
+
+    #+ATTR_RST: :title Pre-solve vessel particle projection
+    #+ATTR_LATEX: :options [Pre-solve vessel particle projection]
+    #+name: crit:presolve
+    #+begin_criterion
+    It is recommended by cite:Breivik2009 to presolve $\varpi(t_0)$ for the path following
+    algorithm of cref:crit:predeploy. This is achieved with [[Particle projection]] from
+    eqref:eq:particle_projection:
+    #+name: crit:presolve
+    \begin{equation}
+    \begin{array}{ll}
+      \dot \varpi_0 &= \frac{\gamma \sigma_0(t)}{\| p_p^\varpi(\varpi_0)},\\
+      \varpi_0(t_0) &= 0,
+    \end{array}
+    \end{equation}
+    where $\sigma_0(t)$ is evaluated by eqref:eq:particle_error using $p(t) = p_v(t_0)$.
+    The value of $\varpi_0$ at $t=t_{\text{end}}$ is the point on the ellipse, which is closest to the vessel.
+    It is important to include this in the formulation, because an initial transient of $\varpi$
+    for the path following algorithm has impact on the pre-deployment closed-loop response.
+    This is especially true if $\varpi(t_0)$ is far from the particle projection and is avoided with this criterion.
+    Note also that this implies that the initial condition for $\varpi$ in the pre-deployment path following algorithm
+    now becomes "free" in the sense that it is to be found by the optimization problem.
+    #+end_criterion
+
+    #+ATTR_RST: :title Sink margin
+    #+ATTR_LATEX: :options [Sink margin]
+    #+name: crit:sink_margin
+    #+begin_criterion
+    Sink margin is the surplus leadline depth beyond the indicated fish school depth.
+    The depth response is calculated at the collision point, where we use eqref:eq:leadline_of_t
+    with a sinking duration of $t_{s,\Delta} = t_c - t_s$, which is the time difference between
+    fish arrival and vessel crossing at the collision point.
+    Let $z_{\min}$ be the user-specified minimal surplus margin so that the following
+    constraint must be satisfied
+    #+name: crit:sink_margin
+    \begin{equation}
+    z_l(t_{s,f}) - z_s \geq z_{\min},
+    \end{equation}
+    where $t_{s,f} = t_s + t_{s,\Delta}$ and $z_s$ is fish depth.
+    #+end_criterion
+
+    #+ATTR_RST: :title Fish trapped margin
+    #+ATTR_LATEX: :options [Fish trapped margin]
+    #+name: crit:fish_margin
+    #+begin_criterion
+    #+name: crit:fish_margin
+    At the time point the vessel has completed the deployment ellipse, we need to ensure that the fish is inside the ellipse.
+    We make use of the path-tangential frame at $p_{pd} = p_p(\varpi_{pd}(t_{\text{end}}))$ and
+    calculate the cross track error of the fish position at time point $t_{pd}$.
+    The fish is inside the ellipse for positive $\epsilon_{\text{trap}}$:
+    \begin{equation}
+    \begin{bmatrix}\sigma_{\text{trap}}\\ \epsilon_{\text{trap}}\end{bmatrix} = d_o R^T
+    (\chi_{pd})(p_s(t_{pd}) - p_w(t_{pd}) - p_p(\varpi_{pd})),
+    \end{equation}
+    where $\chi_{pd}$ is the ellipse tangent at $p_p(\varpi_{pd})$ and $d_o$ is setting orientation.
+
+    Suppose the user requests a minimal trap margin $\epsilon_{\min}$.
+    We can write this constraint as
+    #+name: crit:fish_margin
+    \begin{equation}
+    \begin{array}{ll}
+    \epsilon_{\text{trap}} - \epsilon_{\min} + s_{\epsilon} &\geq 0,\\
+    s_{\epsilon} &\geq 0,
+    \end{array}
+    \end{equation}
+    where $s_{\epsilon}$ is a slack variable to avoid infeasible solutions.
+    #+end_criterion
+
+**** Objective function terms
+
+     The objective function has the terms listed in cref:tab:obj, which are to be minimized.
+
+     #+caption: Objection function terms
+     #+name: tab:obj
+     | Term                             | Description                                                                             |
+     |----------------------------------+-----------------------------------------------------------------------------------------|
+     | $\rho_{\text{deploy}}t_d$        | Find a minimal deployment time point that meets our criteria                            |
+     | $\rho_{\Delta}s_a s_b$           | Ensure a non-negative sink duration, $t_{s,\Delta} = \max(0, t_c -t_s)$,                |
+     |                                  | which is implemented using constraint qualifications as described in cite:Biegler2010.  |
+     | $\rho_{\text{trap}}s_{\epsilon}$ | The fish trap slack is heavily penalized and exists to avoid some infeasible solutions. |
+
+     Currently, all objective terms are terminal objectives, so the optimization problems is cast as a /Mayer problem/, with
+     #+name: eq:mayer
+     \begin{equation}
+     \Phi_M(\mathcal{Z},\theta) = \rho_{\text{deploy}}t_d + \rho_{\Delta} s_a s_b + \rho_{\text{trap}}s_{\epsilon},
+     \end{equation}
+     where $\mathcal{Z}$ and $\theta$ will be defined further below.
+
+*** Nonlinear programming problem for purse seine deployment
+
+    The criteria we defined in the previous section consists of both initial value problems
+    and constraint expressions,
+    which are valid in various time intervals or at specific time points only.
+    We are motivated to collect the initial value problems into two subsystems,
+    each using their own discretization technique and time horizon.
+    Some of the states are stable and does not have control inputs;
+    they are fully defined by initial conditions and parameters.
+    From these state trajectories we are only interested in their terminal value, which we denote $t_{\text{end}}$.
+    For the pre-deployment response from cref:crit:predeploy, on the other hand, we are
+    interested in finding the unknown final time $t_d$.
+
+    The /casadi form/ of a nonlinear programming formulation defines parameters as
+    entities that are constant for one optimization problem, but may be changed from one solution evaluation to the next.
+    We collect both user parameters and initial conditions into the parameter vector as follows:
+    #+name: eq:theta
+    \begin{equation}
+    \theta = \col(U_v, p_{v,0}, V_s, p_{s,0}, \chi_{s}, \psi_{s,w}, W, \alpha, z_s, \tau_l, z_{l,d}, D_s, R_x, R_y, z_{\min}, \epsilon_{\min})
+    \end{equation}
+    Note that fixed parameters, such $d_o$ are not exposed as part of $\theta$.
+
+    We define Subsystem 1 as initial value problems with horizon $t_1 \in [t_0, t_{\text{end}}] =: \mathbb{T}_1$,
+    which are given by cref:crit:collision, cref:crit:deployment, cref:crit:surround, and cref:crit:presolve.
+    We collect the state variables as $x_1 = \col(\varpi_0, \varpi_c, \tau_c, \varpi_d, \varpi_{pd}, s_c, s_d, s_{pd})$.
+
+    Subsystem 2 are the closed-loop vessel trajectory cref:crit:predeploy,
+    fish trajectory eqref:eq:fish_ivp, and water frame eqref:eq:water_ivp.
+    The state variables are collected as $x_2 = \col(\varpi_v, p_v, \chi_v, p_w, p_s)$.
+    We make use of the non-fixed time horizon formulation,
+    where the discretization is divided into $N_2$ time elements each with a step size of $h_2$.
+    The step size is a decision parameter with a step size range
+    #+name: eq:stepsize
+    \begin{equation}
+    h_2 \in [h_{\min}, h_{\max}],
+    \end{equation}
+    with $h_{\{\min,\max\}} = t_{d, \{\min,\max\}}/N_2$.
+    The final time of Subsystem 2 is given as
+    #+name: eq:t_d_def
+    \begin{equation}
+    t_d = t_0 + N_2 h_2,
+    \end{equation}
+    so that the time interval is $t_2 \in [t_0, t_d] =: \mathbb{T}_2$.
+    cref:crit:t_deployment is the constraint that dictates $t_d$.
+
+    By assembling the equations from the preceding section,
+    we are ready to formalize cref:prob:deploy as an optimal control problem in cref:prob:ocp_deploy.
+    We collect decision parameters into the vector $\nu \in \mathcal{V} \subset \mathbb{R}^6$ as
+    #+name: eq:v_opt
+    \begin{equation}
+    \begin{array}{ll}
+    \nu = \begin{bmatrix} L_x\\ L_y\\ s_a\\ s_b\\ s_{\epsilon}\\ h_2\end{bmatrix} &\in
+    \begin{matrix}
+    [0, L_{x,\max}]\\
+    [-L_{y,\max},L_{y,\max}]\\
+    [0,\infty]\\
+    [0,\infty]\\
+    [0,\infty]\\
+    [h_{\min}, h_{\max}]
+    \end{matrix}
+    \end{array}
+    \end{equation}
+
+    Define $\mathcal{Z}$ as $\col(\nu, x_1, x_2)$.
+    The optimization problem is transcribed into a nonlinear programming problem using hybrid discretization,
+    which implies separate discretization schemes for Subsystems 1 and 2.
+    We can do this because they are loosely coupled through parameters and initial/terminal states only.
+
+    #+ATTR_RST: :title Purse seine OCP
+    #+ATTR_LATEX: :options [Purse seine OCP]
+    #+name: prob:ocp_deploy
+    #+begin_problem
+    #+name: prob:ocp_deploy
+    \begin{equation}
+     \begin{array}{lc}
+     \begin{array}{l}
+     \text{minimize:} \\
+     \nu\in \mathcal{V}
+     \end{array}
+     \quad \Phi_M(\mathcal{Z},\theta)\\
+     \quad\text{subject to:}\qquad      \forall\, t_1 \in \mathbb{T}_1, t_2\in\mathbb{T}_2 \\
+     \end{array}
+    \end{equation}
+    cref:crit:ellipse, cref:crit:sink_margin, cref:crit:fish_margin, cref:crit:timing, cref:crit:t_deployment, eqref:eq:v_opt;
+    Subsystem 1: cref:crit:collision, cref:crit:deployment, cref:crit:surround, cref:crit:presolve;
+    Subsystem 2: cref:crit:predeploy, eqref:eq:fish_ivp, eqref:eq:water_ivp.
+   #+end_problem
+
+    The argument that minimizes cref:prob:ocp_deploy is $\nu^\star$.
+    The corresponding vessel and fish trajectories are $p_v^\star(t)$ and $p_s^\star(t)$
+    and can be found by solving an initial value problem of Subsystem 2 with a desired time horizon
+    and $L_x^\star$ and $L_y^\star$ from $\nu^\star$.
+    These functions can be used as decision support to the purse seine master by visualizing them in a graphical user interface.
+
+*** Receding horizon
+
+    A solution to cref:prob:ocp_deploy has limited validity because the ambient conditions or user preferences will change.
+    We therefore solve cref:prob:ocp_deploy on a regular interval with updated initial conditions in a receding horizon fashion.
+    Typically, solutions from overlapping time intervals are used as warm start for the decision variables in the NLP,
+    because it can speed up solution times considerably.
+
+*** Discussion on solution strategies and improvements
+
+    The NLP resulting from discretization of cref:prob:ocp_deploy has few decision variables,
+    but they are strongly connected to the system dynamics. As a result the computation of the Hessian of the Lagrangian is costly with many numerical evaluations.
+    It is advisable to use hessian approximation, which speeds up solution times by an order of magnitude.
+
+    We have had best success in solving the problem using single shooting for both subsystems.
+    There may be opportunities in using multi shooting or collocation with good initial guesses for state trajectories and Lagrange multipliers.
+    We have not investigated this yet.
+
+    Unfortunately, the initial guesses of the decision parameters have impact on whether the optimization problem finds a solution or not.
+    Decision parameters $L_x$ and $h_2$ are especially important, but for both these it is relatively straightforward to
+    provide initial guesses based on some distance and geometry interpretations.
+    Mechanisms for this is not yet implemented.
+
+    The optimization problem sometimes arrives at infeasible solutions.
+    Therefore it may be constructive to provide a set of candidate guesses for key decision parameters,
+    so that the algorithm can try various initial guesses.
+
+    The pre-deployment positioning currently does respect keeping distance to the fish school as it converges toward the deployment point.
+    This is fine when the vessel is already located on the "right" side in relation to the fish school.
+    A future improvement would be to extend Subsystem 2 with a control scheme that takes into account the distance between the vessel and fish school.
+
+** Appendix
+
+*** Regularly parameterized paths and path following
+
+**** Regularly parameterized paths
+
+     A planar parametric curve parameterized by a scalar variable $\varpi \in \mathbb{R}$
+     belongs to a one-dimensional manifold defined as cite:Breivik2009:
+     \begin{equation}
+     \mathcal{P} := \{ p \in \mathbb{R}^2 : p = p_p(\varpi)\, \forall\, \varpi \in \mathbb{R} \}.
+     \end{equation}
+     Below we define some specific curves used in our formulation.
+
+***** Ellipse
+
+      A rotated and translated ellipse can be defined as follows
+      #+name: eq:p_ellipse
+      \begin{equation}
+      p_e(\varpi;\theta_e) = p_{e,0} + \underbrace{\begin{bmatrix}\cos(\vartheta)& -\sin(\vartheta)\\
+        \sin(\vartheta)& \cos(\vartheta)\end{bmatrix}}_{R(\vartheta)}
+        \begin{bmatrix}L_x + R_x \cos(d_o \varpi)\\ L_y + R_y \sin(d_o \varpi) \end{bmatrix},
+      \end{equation}
+      where $\theta_e := \col(p_{e,0}, \vartheta, L_x, L_y, R_x, R_y, d_o)$ is a parameter
+      vector that dictates all aspects of the ellipse, see cref:fig:ellipse. The
+      orientation for increasing $\varpi$ is determined by $d_o \in \{-1, 1\}$ and
+      $\varpi$ is given in radians.
+
+      #+CAPTION: Ellipse path with translation and rotation.
+      #+name: fig:ellipse
+      #+attr_rst: :align center
+      [[../static/ellipse.png]]
+
+***** Straight line
+
+      The solution to an initial value problem of a constant velocity particle,
+      such as eqref:eq:fish_ivp is
+      #+name: eq:p_line
+      \begin{equation}
+      p_l(\varpi;\theta_l) = p_{l,0} + \varpi V \begin{bmatrix}\cos(\chi)\\ \sin(\chi)\end{bmatrix},
+      \end{equation}
+      where $\theta_l := \col(p_{l,0}, V, \chi)$. Notice that for this parametrization,
+      $\varpi$ is a time variable in seconds, with $\varpi = 0$ being the initial
+      condition.
+
+**** Path-tangential frame and arc length
+
+     #+CAPTION: Path-tangential frame and symbols relating to steering on or to regularly parameterized paths.
+     #+name: fig:parametrizations
+     #+ATTR_RST: :align center
+     [[../static/parametrizations.png]]
+
+     In the following, it is useful to confer cref:fig:parametrizations.
+     The material is taken from cite:Haugen2010.
+     Consider a planar particle $p_p(\varpi) = \col(x_p(\varpi), y_p(\varpi))$, which is
+     constrained to move along a curve. We define a /path-tangential frame/ as a
+     reference frame with origin $p_p(\varpi)$ and x-axis aligned with the tangent of the
+     curve. This frame is rotated an angle $\chi_p(\varpi)$ relative some stationary
+     reference frame using the right-hand screw rule, given by
+     \begin{equation}
+     \chi_p(\varpi) = \arctan2(y_p^\varpi(\varpi),x_p^\varpi(\varpi)).
+     \end{equation}
+
+     Consider a particle $p(t) \in \mathbb{R}^2$, which may change with time $t$.
+     The error between $p$ and $p_p$ can be expressed in the path-tangential frame as
+     #+name: eq:particle_error
+     \begin{equation}
+     \begin{bmatrix}\sigma(t)\\ e(t)\end{bmatrix} = \underbrace{\begin{bmatrix}\cos \chi_p & -\sin \chi_p\\ \sin \chi_p & \cos \chi_p \end{bmatrix}^T}_{R^T(\chi_p)}(p(t) - p_p(\varpi)),
+     \end{equation}
+     where $\sigma(t)$ is denoted the /along-track error/ and $e(t)$ as the /cross-track error/.
+
+     The time rate of change of $p_p(\varpi)$ is
+     \begin{equation}
+     \begin{array}{ll}
+     \dat x_p(\varpi) &= \frac{dx_p}{d\varpi}\frac{d\varpi}{dt} = x_p^\varpi \dot \varpi,\\
+     \dat y_p(\varpi) &= \frac{dy_p}{d\varpi}\frac{d\varpi}{dt} = y_p^\varpi \dot \varpi,\\
+     \dat p_p(\varpi) &:= \col(\dat x_p, \dat y_p),
+     \end{array}
+     \end{equation}
+     where we have used the chain rule.
+     The speed of a particle is defined as $U_p(t) := \|\dat p_p(\varpi)\|$,
+     which also can be written as
+     \begin{equation}
+     U_p(t) = \|\col(\dat x_p, \dat y_p)\| = \|\col(x_p^\varpi \dat \varpi, y_p^\varpi \dat \varpi)\| = \underbrace{\|\col(x_p^\varpi,y_p^\varpi)\|}_{\|p_p^\varpi(\varpi)\|}\dat \varpi.
+     \end{equation}
+
+     The arc length between two points is the distance a particle needs to travel when moving from one point to another.
+     If the particle is constrained to move along a curve, we can show that the time derivative of the arc length is, see e.g. cite:Haugen2010
+     #+name: eq:arc
+     \begin{equation}
+     \begin{array}{ll}
+     \dot s(\varpi) &= \frac{d}{dt}\left(\int_a^\varpi \|p_p^\theta(\theta)\|d\theta\right)\\
+     &= \|p_p^\varpi(\varpi)\|\dot \varpi\\
+     &= U_p(t),
+     \end{array}
+     \end{equation}
+     which confirms that the arc length is the integral of the particle speed.
+     Notice that the arc length increases for increasing parametrization variable $\varpi$.
+
+**** Particle feedback laws
+
+     We introduce virtual particles, which we can manipulate to achieve various objectives.
+     Usually, the dynamic response of the parametrization variable $\varpi$ is designed to
+     solve an objective using simple feedback laws. We will cover several such cases in the following.
+
+***** Particle projection
+
+      It is possible to find the point on a curve, which locally minimizes the distance to a point not necessarily located on the curve.
+      The minimization problem
+      \begin{equation}
+      \min_\varpi \|p(t) - p_p(\varpi)\|,
+      \end{equation}
+      has a local minimum when $\sigma(t) = 0$. A simple proportional feedback law achieves this:
+      #+name: eq:particle_projection
+      \begin{equation}
+      \dat \varpi = \frac{\gamma \sigma(t)}{\|p_p^\varpi(\varpi)\|},
+      \end{equation}
+      where $\gamma > 0$ is the feedback gain. With sufficiently large $\gamma$,
+      the particle will quickly converge to and be the particle projection of $p(t)$ as it changes with time.
+
+***** Path following
+
+      The path following algorithm for regularly parameterized paths as described in cite:Breivik2009
+      uses particle projection and lookahead distance to steer a particle $p(t)$ onto a one-dimensional manifold.
+      We restate the algorithm here, because we will use it in the path planner formulation.
+
+      Let $p(t) \in \mathbb{R}^2$ represent the planar position of a particle in a
+      stationary reference frame. Let $V(t)$ be the velocity magnitude of the particle, so
+      that
+      \begin{equation}
+        \dat p(t) = V(t)\begin{bmatrix}\cos \chi(t)\\\sin \chi(t)\end{bmatrix},
+      \end{equation}
+      where $\chi(t)$ is the particle course -- the angle between the x-axis and the particle velocity vector.
+
+      Define $p_p(\varpi) \in \mathbb{R}^2$ as a virtual path-constrained particle for which we want $p(t)$ to converge to an move along.
+      The path following objective is therefore
+      \begin{equation}
+      \lim_{t\to\infty}\|p(t) - p_p(\varpi(t))\| = 0,
+      \end{equation}
+      where we are free to define the dynamics of $\varpi(t)$.
+      Notice that this objective also can be stated using eqref:eq:particle_error as
+      \begin{equation}
+      \lim_{t\to\infty}\begin{bmatrix}\sigma(t)\\ e(t)\end{bmatrix} = 0.
+      \end{equation}
+
+      The dynamics of $\varpi$ is designed as a combination of particle projection feedback
+      eqref:eq:particle_projection and a steering law for the orientation of $p(t)$, given as
+      #+name: eq:pathfollow_varpi
+      \begin{equation}
+      \dat \varpi = \frac{V(t) \cos \chi_r(e) + \gamma \sigma(t)}{\|p_p^\varpi(\varpi)\|},
+      \end{equation}
+      where $\chi_r(e)$ is a path-relative steering angle defined as
+      \begin{equation}
+      \chi_r(e) = \arctan\left(\frac{-e(t)}{\Delta}\right) \in (-\pi/2, \pi/2),
+      \end{equation}
+      with $\Delta > 0$, see cref:fig:parametrizations.
+
+      The desired orientation of the particle velocity vector is
+      #+name: eq:pathfollow_chid
+      \begin{equation}
+      \chi_d(e,\varpi) = \chi_p(\varpi) + \chi_r(e;\Delta).
+      \end{equation}
+
+      The control objective of the particle course is to drive $\lim_{t\to\infty}\chi(t)-\chi_d(e,\varpi) = 0$.
+      The course error is defined as
+      \begin{equation}
+      \tilde \chi = \chi_d - \chi, \, \in (\pi, \pi],
+      \end{equation}
+      where $\tilde \chi$ is to be within the indicated domain, and can be ensured using cite:Breivik2009,Haugen2010:
+      #+name: eq:pathfollow_tildechi
+      \begin{equation}
+      \begin{array}{ll}
+      \tilde \chi &= \arctan2(\sin(\tilde\chi), \cos(\tilde\chi))\\
+      \sin\tilde\chi &= \sin(\chi_d - \chi) = \sin \chi_d \cos \chi - \cos \chi_d \sin \chi,\\
+      \cos\tilde\chi &= \cos(\chi_d - \chi) = \cos \chi_d \cos \chi + \sin \chi_d \sin \chi.
+      \end{array}
+      \end{equation}
+      The course rate controller is given as
+      #+name: eq:pathfollow_chi
+      \begin{equation}
+      \dot \chi = \omega_{\max} \frac{\tilde \chi}{\sqrt{\tilde \chi^2 + \Delta_{\dat \chi}^2}},
+      \end{equation}
+      where $\omega_{\max}>0$ is maximal rate of turn and $\Delta_{\dat \chi}>0$ is a rendezvous tuning parameter.
+      This control scheme guarantees that the particle converges to the curve and is proven in cite:Breivik2009,Skjetne2011.
+
+***** Arc length control objective
+
+      Suppose $p_p(\varpi_1)$ and $p_p(\varpi_2)$ are path-constrained particles, denoted
+      1 and 2. Let the control objective be to obtain a desired arc length between the
+      particles, by manipulating the speed of particle 1. Let $S$ be the desired delta arc
+      length and $s_{\{1,2\}}$ the arc lengths of the particles. The proportional feedback law
+      for $s_1$ together with the dynamics for particle parametrizations gives us the
+      following initial value problem
+      #+name: eq:arcobjective
+      \begin{equation}
+      \begin{array}{ll}
+        \dot s_1 &= -k_d(s_1 - (s_2 - S))\\
+        \dot \varpi_1 &= \frac{\dot s_1}{\|p_p^\varpi(\varpi_1)\|}\\
+        \dot s_2 &= U_{p,2}(t)\\
+        \dot \varpi_2 &= \frac{U_{p,2}(t)}{\|p_p^\varpi(\varpi_2)\|}\\
+        & \varpi_1(t_0) =\varpi_2(t_0) = \varpi_0,\, s_1(t_0) = 0,\, s_2(t_0)=0,
+      \end{array}
+      \end{equation}
+      where $k_d$ is the feedback gain and $U_{p,2}(t)$ is the speed of particle 2.
+      Note that for $k_d > 0$, we obtain $s_1 < s_2$, and vice versa.
+
+**** Slip angle
+
+     We make a clear distinction between course and heading, where course is the planar
+     orientation of the velocity vector in $\{\text{NED}\}$, whereas heading is the planar
+     orientation of the body frame. We need expressions to relate them to each other and
+     achieve this using geometric relations.
+
+     We consider a particle $p(t) \in \mathbb{R}^2$, which is written in polar form as
+     \begin{equation}
+       \dot p = V(t) \begin{bmatrix}\cos\chi(t)\\\sin\chi(t)\end{bmatrix},
+     \end{equation}
+     where $V(t)$ and $\chi(t)$ are the magnitude and orientation of the velocity vector of the particle.
+     Suppose the vector is given as a linear combination of two velocity vectors
+     \begin{equation}
+       \dot p = U_v \begin{bmatrix}\cos\psi(t)\\\sin\psi(t)\end{bmatrix} + W \begin{bmatrix}\cos\alpha\\\sin\alpha\end{bmatrix},
+     \end{equation}
+     where $\psi$ is heading.
+     Let $\beta$ denote the /slip angle/ between the heading and course, that is
+     #+name: eq:chi_of_beta
+     \begin{equation}
+     \chi = \psi + \beta.
+     \end{equation}
+     We can find formulas for $V(t)$ and $\chi(t)$, which are expressed in terms of the above variables.
+
+     The formula for $V(t)$ is
+     #+name: eq:voft
+     \begin{equation}
+     \begin{array}{ll}
+       V(t) &= \sqrt{(U_v\cos(\psi) + W\cos(\alpha))^2 + (U_v\sin(\psi) + W\sin(\alpha))^2}\\
+            &= \sqrt{U_v^2 + W^2 + 2U_vW(\cos(\psi(t) - \alpha))}\\
+            &= \sqrt{U_v^2 + W^2 + 2U_vW(\cos(\chi(t) - \beta(t) - \alpha))}
+     \end{array}
+     \end{equation}
+     We use the geometric relation in cref:fig:geometri to establish an expression for $\beta$.
+     It can be seen that $W\sin(\alpha - \chi) = \ell$, $U_v\sin(\beta) = \ell$,
+     which gives $\sin(\beta) = \frac{W}{U_v}\sin(\alpha - \chi)$.
+     The expression for $\beta(t)$ is thus
+     #+name: eq:beta_of_t
+     \begin{equation}
+     \beta(t) = \arcsin\left(\frac{W}{U_v}\sin(\alpha - \chi(t)) \right).
+     \end{equation}
+     When we are given $\psi(t_0)$, we can calculate $V(t_0)$ and
+     #+name: eq:chi_of_t0
+     \begin{equation}
+     \chi(t_0) = \arctan2(U_v\sin \psi(t_0) + W\sin \alpha, U_v \cos \psi(t_0) + W \sin \alpha)).
+     \end{equation}
+     With these variables given, we can evaluate $\beta(t)$ for all $t$ and also calculate
+     $\psi(t)$ using the solution to the differential equations of $\dat p(t), \dat \chi(t)$.
+
+     #+CAPTION: Geometric relations between two velocity vectors.
+     #+name: fig:geometri
+     #+ATTR_RST: :align center
+     [[../static/geometry.png]]
+
+
+** COMMENT Nomenclature (OUTDATED)
+
+#+caption: Path Planner Variable Descriptions.
+#+name: tab:summary
+| *Symbol*                                                                  | *Description*                             |
+|---------------------------------------------------------------------------+-------------------------------------------|
+| $\{\text{NED}\}$                                                          | North, east, down reference frame         |
+| $\{\text{WF}\}$                                                           | Water frame moving with surface current   |
+| $\mathbb{T} := \{t \in \mathbb{R} : t_0 \leq t \leq t_f\}$                | Limited time horizon                      |
+| $w_c(p_z; t_0)$                                                           | Approximated sea current at depth $p_z$   |
+| *Water frame*                                                             |                                           |
+| $p_w(t)$                                                                  | Origin of water frame                     |
+| $W$                                                                       | Sea current magnitude near the surface    |
+| $\alpha$                                                                  | Sea current direction near the surface    |
+| *Fishing vessel*                                                          |                                           |
+| $p_v(t)$                                                                  | Planar position                           |
+| $\psi_v(t)$                                                               | Heading                                   |
+| $r_v(t)$                                                                  | Rate of turn                              |
+| $U_v>0$                                                                   | Speed in water                            |
+| $r_v(t)$                                                                  | Rate of turn                              |
+| $x_v(t) = \col(p_v,\psi_v,r_v) \in \mathcal{X}_v \subseteq \mathbb{R}^4$  | Vessel state vector                       |
+| $u_r(t) \in \mathcal{U}_v := [u_{r,\min}, u_{r,\max}] \subset \mathbb{R}$ | Heading acceleration                      |
+| *Fish school*                                                             |                                           |
+| $p_s(t)$                                                                  | Planar position                           |
+| $\psi_s$                                                                  | Heading                                   |
+| $U_s>0$                                                                   | Speed in water                            |
+| $z_s$                                                                     | Fish school depth                         |
+| *Leadline*                                                                |                                           |
+| $z_l(t)$                                                                  | Leadline depth                            |
+| $\tau_l > 0$                                                              | Leadline time constant                    |
+| $z_{l,d} > 0$                                                             | Leadline set-point depth                  |
+| $t_s> t_0$                                                                | Time point when $z_l$ enters water        |
+| *Constraint expressions*                                                  |                                           |
+| $f_1(t)$                                                                  | Vessel-fish distance criterion            |
+| $f_2(t)$                                                                  | Setting orientation criterion             |
+| $D_{\text{v-s}}$                                                          | Idealized vessel-fish setting radius      |
+| $u_s(t) \in \mathcal{U}_s := [0, u_{s,\max}]$                             | Slack variable, vessel-fish distance      |
+| $d_o \in \{-1,1\}$                                                        | Setting orientation, (counter-)clockwise  |
+| $t_d > t_0$                                                               | Deployment initiation time point          |
+| *Objective function*                                                      |                                           |
+| $\Phi_L(x,u,\theta,t)$                                                    | Lagrange integral term                    |
+| $\rho_{\text{v-s}}$                                                       | Vessel-fish distance gain                 |
+| $\rho_{\text{acc}}$                                                       | Vessel heading acceleration penalty       |
+| $\rho_{\text{deployed}}$                                                  | Heading acceleration disabler, high-gain  |
+| $\rho_s$                                                                  | Vessel-fish distance soft constraint gain |
+| $t_d$                                                                     | Deployment time point                     |
+| $Q$,                                                                      | Positive semi-definite gain for states    |
+| $R(t)$                                                                    | Positive definite control gain matrix     |
+| $x(t) = \col(p_v,\psi_v,r_v,p_s,z_l)$                                     | $7\text{-dimensional}$ state vector       |
+| $u(t) = \col(u_r, u_s)$                                                   | Control input vector                      |
+| $\theta = \col( U_v, \tau_l, z_{l,d}, D_{\text{v-s}}, d_o)$               | Parameter vector                          |
+
+
+#+CAPTION: Solution trajectories for the optimal control problem.
+#+name: tab:ocp_param
+| *Symbol*                         | *Description*                                         |
+|----------------------------------+-------------------------------------------------------|
+| *Optimal control problem*        |                                                       |
+| $u^{\star}(t) \in \mathbb U$     | Optimized control input, turn rate and slack variable |
+| $p^{\star}_v(t) \in \mathbb R^2$ | Optimized vessel trajectory                           |
+| $p^{\star}_s(t) \in \mathbb R^2$ | Predicted fish trajectory                             |
+| $t_d$                            | Suggested time point of deployment                    |

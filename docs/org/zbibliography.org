@@ -1,0 +1,11 @@
+* Bibliography
+
+   #+begin_export latex
+   \bibliographystyle{plain}
+   \bibliography{../static/bib.bib}
+   #+end_export
+   #+begin_export rst
+   .. bibliography:: ../static/bib.bib
+     :style: plain
+     :cited:
+   #+end_export

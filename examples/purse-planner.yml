@@ -1,0 +1,345 @@
+---
+dds: {domain: 0}
+
+algorithm:
+  name: PursePlanner
+  command: { request_topic: fkinCmd, reply_topic: fkinCmdResp, recipient: PursePlanner }
+  notifier: { notify_topic: fkinStateNotification, identifier: PursePlanner }
+
+# ======================================
+#  NLP templates
+# ======================================
+
+.ipoptset: &ipopt-options
+  expand: true
+  print_time: false
+  record_time: true           # needed.
+  iteration_callback_step: 10
+  eval_errors_fatal: true
+  ipopt:
+    max_iter: 1000
+    linear_solver: ma27
+    print_level: 5
+    sb: "yes"
+    hessian_approximation: "limited-memory"
+
+.collset1: &colloc1-settings
+  technique: collocation
+  elements:
+    count: 400
+    regular_intervals: true
+    min: .NAN
+    max: .NAN
+  horizon:
+    length: 30
+    flexible: false
+    min: .NAN
+    max: .NAN
+  checkpoints: 1
+
+  options:
+    quadrature: legendre
+    degree: 3
+
+.shootset1: &shoot1-settings
+  technique: single-shooting
+  elements:
+    count: 300
+    regular_intervals: true
+    min: .NAN
+    max: .NAN
+  horizon:
+    length: 30
+    flexible: false
+    min: .NAN
+    max: .NAN
+  checkpoints: 1
+  options:
+    integrator_name: rk4
+    integrator_options:
+      print_time: false
+
+.collset2: &colloc2-settings
+  technique: collocation
+  elements:
+    count: 80
+    regular_intervals: true
+    min: .NAN
+    max: .NAN
+  horizon:
+    length: 153
+    flexible: true
+    min: 6
+    max: 300
+  checkpoints: 6
+  options:
+    quadrature: legendre
+    degree: 3
+
+.shootset2: &shoot2-settings
+  technique: single-shooting
+  elements:
+    count: 1500
+    regular_intervals: true
+    min: .NAN
+    max: .NAN
+  horizon:
+    length: 153
+    flexible: true
+    min: 6
+    max: 300
+  checkpoints: 1
+  options:
+    integrator_name: rk4
+    integrator_options:
+      print_time: false
+      #print_stats: false
+      #collocation_scheme: legendre
+      #interpolation_order: 3
+      #number_of_finite_elements: 1
+
+# ======================================
+#  Schema templates
+# ======================================
+
+.ipopt-schema: &ipopt-schema
+  map:
+    expand: [bool: ]                  # expand MX to SX, only collocation
+    print_time: [bool: ]              # print solver stats
+    record_time: [bool: ]             # solver stats in stats()
+    iteration_callback_step: [uint: ] # callback fcn frequency
+    eval_errors_fatal: [bool: ]
+    ipopt:
+      map:
+        max_iter: [uint: ]            # max iterations
+        linear_solver: [string: ]     # ma27, ma57, mumps,..
+        print_level: [uint: ]         # iteration output
+        sb: [string: ]                # no ipopt banner
+        hessian_approximation: [string: ] # Speeds up single shooting
+
+.colloc-schema: &colloc-schema
+  map:
+    technique: [string: ]
+    elements:
+      map:
+        count: [uint: ]
+        regular_intervals: [bool: ]
+        min: [double: ]
+        max: [double: ]
+    horizon:
+      map:
+        length: [double: ]
+        flexible: [bool: ]
+        min: [double: ]
+        max: [double: ]
+    checkpoints: [uint: ]
+    options:
+      map:
+        quadrature: [string: ]
+        degree: [uint: ]
+
+.shoot-schema: &shoot-schema
+  map:
+    technique: [string: ]
+    elements:
+      map:
+        count: [uint: ]
+        regular_intervals: [bool: ]
+        min: [double: ]
+        max: [double: ]
+    horizon:
+      map:
+        length: [double: ]
+        flexible: [bool: ]
+        min: [double: ]
+        max: [double: ]
+    checkpoints: [uint: ]
+    options:
+      map:
+        integrator_name: [string: ]
+        integrator_options:
+          map:
+            print_time: [bool: ]
+
+# ======================================
+#  PursePlanner settings
+# ======================================
+
+PursePlanner:
+
+  config:
+    initial_condition:     { x0: [0, 0, 0, 0, 0, 0, 150, 200] }
+    parameters:
+      setting_speed_U_v:   { topic: balder_setting_speed,        id: PursePlanner, default: 6 }
+      setting_radii:       { topic: balder_setting_radius,       id: PursePlanner, default: [150, 150] }
+      aim_distance_D_s:    { topic: balder_aim_point_arc_length, id: PursePlanner, default: 471 }
+      fish_margin_d_f:     { topic: balder_fish_margin,          id: PursePlanner, default: 100 }
+      sink_margin_z_min:   { topic: balder_lead_margin,          id: PursePlanner, default: 50 }
+      leadline_tau_ll_z_d: { topic: balder_leadline_parameters,  id: Leadline,     default: [330, 160] }
+      current_surface:     { topic: balder_current_surface,      default: [0, 0] }
+      current_fish:        { topic: balder_current_fish,         default: [0, 0] }
+      fish_velocity_over_ground: { topic: balder_fish_velocity_over_ground,  default: [2, 0] }
+      fish_depth_z_s:      { topic: balder_fish_depth,           id: Fish, default: 50 }
+
+    inputs:
+      GPS_origin:          { topic: mimir_gps_origin,            default: [63.4581027, 10.3683367] }
+      vessel_pos_info:     { topic: vessel_global_pos_vel } # should max_age_ms
+      vessel_gyro_info:    { topic: vessel_heading_rot }
+      fish_pos_info:       { topic: fish_global_pos_vel }
+      fish_relative_pos:   { topic: fish_relative_pos_3d }
+      keep_solution:       { topic: balder_keep_solution }
+    outputs:
+      id: PursePlanner
+      trajectory_vessel:     { topic: mimir_vessel_trajectory }
+      trajectory_vessel_rot: { topic: mimir_vessel_trajectory_rot }
+      trajectory_fish:     { topic: mimir_fish_trajectory }
+      nlp_config:          { topic: mimir_nlp_config }
+      nlp_stats:           { topic: mimir_nlp_stats }
+      vessel_speed:        { topic: vessel_speed_command }
+      vessel_course_rate:  { topic: vessel_course_rate_command }
+      deploy_position:     { topic: vessel_deploy_position }
+      collide_position:    { topic: fish_collide_position }
+      deploy_time:         { topic: vessel_deploy_time }
+    settings:
+
+      plot: true
+      time_step_ms: 3000
+      nlp:
+        formulation:
+          heading_rot_max: 0.10  # 6 ish deg/s
+          heading_acc_max: 0.0628   # 3.6 deg/s^2
+          deploy_clockwise: true
+          decision_parameters:
+            ellipse:
+              along: [0, 500]   # Translation of ellipse along fish direction, min, max
+              across: [-10, 10] # Cross-track placement (slack)
+          subsystem:
+            x_1:
+              gamma: 10       # Gain for path constrained particle
+              k_d: 1          # Proportional feedback deployment arc length
+              k_pd: 100       # Proportional feedback post deployment arc length, >> k_d
+              Delta_chi: 0.1  # Rendezvous for tilde chi (experience: should be < 1)
+              Delta: 20       # Lookahead distance, larger is more conservative convergence
+              deploy_vicinity: 10 # Maximal distance between vehicle convergence and deployment point (slack)
+              omega_max: 0.15 # Maximal-ish rate of turn (can be larger for transients)
+          objective:
+            terminal:
+              time_penalty: 1     # Minimize time for vessel to reach deployment point
+              tdiff_penalty: 100  # MPCC dual variable penalty enforcing max(t_diff, 0)
+              fish_trap_slack: 10 # Penalize slack variable for fish distance at deployment complete
+        with_callback: true
+        solver:
+          name: ipopt
+          options:
+            *ipopt-options
+        discretization:
+          x_1:
+            *shoot1-settings
+          x_2:
+            *shoot2-settings
+
+      integrator:
+        name: rk4
+        options:
+          print_time: false
+          #print_stats: false
+          #abstol: 1e-6
+          #collocation_scheme: legendre
+          #interpolation_order: 3
+          #number_of_finite_elements: 5 # 60
+
+  schema:
+    map:
+      initial_condition:       { map: { x0: { list: [double: ] }}}
+      parameters:
+        map:
+          setting_speed_U_v:   { map: { topic: [string: ], id: [string: ], default: [double: ] }}
+          setting_radii:       { map: { topic: [string: ], id: [string: ], default: { list: [double: ] }}}
+          aim_distance_D_s:    { map: { topic: [string: ], id: [string: ], default: [double: ] }}
+          fish_margin_d_f:     { map: { topic: [string: ], id: [string: ], default: [double: ] }}
+          leadline_tau_ll_z_d: { map: { topic: [string: ], id: [string: ], default: { list: [double: ] }}}
+          sink_margin_z_min:   { map: { topic: [string: ], id: [string: ], default: [double: ] }}
+          current_surface:     { map: { topic: [string: ], default: { list: [double: ] }}}
+          current_fish:        { map: { topic: [string: ], default: { list: [double: ] }}}
+          fish_velocity_over_ground: { map: { topic: [string: ], default: { list: [double: ] }}}
+          fish_depth_z_s:      { map: { topic: [string: ], id: [string: ], default: [double: ] }}
+      inputs:
+        map:
+          GPS_origin:          { map: { topic: [string: ], default: { list: [double: ] }}}
+          vessel_pos_info:     { map: { topic: [string: ] }} # max_age_ms: [int64: ]}}
+          vessel_gyro_info:    { map: { topic: [string: ] }} # max_age_ms: [int64: ]}}
+          fish_pos_info:       { map: { topic: [string: ] }} # max_age_ms: [int64: ]}}
+          fish_relative_pos:   { map: { topic: [string: ] }} # max_age_ms: [int64: ]}}
+          keep_solution:       { map: { topic: [string: ] }}
+      outputs:
+        map:
+          id: [string: ]
+          trajectory_vessel:   { map: { topic: [string: ] }}
+          trajectory_vessel_rot:   { map: { topic: [string: ] }}
+          trajectory_fish:     { map: { topic: [string: ] }}
+          nlp_config:          { map: { topic: [string: ] }}
+          nlp_stats:           { map: { topic: [string: ] }}
+          vessel_speed:        { map: { topic: [string: ] }}
+          vessel_course_rate:  { map: { topic: [string: ] }}
+          deploy_position:     { map: { topic: [string: ] }}
+          collide_position:    { map: { topic: [string: ] }}
+          deploy_time:         { map: { topic: [string: ] }}
+      settings:
+        map:
+          plot: [bool: ]
+          time_step_ms: [int32: ]
+          nlp:
+            map:
+              formulation:
+                map:
+                  heading_rot_max: [double: ] # Rate of turn vessel heading [rad/s]
+                  heading_acc_max: [double: ] # Heading acceleration [rad/s^2]
+                  deploy_clockwise: [bool: ]  # Clockwise: true, Counter-clockwise: false
+                  decision_parameters:
+                    map:
+                      ellipse:
+                        map:
+                          along: { list: [double: ] }
+                          across: { list: [double: ] }
+                  subsystem:
+                    map:
+                      x_1:
+                        map:
+                          gamma: [double: ]           # Gain for path constrained particle
+                          k_d: [double: ]             # Prop. feedback deployment arc length
+                          k_pd: [double: ]            # Prop. feedback post deploy arc length >>k_d
+                          Delta_chi: [double: ]       # Rendezvous for tilde chi (should be < 1)
+                          Delta: [double: ]           # Lookahead distance, large is conservative
+                          deploy_vicinity: [double: ] # Max. dist. between vehicle and deploy point
+                          omega_max: [double: ]       # Max-ish rate of turn (might be violated)
+                  objective:
+                    map:
+                      terminal:
+                        map:
+                          time_penalty: [double: ]    # Minimize time to arrive at deploy
+                          tdiff_penalty: [double: ]   # MPCC dual variable to enforce max(t_diff,0)
+                          fish_trap_slack: [double: ] # Penalize slack for fish dist. at deployed
+              with_callback: [bool: ]
+              solver:
+                map:
+                  name: [string: ]
+                  options:
+                    *ipopt-schema
+              discretization:
+                map:
+                  x_1:
+                    *shoot-schema
+                  x_2:
+                    *shoot-schema
+          integrator:
+            map:
+              name: [string: ]
+              options:
+                map:
+                  print_time: [bool: ]
+                  #print_stats: [bool: ]
+                  #abstol: [double: ]
+                  #collocation_scheme: [string: ]      # collocation
+                  #interpolation_order: [uint: ]       # collocation
+                  #number_of_finite_elements: [uint: ] # collocation
+...

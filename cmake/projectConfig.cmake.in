@@ -1,0 +1,36 @@
+set(_this_project_name @PROJECT_NAME@)
+
+include(CMakeFindDependencyMacro)
+
+list(INSERT CMAKE_MODULE_PATH 0 "@@_@PACKAGE_INSTALL_CONFIGDIR@_@@")
+
+# Currently this project only exposes an incomplete interface library without dependencies
+#find_dependency(Boost 1.67 COMPONENTS log program_options @MIMIR_GNUPLOT_BOOST_COMPONENTS@ REQUIRED)
+#find_dependency(OpenSplice 6.9 REQUIRED)
+#find_dependency(Casadi 3.5 REQUIRED)
+#find_dependency(yaml-cpp 0.6 REQUIRED)
+
+list(REMOVE_AT CMAKE_MODULE_PATH 0)
+
+@@_@PACKAGE_INIT@_@@
+
+if(NOT TARGET @PROJECT_EXPORT@:@PROJECT_EXPORT@)
+  include("@@_@PACKAGE_INSTALL_CONFIGDIR@_@@/${_this_project_name}Targets.cmake")
+
+  foreach(_comp ${@PROJECT_NAME@_FIND_COMPONENTS})
+    if (NOT ";${_supported_components};" MATCHES _comp)
+      list(APPEND _unsupported_components ${_comp})
+    else()
+      include("@@_@PACKAGE_INSTALL_CONFIGDIR@_@@/${_this_project_name}${_comp}Targets.cmake")
+    endif()
+  endforeach()
+
+endif()
+
+set(@PROJECT_EXPORT@_LIBRARIES @PROJECT_EXPORT@::@PROJECT_EXPORT@)
+
+check_required_components(@PROJECT_NAME@)
+
+if(NOT @PROJECT_NAME@_FOUND)
+  set(@PROJECT_NAME@_NOT_FOUND_MESSAGE "The following unsupported components were requested: ${_unsupported_components}")
+endif()

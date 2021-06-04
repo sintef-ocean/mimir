@@ -1,0 +1,39 @@
+---
+
+dds:
+  domain: 0
+
+algorithm:
+  name: FishSchool
+  command:
+    request_topic: fkinCmd
+    reply_topic: fkinCmdResp
+    recipient: Fish
+  notifier:
+    notify_topic: fkinStateNotification
+    identifier: Fish
+
+# KinematicVessel simulator with controllable input
+FishSchool:
+  time_step_ms: 200
+  # could add integrator options, but not now
+  inputs:
+    fish_ctrl:
+      topic: fkinFishCtrl
+      id: Fish
+      max_age_ms: -1
+  outputs:
+    kinematics:
+      topic: fkinKinematics6D
+      id: Fish
+  initial_conditions:
+    position:
+      topic: fkinPosition
+      id: FishInit
+      max_wait_ms: 80
+      fallback: [0, 100, 50]
+    euler:
+      topic: fkinEuler
+      id: FishInit
+      max_wait_ms: 80
+      fallback: [0, 0, 0]

@@ -1,0 +1,149 @@
+#+LaTeX_HEADER: \renewcommand{\eqref}[1]{Eq. (\ref{#1})}
+#+LaTeX_HEADER: \usepackage{siunitx}
+* Introduction
+
+** Overview
+   :PROPERTIES:
+   :CUSTOM_ID: sec:overview
+   :END:
+
+   /mimir/ serves as a simple reference implementation to achieve an optimization-based
+   decision support in the [[https://www.fhf.no/prosjekter/prosjektbasen/901350/][FHF project: Catch control in purse seining]] cite:FKINFHF. The
+   program typically runs to provide algorithm outputs to another application, for
+   instance a graphical application that visualizes the results. The algorithms are
+   specifically set up to use the [[https://web.casadi.org][CasADi]] cite:Andersson2019casadi framework and its
+   interfaces to various algorithm libraries, including optimization problem solvers and
+   numerical integrators.
+
+   We provide a few algorithms that follows an interface defined by
+   @@rst::cpp:class:`mimir::IAlgorithm`@@. The interface consists of only three functions:
+   =initialize()=, =solve()=, and =timer()=. These functions are controlled by a state
+   machine, @@rst::cpp:class:`mimir::StateMachine`@@, using [[https://www.boost.org/][Boost StateChart]]
+   cite:Schling2011boost, which strives to ensure that the solve step is executed on a
+   regular interval. The state machine is run by the =mimir= executable and loads one
+   algorithm with settings specified by a YAML configuration file. The inputs to, and
+   outputs from, an algorithm are exchanged using the data distribution service standard
+   [[https://www.omg.org/spec/DDS/About-DDS/][OMG DDS]] cite:OMGDDS, which is a communication middleware that takes care of the data
+   sharing with other applications. The Diagram in cref:fig:MimirComponent illustrates the
+   uncomplicated algorithm wrapper implementation in /mimir/.
+
+   #+BEGIN_SRC plantuml :exports results :file ../static/container.svg
+      !include ../static/style.puml
+      !include <C4/C4_Dynamic.puml>
+      !include <office/Users/user.puml>
+      'LAYOUT_WITH_LEGEND()
+
+      title [Component diagram]  Mimir
+
+      Person(user, "Mimir user", "Application user")
+
+      Container_Boundary(pp, "Mimir application") {
+        Component(mimir, "Algorithm executor", "Component: mimir::StateMachine", "Solves an instance of mimir::IAlgorithm")
+      }
+
+      System_Ext(dds, "DDS program(s)", "Applications using DDS communication")
+
+      Rel(user, pp, "Provides config file [YAML]")
+      Rel(mimir, dds, "Sends and receives data [DDS]")
+
+
+    #+END_SRC
+
+   #+CAPTION: Component diagram for Mimir.
+   #+name: fig:MimirComponent
+   #+ATTR_RST: :align center  :scale 60
+   #+RESULTS:
+   [[file:../static/container.svg]]
+
+** Running an algorithm
+
+   To load =mimir= with a specific algorithm, you need to provide the executable with a
+   YAML configuration file similar the the one below. Each algorithm has its own expected
+   schema. Available algorithms are found in @@rst::ref:`namespace_mimir__algorithm`@@.
+   Most application settings are contained in the configuration file, but there are a few
+   more command line options available, see @@rst::ref:`Manpage <rst/usage:OPTIONS>`@@.
+
+   #+INCLUDE: "usage.org::*YAML config file"
+
+
+
+   #+begin_src plantuml :exports results :file ../static/yaml.svg
+     @startyaml
+     <style>
+     yamlDiagram {
+       node {
+         BackGroundColor transparent
+         LineColor black
+       }
+       arrow {
+         LineColor black
+       }
+     }
+     </style>
+     dds:
+       domain: 0
+     algorithm:
+       name: PursePlanner
+       command:
+         request_topic: fkin_cmd
+         reply_topic: fkin_cmd_resp
+         recipient: PursePlanner
+       notifier:
+         notify_topic: fkin_state_notification
+         identifier: PursePlanner
+       PursePlanner:
+         algorithm-specific: data
+      @endyaml
+   #+end_src
+
+   #+caption: YAML config visualization.
+   #+name: fig:yaml
+   #+ATTR_RST: :align center :scale 100
+   #+RESULTS:
+   [[file:../static/yaml.svg]]
+
+
+
+
+   #+begin_note
+     As can be seen in the @@rst::cpp:class:`mimir::StateMachine`@@, the algorithm enters
+     a standby state by default. The user needs to issue a =START_PROCESS= to
+     the user specified =request_topic= (DDS) in order for the algorithm to start.
+   #+end_note
+
+** Interacting with the algorithm
+
+   The user can post commands to the @@rst::cpp:class:`mimir::StateMachine`@@ to control
+   in which state the algorithm should be. This is achieved through DDS signals, which is
+   translated to state machine events.
+   + The user sends a DDS =fkin::Command= defined in =RatatoskIDL=.
+   + @@rst::cpp:class:`mimir::control::CommandResponder`@@ translates between commands and
+     state machine events.
+   + @@rst::cpp:class:`mimir::control::StateNotifier`@@ broadcasts changes on DDS
+     using a =fkin::ProcessStateKind=.
+
+   The sequence diagram in cref:fig:MimirSequence shows a possible realization.
+
+   #+BEGIN_SRC plantuml :exports results :file ../static/sequence.svg
+     !include ../static/style.puml
+     actor User as U
+     participant CommandResponder as CR
+     participant StateMachine as SM
+     participant StateNotifier as SN
+     activate SM
+     U -> CR : START_PROCESS
+     CR -> SM : EvStart
+     SM -> SN : INITIALIZING
+     SM -> SM : EvReady
+     SM -> SN : RUNNING
+     U -> CR : TERMINATE_PROCESS
+     CR -> SM : EvKill
+     SM -> SN : DEAD
+     destroy SM
+   #+END_SRC
+
+   #+CAPTION: A sequence diagram for a simple start-then-stop of Mimir.
+   #+name: fig:MimirSequence
+   #+ATTR_RST: :align center :scale 70
+   #+RESULTS:
+   [[file:../static/sequence.svg]]

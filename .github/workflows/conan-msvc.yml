@@ -1,0 +1,59 @@
+name: MSVC Conan
+
+on: [push]
+
+env:
+  DEBIAN_FRONTEND: noninteractive
+  CONAN_UPLOAD: ${{ secrets.CONAN_URL }}
+  CONAN_PASSWORD_SINTEF: ${{ secrets.CONAN_PASSWORD }}
+  CONAN_LOGIN_USERNAME_SINTEF: ${{ secrets.CONAN_USER }}
+  CONAN_NON_INTERACTIVE: True
+  CONAN_USE_ALWAYS_SHORT_PATHS: True
+  CONAN_SYSREQUIRES_MODE: enabled
+  CONAN_SYSREQUIRES_SUDO: 1
+
+jobs:
+  conan-with-msvc:
+    name: Conan
+    runs-on: windows-2019
+    env:
+      CONAN_USER_HOME_SHORT: C:\c
+      CONAN_USE_ALWAYS_SHORT_PATHS: 1
+      DOCKER_CONTAINER: 1
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler_version: [16]
+        build_type: [Release]
+        with_doc: ["True", "False"]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+      - name: Setup build dependencies
+        run: |
+          choco install -y Wget doxygen.install emacs pandoc plantuml nsis
+          choco install -y graphviz.portable --force
+          python -m pip install --upgrade setuptools wheel pip
+          python -m pip install --upgrade conan win-unicode-console
+          python -m pip install -r docs/requirements.txt --upgrade
+          emacs -Q --batch -l docs/emacs-install-pkgs.el
+      - name: Configure Conan
+        run : |
+          conan remote add sintef ${{ secrets.CONAN_URL }}
+          conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
+          conan profile new default --detect
+          conan config set general.revisions_enabled=1
+      - name: Conan build
+        run: |
+          mkdir build
+          cd build
+          conan install .. `
+            -s build_type=${{ matrix.build_type }} `
+            -s compiler.version=${{ matrix.compiler_version }} `
+            -o balder:with_doc=${{ matrix.with_doc }} `
+            -b missing -b outdated
+          conan upload --all -c -r sintef qt/* --retry 5 --retry-wait 30
+          conan build ..
+          conan package ..

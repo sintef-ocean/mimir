@@ -1,0 +1,582 @@
+* YAML configuration files and schemas
+
+  YAML Ain't Markup Language (YAML) is a human-readable data serialization language, which
+  we use to configure the algorithms in this project, [[https://github.com/jbeder/yaml-cpp][yaml-cpp]]. The application expects the user to
+  adhere to a very specific layout of the configuration file.
+  For some advanced algorithms like @@rst::cpp:class:`mimir::algorithm::PursePlanner`@@,
+  care must be taken when specifying the configuration.
+  To help the practitioner, we make use of /schemas/ to dynamically validate the configuration files, forked from [[https://github.com/LazyMechanic/yavl-cpp-cmake][yavl-cpp-cmake]].
+  The YAML validation ensures that the provided YAML structure contains the expected entries, as well as data types.
+  A data type can be one of: =string=, =double=, =float=, =bool=, =uint64=, =int64=,
+  =int=, =uint=, =int16=, =uint16=, =int8=, =uint8=, =enum=.
+
+  Under normal circumstances the schema is internal to the program, but for
+  @@rst::cpp:class:`mimir::algorithm::PursePlanner`@@ it is dynamic in nature, because the
+  settings are propagated to transitive dependencies and changes depending on chosen
+  low-level algorithms (e.g. linear solver). The user needs to expand the schema, which
+  currently resides within the same YAML document as the configuration itself.  Below, we
+  present a simple YAML file and its schema, so that a practitioner can grasp the concept
+  when populating the required schema according settings of transitive dependencies.
+
+  The YAML in cref:code:yaml has schema cref:code:schema.
+
+  #+caption: YAML snippet
+  #+name: code:yaml
+  #+begin_src yaml
+    settings:
+      plot: true
+      time_step_ms: 3000
+      nlp:
+        vars: [1, 2, 3]
+  #+end_src
+  #+begin_src plantuml :exports results :file ../static/yavl-example.svg
+    @startyaml
+    <style>
+     yamlDiagram {
+       node {
+         BackGroundColor transparent
+         LineColor black
+       }
+       arrow {
+         LineColor black
+       }
+     }
+     </style>
+    settings:
+      plot: true
+      time_step_ms: 3000
+      nlp:
+        vars: [1, 2, 3]
+     @endyaml
+  #+end_src
+
+  #+ATTR_RST: :align center :scale 100
+  #+RESULTS:
+  [[file:../static/yavl-example.svg]]
+
+
+  #+caption: Schema for YAML snippet
+  #+name: code:schema
+  #+begin_src yaml
+    map:
+      settings:
+        map:
+          plot: [bool: ]
+          time_step_ms: [int32: ]
+          nlp:
+            map:
+              vars:
+                list: [double: ]
+  #+end_src
+
+  #+begin_src plantuml :exports results :file ../static/yavl-schema.svg
+    @startyaml
+    <style>
+     yamlDiagram {
+       node {
+         BackGroundColor transparent
+         LineColor black
+       }
+       arrow {
+         LineColor black
+       }
+     }
+     </style>
+    map:
+      settings:
+        map:
+          plot: [bool:]
+          time_step_ms: [int32:]
+          nlp:
+            map:
+              vars:
+                list: [double:]
+     @endyaml
+  #+end_src
+
+  #+ATTR_RST: :align center :scale 100
+  #+RESULTS:
+  [[file:../static/yavl-schema.svg]]
+
+** Purse planner configuration schema
+
+   The schema for the @@rst::cpp:class:`mimir::algorithm::PursePlanner`@@ is given in
+   cref:code:planner_schema.  We split each root map of cref:fig:schema:root into separate
+   diagrams, as shown in cref:fig:schema:initial_condition, cref:fig:schema:parameters,
+   cref:fig:schema:inputs, cref:fig:schema:outputs, cref:fig:schema:settings, including also
+   cref:fig:schema:formulation and cref:fig:schema:discretization.
+
+   #+begin_src plantuml :exports results :file ../static/schema_root.svg
+     @startyaml
+     <style>
+     yamlDiagram {
+       node {
+         BackGroundColor transparent
+         LineColor black
+       }
+       arrow {
+         LineColor black
+       }
+     }
+     </style>
+     map:
+       initial_condition: " "
+       parameters: " "
+       inputs: " "
+       outputs: " "
+       settings: " "
+      @endyaml
+   #+end_src
+
+   #+caption: Schema root entries.
+   #+name: fig:schema:root
+   #+ATTR_RST: :align center :scale 100
+   #+RESULTS:
+   [[file:../static/schema_root.svg]]
+
+
+   #+begin_src plantuml :exports results :file ../static/schema_initial_condition.svg
+     @startyaml
+     <style>
+     yamlDiagram {
+       node {
+         BackGroundColor transparent
+         LineColor black
+       }
+       arrow {
+         LineColor black
+       }
+     }
+     </style>
+     initial_condition:
+       map:
+         x0:
+           list: [double:]
+      @endyaml
+   #+end_src
+
+   #+caption: Schema initial condition.
+   #+name: fig:schema:initial_condition
+   #+ATTR_RST: :align center :scale 100
+   #+RESULTS:
+   [[file:../static/schema_initial_condition.svg]]
+
+   #+begin_src plantuml :exports results :file ../static/schema_parameters.svg
+     @startyaml
+     <style>
+     yamlDiagram {
+       node {
+         BackGroundColor transparent
+         LineColor black
+       }
+       arrow {
+         LineColor black
+       }
+     }
+     </style>
+     parameters:
+       map:
+         setting_speed_U_v:
+           map:
+             topic: [string:]
+             id: [string:]
+             default: [double:]
+         setting_radii:
+           map:
+             topic: [string:]
+             id: [string:]
+             default:
+               list: [double:]
+         aim_distance_D_s:
+           map:
+             topic: [string:]
+             id: [string:]
+             default: [double:]
+         fish_margin_d_f:
+           map:
+             topic: [string:]
+             id: [string:]
+             default: [double:]
+         fish_margin_z_min:
+           map:
+             topic: [string:]
+             id: [string:]
+             default: [double:]
+         leadline_tau_ll_z_d:
+           map:
+             topic: [string:]
+             id: [string:]
+             default:
+               list: [double:]
+         current_surface:
+           map:
+             topic: [string:]
+             default:
+               list: [double:]
+         current_fish:
+           map:
+             topic: [string:]
+             default:
+               list: [double:]
+         fish_velocity_over_ground:
+           map:
+             topic: [string:]
+             default:
+               list: [double:]
+         fish_depth_z_s:
+           map:
+             topic: [string:]
+             id: [string:]
+             default: [double:]
+      @endyaml
+   #+end_src
+
+   #+caption: Schema parameters.
+   #+name: fig:schema:parameters
+   #+ATTR_RST: :align center :scale 100
+   #+RESULTS:
+   [[file:../static/schema_parameters.svg]]
+
+   #+begin_src plantuml :exports results :file ../static/schema_inputs.svg
+     @startyaml
+     <style>
+     yamlDiagram {
+       node {
+         BackGroundColor transparent
+         LineColor black
+       }
+       arrow {
+         LineColor black
+       }
+     }
+     </style>
+     inputs:
+       map:
+         GPS_origin:
+           map:
+             topic: [string:]
+             default:
+               list: [double:]
+         vessel_pos_info:
+           map:
+             topic: [string:]
+         vessel_gyro_info:
+           map:
+             topic: [string:]
+         fish_pos_info:
+           map:
+             topic: [string:]
+         fish_relative_pos:
+           map:
+             topic: [string:]
+         keep_solution:
+           map:
+             topic: [string:]
+      @endyaml
+   #+end_src
+
+   #+caption: Schema inputs.
+   #+name: fig:schema:inputs
+   #+ATTR_RST: :align center :scale 100
+   #+RESULTS:
+   [[file:../static/schema_inputs.svg]]
+
+   #+begin_src plantuml :exports results :file ../static/schema_outputs.svg
+     @startyaml
+     <style>
+     yamlDiagram {
+       node {
+         BackGroundColor transparent
+         LineColor black
+       }
+       arrow {
+         LineColor black
+       }
+     }
+     </style>
+     outputs:
+       map:
+         id: [string:]
+         trajectory_vessel:
+           map:
+             topic: [string:]
+         trajectory_vessel_rot:
+           map:
+             topic: [string:]
+         trajectory_fish:
+           map:
+             topic: [string:]
+         nlp_config:
+           map:
+             topic: [string:]
+         nlp_stats:
+           map:
+             topic: [string:]
+         vessel_speed:
+           map:
+             topic: [string:]
+         vessel_course_rate:
+           map:
+             topic: [string:]
+         deploy_position:
+           map:
+             topic: [string:]
+         collide_position:
+           map:
+             topic: [string:]
+         deploy_time:
+           map:
+             topic: [string:]
+      @endyaml
+   #+end_src
+
+   #+caption: Schema outputs.
+   #+name: fig:schema:outputs
+   #+ATTR_RST: :align center :scale 100
+   #+RESULTS:
+   [[file:../static/schema_outputs.svg]]
+
+   #+begin_src plantuml :exports results :file ../static/schema_settings.svg
+     @startyaml
+     <style>
+     yamlDiagram {
+       node {
+         BackGroundColor transparent
+         LineColor black
+       }
+       arrow {
+         LineColor black
+       }
+     }
+     </style>
+     settings:
+       map:
+         plot: [bool:]
+         time_step_ms: [int32:]
+         nlp:
+           map:
+             formulation:
+               ,*formulation-schema
+             with_callback: [bool:]
+             solver:
+               map:
+                 name: [string:]
+                 options:
+                   ,*ipopt-schema
+             discretization:
+               map:
+                 x_1:
+                   ,*shoot-schema
+                 x-2:
+                   ,*shoot-schema
+         integrator:
+           map:
+             name: [string:]
+             options:
+               map:
+                 print_stats: [bool:]
+                 collocation_scheme: [string:]
+                 interpolation_order: [uint:]
+                 number_of_finite_elements: [uint:]
+      @endyaml
+   #+end_src
+
+   #+caption: Schema settings.
+   #+name: fig:schema:settings
+   #+ATTR_RST: :align center :width 100%
+   #+RESULTS:
+   [[file:../static/schema_settings.svg]]
+
+   #+begin_src plantuml :exports results :file ../static/schema_formulation.svg
+     @startyaml
+       <style>
+       yamlDiagram {
+         node {
+           BackGroundColor transparent
+           LineColor black
+         }
+         arrow {
+           LineColor black
+         }
+       }
+       </style>
+       formulation-schema:
+         map:
+           heading_rot_max: [double:]
+           heading_acc_max: [double:]
+           deploy_clockwise: [bool:]
+           decision_parameters:
+             map:
+               ellipse:
+                 map:
+                   along:
+                     list: [double:]
+                   across:
+                     list: [double:]
+           subsystem:
+             map:
+               x_1:
+                 map:
+                   gamma: [double:]
+                   k_d: [double:]
+                   k_pd: [double:]
+                   Delta_chi: [double:]
+                   Delta: [double:]
+                   deploy_vicinity: [double:]
+                   omega_max: [double:]
+           objective:
+             map:
+               terminal:
+                 map:
+                   time_penalty: [double:]
+                   tdiff_penalty: [double:]
+                   fish_trap_slack: [double:]
+     @endyaml
+   #+end_src
+
+   #+caption: Schema for formulation settings.
+   #+name: fig:schema:formulation
+   #+ATTR_RST: :align center :scale 100
+   #+RESULTS:
+   [[file:../static/schema_formulatio.svg]]
+
+   #+begin_src plantuml :exports results :file ../static/schema_shoot.svg
+     @startyaml
+     <style>
+     yamlDiagram {
+       node {
+         BackGroundColor transparent
+         LineColor black
+       }
+       arrow {
+         LineColor black
+       }
+     }
+     </style>
+     shoot-schema:
+       map:
+         technique: [string:]
+         elements:
+           map:
+             count: [uint:]
+             regular_intervals: [bool:]
+             min: [double:]
+             max: [double:]
+         horizon:
+           map:
+             length: [double:]
+             flexible: [bool:]
+             min: [double:]
+             max: [double:]
+         checkpoints: [uint:]
+         options:
+           map:
+             integrator_name: [string:]
+             integrator_options:
+               map:
+                 print_time: [bool:]
+      @endyaml
+   #+end_src
+
+   #+caption: Schema for discretization settings, shooting.
+   #+name: fig:schema:discretization
+   #+ATTR_RST: :align center :scale 100
+   #+RESULTS:
+   [[file:../static/schema_shoot.svg]]
+
+
+   #+caption: Schema for Purse planner configuration
+   #+name: code:planner_schema
+   #+begin_src yaml
+     map:
+       initial_condition:       { map: { x0: { list: [double: ] }}}
+       parameters:
+         map:
+           setting_speed_U_v:   { map: { topic: [string: ], id: [string: ], default: [double: ] }}
+           setting_radii:       { map: { topic: [string: ], id: [string: ], default: { list: [double: ] }}}
+           aim_distance_D_s:    { map: { topic: [string: ], id: [string: ], default: [double: ] }}
+           fish_margin_d_f:     { map: { topic: [string: ], id: [string: ], default: [double: ] }}
+           leadline_tau_ll_z_d: { map: { topic: [string: ], id: [string: ], default: { list: [double: ] }}}
+           sink_margin_z_min:   { map: { topic: [string: ], id: [string: ], default: [double: ] }}
+           current_surface:     { map: { topic: [string: ], default: { list: [double: ] }}}
+           current_fish:        { map: { topic: [string: ], default: { list: [double: ] }}}
+           fish_velocity_over_ground: { map: { topic: [string: ], default: { list: [double: ] }}}
+           fish_depth_z_s:      { map: { topic: [string: ], id: [string: ], default: [double: ] }}
+       inputs:
+         map:
+           GPS_origin:          { map: { topic: [string: ], default: { list: [double: ] }}}
+           vessel_pos_info:     { map: { topic: [string: ] }}
+           vessel_gyro_info:    { map: { topic: [string: ] }}
+           fish_pos_info:       { map: { topic: [string: ] }}
+           fish_relative_pos:   { map: { topic: [string: ] }}
+           keep_solution:       { map: { topic: [string: ] }}
+       outputs:
+         map:
+           id: [string: ]
+           trajectory_vessel:   { map: { topic: [string: ] }}
+           trajectory_vessel_rot:   { map: { topic: [string: ] }}
+           trajectory_fish:     { map: { topic: [string: ] }}
+           nlp_config:          { map: { topic: [string: ] }}
+           nlp_stats:           { map: { topic: [string: ] }}
+           vessel_speed:        { map: { topic: [string: ] }}
+           vessel_course_rate:  { map: { topic: [string: ] }}
+           deploy_position:     { map: { topic: [string: ] }}
+           collide_position:    { map: { topic: [string: ] }}
+           collide_time:        { map: { topic: [string: ] }}
+       settings:
+         map:
+           plot: [bool: ]
+           time_step_ms: [int32: ]
+           nlp:
+             map:
+               formulation:
+                 map:
+                   heading_rot_max: [double: ]  # Rate of turn vessel heading [rad/s]
+                   heading_acc_max: [double: ]  # Heading acceleration [rad/s^2]
+                   deploy_clockwise: [bool: ]   # Clockwise: true, Counter-clockwise: false
+                   decision_parameters:
+                     map:
+                       ellipse:
+                         map:
+                           along: { list: [double: ] } # min, max along-track placement
+                           across: { list: [double: ] } # min, max cross-track placement
+                   subsystem:
+                     map:
+                       x_1:
+                         map:
+                           gamma: [double: ]           # Gain for path constrained particle
+                           k_d: [double: ]             # Prop. feedback deployment arc length
+                           k_pd: [double: ]            # Prop. feedback post deploy arc length >>k_d
+                           Delta_chi: [double: ]       # Rendezvous for tilde chi (should be < 1)
+                           Delta: [double: ]           # Lookahead distance, large is conservative
+                           deploy_vicinity: [double: ] # Max. dist. between vehicle and deploy point
+                           omega_max: [double: ]       # Max-ish rate of turn (might be violated)
+                   objective:
+                     map:
+                       terminal:
+                         map:
+                           time_penalty: [double: ]    # Minimize time to arrive at deploy
+                           tdiff_penalty: [double: ]   # MPCC dual variable to enforce max(t_diff,0)
+                           fish_trap_slack: [double: ] # Penalize slack for fish dist. at deployed
+               with_callback: [bool: ]
+               solver:
+                 map:
+                   name: [string: ]
+                   options:
+                     *ipopt-schema
+               discretization:
+                 x_1:
+                   *shoot-schema
+                 x_2:
+                   *shoot-schema
+           integrator:
+             map:
+               name: [string: ]
+               options:
+                 map:
+                   print_stats: [bool: ]
+                   #abstol: [double: ]
+                   collocation_scheme: [string: ]      # collocation
+                   interpolation_order: [uint: ]       # collocation
+                   number_of_finite_elements: [uint: ] # collocation
+   #+end_src

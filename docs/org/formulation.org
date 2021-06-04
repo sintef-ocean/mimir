@@ -1,0 +1,953 @@
+#+LaTeX_HEADER: \input{../tex/defs}
+
+* Nonlinear programming formulation
+
+  This chapter describes theory for mathematical optimization used in this project.
+  It includes mathematical constructs that constitute our implementations.
+  You can skip this chapter, but it is advisable to at least read [[NLP formulation overview]] and [[Receding horizon]].
+
+** Brief introduction to nonlinear programming problems
+
+   Dynamical systems can often be formulated with a system of differential-algebraic
+   equations (DAE). The DAEs can describe phenomena that one want to interact with to
+   achieve a specific /objective/. A dynamical system usually evolve as time progresses,
+   and therefore depends on a continuous time variable. We define an /objective/ as a
+   quantifiable goal, which is related to the dynamical response of the DAE by means of
+   input signals. An optimal control problem (OCP) deals with finding control inputs in
+   such a way that the /objective/ is minimized.  This formulation rarely has an explicit
+   solution and needs to be solved numerically. One approach for solving OCPs is to
+   implement a "discretize then optimize" numerical algorithm
+   [[cite:Biegler2010][Sec. 8.6]], such as single shooting, multiple shooting, direct
+   collocation, or a hybrid technique cite:albert2016numerical. These techniques quickly
+   become computationally demanding, so a /receding horizon/ approach is usually employed
+   to strive for solutions in real time. In a receding horizon implementation, successive
+   finite time horizon problems are solved. When the optimization objective is to control
+   the process, a reciding horizon OCP is often called /model predictive control/
+   (MPC). The resulting discretized problem formulation takes the form of a so-called
+   nonlinear programming (NLP) problem.
+
+   A nonlinear programming (NLP) problem is a subclass of optimization problems, which can
+   be stated in minimization form as in cref:prob:nlp.
+   #+ATTR_RST: :title Nonlinear programming problem
+   #+ATTR_LATEX: :options [Nonlinear programming problem]
+   #+name: prob:nlp
+   #+begin_problem
+   #+name: prob:nlp
+   \begin{equation}
+   \begin{array}{llll}
+   \begin{array}{l}
+     \text{minimize:}\\
+     z(\cdot) \in \mathbb{R}^n
+   \end{array} &
+   \displaystyle F(z) &
+   \quad\text{subject to:} &
+   \begin{array}{l}
+     g(z) = 0,\\
+     h(z) \leq 0,
+   \end{array}
+   \end{array}
+   \end{equation}
+   #+end_problem
+
+   where $g(z) \in \mathbb{R}^{n_g}$ and $h(z) \in \mathbb{R}^{n_h}$ are equality and
+   inequality constraint functions, respectively. $F(z): \mathbb{R}^n \to \mathbb{R}$ is
+   defined as the /objective function/, which is to be minimized by determining $z$. This
+   formulation is very general and it is necessary to impose restrictions on, or
+   assumptions about, the properties of the involved functions. As an example, the
+   function $F(z)$ may only have one global minimum, but many local minima. An iterative
+   numerical solver may converge to a local minimum depending on the starting condition of
+   the solver. Therefore, one usually set necessary and sufficient conditions to define
+   that a local minimum is an acceptable solution to the problem stated above. Resources
+   on numerical optimization, OCP, NLP and discretization techniques can be found in
+   e.g. cite:Biegler2010,Betts2010,Nocedal2006,Hairer1993.
+
+
+** Formulating an NLP from DAE, OCP and discretization
+   :PROPERTIES:
+   :CUSTOM_ID: sec:procedure
+   :END:
+
+   Our chosen procedure of formulating a nonlinear programming problem involves the steps below.
+
+   1. Describe the process under scrutiny with a system of a differential-algebraic equations (DAE).
+   2. Formulate the optimal control problem (OCP) with the desired objective and other constructs.
+   3. Use a discretization technique to convert the OCP to a nonlinear programming (NLP) problem.
+   4. Set initial conditions, solve the NLP and extract the solution.
+
+   The procedure involves implementation of systematic techniques, but also a fair amount
+   of iterative processes such as tuning, redesign and application of engineering skills.
+   In the following sections we provide mathematical descriptions of the steps outlined
+   above and attempt to closely relate them to the source code implementation in [[NLP formulation overview]].
+
+   The NLP is solved in a receding horizon fashion. This means that the problem is solved
+   with a limited, but moving time horizon, which is described in [[Receding horizon]].
+
+   #+begin_note
+   We describe the procedure generally, but the implementation is currently not
+   generalized, that is, it is only available within the path planner formulation source
+   code.
+   #+end_note
+
+*** NLP formulation overview
+
+    The above outline procedure outlined is implemented in
+    @@rst::cpp:class:`mimir::algorithm::PursePlannerFormulation`@@. The sequence of
+    execution is indicated by cref:tab:formulate. Note that the functions with an
+    anonymous namespace reside in the =.cpp= of =PursePlannerFormulation=.
+    We provide details on each of these items in the remainder of this chapter.
+
+    #+CAPTION: The NLP formulation procedure.
+    #+Name: tab:formulate
+    #+ATTR_RST: :align center
+    | Step                              | Theory                | Implementation                          |
+    |-----------------------------------+-----------------------+-----------------------------------------|
+    | Matematically model system        | cref:prob:cdaeivp     | =::formulate_dynamics=                  |
+    |-----------------------------------+-----------------------+-----------------------------------------|
+    | Formulate optimal control problem | cref:prob:ocp         | =::formulate_dynamics=                  |
+    |-----------------------------------+-----------------------+-----------------------------------------|
+    | Transcribe OCP to NLP             | cref:prob:nlpss       | =::formulate_single_shoot=              |
+    |                                   | cref:prob:nlpms       | =::formulate_multi_shoot=               |
+    |                                   | cref:prob:nlpcolloc   | =::formulate_collocation=               |
+    |-----------------------------------+-----------------------+-----------------------------------------|
+    | Rearrange NLP on /casadi form/    | cref:prob:nlp_revisit | =::formulate_nlp=                       |
+    | - Instantiates  =casadi::nlpsol=  | [[#variable_bounds]]      | =::add_nlp_variable_bounds=             |
+    |-----------------------------------+-----------------------+-----------------------------------------|
+    | Prepare [[Helper functions]]          |                       | =::create_helper_functions=             |
+    |                                   | eqref:eq:timegrid     | =::create_solution_timegrid=            |
+    |                                   | eqref:eq:funpack      | =::create_solution_unpacker=            |
+    |                                   | eqref:eq:nlp_shifter  | =::create_horizon_shifter=              |
+    |                                   | eqref:eq:trajectory   | =::create_trajectory_function=          |
+    |                                   | eqref:eq:decideunpack | =::create_decision_parameter_extractor= |
+    |                                   | eqref:eq:sextract     | =::create_system_extractor=             |
+    |-----------------------------------+-----------------------+-----------------------------------------|
+
+** Receding horizon
+
+   The NLP formulation procedure of cref:tab:formulate only defines the necessary
+   functions to be used. To actually use them we need to put them in an event loop that
+   properly prepares and solves the NLP, and then extracts information from the solution.
+   These steps are done within an implementation of the function
+   @@rst::cpp:func:`mimir::IAlgorithm::solve`@@. Below we list the actions performed in
+   such a solve step.
+
+   1. Fetch inputs and parameters from DDS; prepare $x(t_0)$ and $p$;
+   2. Shift solution from previous step using eqref:eq:nlp_shifter -- for warm starting optimization problem;
+   3. Set initial condition for $x(t_0)$;
+   4. Solve cref:prob:nlp_revisit;
+   5. Verify successful solution and publish statistics on DDS;
+   6. Extract solution and store in data structures in preparation for next time step;
+   7. Acquire solution trajectories with the help of eqref:eq:timegrid, eqref:eq:funpack, eqref:eq:trajectory;
+   8. Publish solution trajectories on DDS;
+
+   The above steps are executed on regular intervals and as
+   time progresses, we achieve a receding horizon NLP problem solving.
+
+
+** Mathematical notation
+   This document contains terminology that should be clarified.
+
+   + We use over-dot notation for time derivatives, that is $\dat x := \frac{dx}{dt}$.
+   + Denote the /extended real number line/ as $\overline{\mathbb{R}} := \mathbb{R} \cup \{-\infty,+\infty\}$.
+     The reason for introducing $\overline{\mathbb{R}}$ is that some numerical
+     algorithms treat $\pm \infty$ distinctly from a "not quite infinity" number.
+   + The orientation space is defined by $\mathbb{S} \in [-\pi,\pi)$.
+   + We use subscripts $\geq$ and $>$ to indicate non-negative and positive subsets;
+     so $\mathbb{R}_{\geq} := \{ x \in \mathbb{R} : x \geq 0\}$,
+     and $\mathbb{R}_{>} := \{ x \in \mathbb{R} : x > 0\}$.
+   + Similarly, $\mathbb{N}_\geq$ and $\mathbb{N}_>$ are non-negative and positive integers, or natural numbers.
+   + Countable finite index sets of non-negative and positive natural numbers are defined as
+     $\mathbb{I}_{\geq,n} := \{i \in \mathbb{N}_\geq : i < n \}$ and $\mathbb{I}_{>,n} := \{i \in \mathbb{N}_> : i \leq n \}$, both with cardinality $n$.
+   + $I_n$ is the $n\times n$ identity matrix.
+   + $1_{n\times m}$ is an $n\text{-by-}m$ matrix of ones.
+   + $0_{n\times m}$ is an $n\text{-by-}m$ matrix of zeros.
+   + $A_{[i,j]}$ is the matrix element at the $i\text{-th}$ row and $j\text{-th}$ column.
+   + Define a tuple selector operator subscript $\langle m \rangle$ as a mapping that extracts the $m\text{-th}$ element of an n-tuple, so $(x_1,x_2,\cdots, x_m,\cdots,x_n)_{\langle m\rangle} = x_m$.
+   + A block diagonal matrix of other matrices $X_{i\in \mathbb{I}_{>,s}} \in \mathbb{R}^{m_i\times n_i}$ is defined as
+     $\bdiag_{i \in \mathbb{I}_{>,s}}(X_i) := \bigoplus_{i \in \mathbb{I}_{>,s}} X_i$, where $\oplus$ is the direct sum.
+   + The symbol $\otimes$ is the Kronecker product.
+   + The vertically stacked matrix of other matrices $X_{i \in \mathbb{I}_{>,s}} \in \mathbb{R}^{m_i \times n}$ is denoted
+     $\col_{i \in \mathbb{I}_{>,s}}(X_i) := \bdiag_{i\in \mathbb{I}_{>,s}}(X_i) \cdot (1_{s \times 1} \otimes I_n)$.
+   + The horizontally stacked matrix of other matrices $X_{i \in \mathbb{I}_{>,s}} \in \mathbb{R}^{m \times n_i}$ is denoted
+     $\row_{i \in \mathbb{I}_{>,s}}(X_i) := \col_{i\in \mathbb{I}_{>,s}}(X_i^T)^T$.
+   + Let $e_i$ be the $i\text{-th}$ canonical basis for an $n\text{-dimensional}$ space.
+     The column vectorization of a matrix $X \in \mathbb{R}^{m\times n}$ is denoted $\vek(X) := \sum_{i\in \mathbb{I}_{>,n}} e_i \otimes X e_i$.
+   + Vertically stacked identical matrices $X \in \mathbb{R}^{m\times n}$ for an $s$ number of times is denoted
+     $\repvert_s(X) :=  1_{s\times 1} \otimes X$.
+   + Horizontally stacked identical matrices $X \in \mathbb{R}^{m\times n}$ for an $s$ number of times is denoted
+     $\rephorz_s(X) :=  1_{1\times s} \otimes X$.
+   + A band diagonal square matrix of size $n$ with ones at superdiagonal $k$ is denoted
+     $\band(n, k)$.
+
+
+** Differential-algebraic equations (DAEs)
+
+   A system of differential-algebraic equations (DAEs) is a class of equations where some
+   of the differential states cannot be written explicitly, and/or there are algebraic
+   constraints. Here, we consider first order DAEs with explicit, implicit, and algebraic
+   equations. Let $t\in \mathbb{R}_>$ be the independent time variable. Define
+   $x_e(t) \in \mathbb{R}^{n_e}$ and $x_i(t) \in \mathbb{R}^{n_i}$ as the explicit
+   and implicit differential state variables, and let $q(t) \in \mathbb{R}^{n_q}$ be
+   quadrature differential states for which do not explicitly appear in the function mappings.
+   Further, let $z(t) \in \mathbb{R}^{n_z}$ be algebraic variables,
+   $u(t) \in \mathbb{R}^{n_u}$ input variables, and $y(t) \in \mathbb{R}^{n_y}$
+   output variables. In addition, we define $p \in \mathbb{R}^{n_p}$ as
+   time-independent fixed and tunable parameters[fn:: /variability/ in the FMI sense. For the initial value problems we consider, parameters are fixed.], and
+   finally, $d \in \mathbb{R}^{n_d}$, which is a dependent variable vector, but independent of time.
+   A DAE system can be stated as
+
+   \begin{equation}
+   \begin{array}{l}
+    \text{DAE:}\quad
+    \left\{
+    \begin{array}{ll}
+    \dat{x}_e &= f_e(x_e,x_i,z,u,p,d,t), \\
+    0 &= f_i(x_e,x_i,z,u,p,d,t,\dat{x}_i), \\
+    0 &= f_a(x_e,x_i,z,u,p,d,t), \\
+    \dat{q} &= f_q(x_e,x_i,z,u,p,d,t), \\
+    d &= f_d(p,d), \\
+    y &= f_y(x_e,x_i,z,u,p,d,t),
+    \end{array} \right.
+    \end{array}
+   \end{equation}
+   where $f_e(\cdot)$ is the ordinary differential equations (ODE), and $f_a(\cdot)$ is
+   the algebraic expression function.  If $x_i(t) \in \emptyset$, the DAE can be seen as a
+   set of ODEs with constraints, but it is usually called a semi-explicit DAE. Our
+   formulation can be further condensed by combining functions to get a standard form;
+   perhaps even made semi-explicit DAE of index 1, see e.g. [[cite:Hairer2010][Sec VI.1]].
+   We retain the current form, because it closely resembles the notation used in
+   casadi's [[https://web.casadi.org/docs/#the-daebuilder-class][DaeBuilder]], which is also used in our implementation.
+
+   Numerically solving a DAE requires special attention to the properties of the problem
+   at hand, in addition to knowledge about the capabilities and limitations of the applied
+   solvers, see cite:Hairer2010 for a detailed account on the matter. A DAE can be stated
+   as a boundary value problem or an initial value problem (IVP). We concern ourselves
+   with the IVP form, where the problem is to solve the system of equations given initial
+   conditions for the differential states. It should be noted that the "discretize then
+   optimize" technique is a powerful approach, since it can deal with DAEs
+   by using direct collocation [[cite:Hairer2010][Sec VII.4]] or a DAE-capable solver,
+   such as [[https://computing.llnl.gov/projects/sundials/idas][IDAS]] from SUNDIALS cite:Hindmarsh2005sundials.
+
+   #+begin_tip
+     + casadi's [[https://web.casadi.org/docs/#the-daebuilder-class][DaeBuilder]] simplifies the formulation of a DAE to be used with the casadi
+       framework. We use it in =::formulate_dynamics()= of =src/algorithm/PursePlannerFormulation.cpp=.
+     + casadi's [[https://web.casadi.org/docs/#initial-value-problems-and-sensitivity-analysis][Integrator]] supports various solvers, including IDAS and collocation. Note
+       that a DAE needs to be made semi-explicit and be of index-1 in order to be used
+       with this integrator. There are functions in DaeBuilder that may help in achieving
+       this.
+   #+end_tip
+
+*** The constrained DAE initial value problem (IVP)
+
+    We introduce the concept of a constrained DAE initial value problem $\left(\text{cDAE}_\text{IVP}\right)$ as a
+    problem where the variables of a DAE may be restricted to a subset of all extended real
+    numbers. These restrictions can either be imposed by the phenomena they are
+    describing, or indirectly through the optimal control problem formulation.
+    Care must be taken when constraining the problem. Adding unreasonably strict
+    constraints may render the IVP inconsistent and unsolvable.
+
+    Let $\mathbb{T} := [t_0, t_f]$ be the time interval for the IVP.
+    Suppose $u(t) \in \mathcal{U}\subseteq \overline{\mathbb{R}}^{n_u}$ is known for $t\in \mathbb{T}$,
+    with $x_e(t_0)=x_{e,0}$, $x_i(t_0) = x_{i,0}$, $q(t_0)=0$, and $p = \text{given}$, and consistent.
+    The constrained DAE IVP is stated in cref:prob:cdaeivp. The solution to
+    $\left(\text{cDAE}_\text{IVP}\right)$ are $\forall t \in \mathbb{T}$ the trajectories
+    $x_e(t)$, $x_i(t)$, $z(t)$, $q(t)$, and $y(t)$.  The control input $u(t)$ is usually
+    something to be determined based on a quantifiable goal or objective.
+    #+ATTR_RST: :title Constrained DAE IVP
+    #+ATTR_LATEX: :options [Constrained DAE IVP]
+    #+name: prob:cdaeivp
+    #+begin_problem
+    #+name: prob:cdaeivp
+    \begin{equation}
+    \begin{array}{l}
+     \text{cDAE}_\text{IVP}:\qquad
+     \begin{array}{l}
+     \,\forall t \in \mathbb{T}\, \left\{
+     \begin{array}{ll}
+     \dat{x}_e &= f_e(x_e,x_i,z,u,p,t), \\
+     0 &= f_i(x_e,x_i,z,u,p,t,\dat{x}_i), \\
+     0 &= f_a(x_e,x_i,z,u,p,t), \\
+     \dat{q} &= f_q(x_e,x_i,z,u,p,t), \\
+     d &= f_d(p,d), \\
+     y &= f_y(x_e,x_i,z,u,p,t),
+     \end{array} \right. \\
+     x_e \in \mathcal{X}_e \subseteq \overline{\mathbb{R}}^{n_e},
+     \, x_i \in \mathcal{X}_i \subseteq \overline{\mathbb{R}}^{n_i},
+     \,z \in \mathcal{Z} \subseteq \overline{\mathbb{R}}^{n_z}, \\
+     u \in \mathcal{U}\subseteq \overline{\mathbb{R}}^{n_u}, \\
+     y \in \mathcal{Y} \subseteq \overline{\mathbb{R}}^{n_y}.\\
+     x_e(t_0) = x_{e,0},
+     \, x_i(t_0) = x_{i,0},
+     \, q(t_0) = 0,\\
+      p = \text{given},\\
+      u(t) = \text{defined}.
+      \end{array}
+     \end{array}
+    \end{equation}
+    #+end_problem
+
+
+
+** Optimal control problem (OCP)
+
+   The task of the optimal control problem (OCP) is, by means of determining the control
+   input $u(t)$, to find a solution to the constrained DAE IVP in cref:prob:cdaeivp, while
+   (locally) minimizing some scalar objective function. Thus, the two main components in
+   an OCP are:
+   1) the objective function,
+   2) the constrained initial value problem.
+
+   The objective function can take several forms, but herein we use the general Bolza-type
+   optimal control problem [[cite:Biegler2010][Sec. 8.3]]. Let us use the same entities as
+   defined earlier, but also let $x(t) := \col(x_i(t), x_e(t))$. The objective function
+   maps to a scalar value and is declared as
+   #+name: eq:objective
+   \begin{equation}
+   J(x,z,u,p,d,t) = \Phi_L(x,z,u,p,d,t) + \Phi_M(p,d,t_f)\, \in \mathbb{R},
+   \end{equation}
+   where the terms are
+   \begin{equation}
+   \begin{array}{llr}
+   \Phi_L(x,z,u,p,d,t) &= \int_{t_0}^{t_f}\phi_L(x,z,u,p,d,t) dt,& \text{Lagrange integral term}\\
+   \Phi_M(p,d,t_f) &= \phi_M(x(t_f),z(t_f),p,d,t_f),& \text{Mayer terminal cost term}
+   \end{array}
+   \end{equation}
+   and should be sufficiently smooth. The structure and properties of the
+   objective function have large impact on the optimal control problem, refer to
+   cite:Biegler2010,Nocedal2006 for details.
+
+   Now that the two main components are declared, we present the OCP in cref:prob:ocp.
+
+   #+ATTR_RST: :title Optimal control problem
+   #+ATTR_LATEX: :options [Optimal control problem]
+   #+name: prob:ocp
+   #+begin_problem
+   #+name: prob:ocp
+   \begin{equation}
+   \begin{array}{l}
+    \text{OCP:}\quad
+   \begin{array}{l}
+     \text{minimize:}\,\\
+     u(\cdot) \in \mathcal{U}
+   \end{array}
+   J(x,z,u,p,d,t)\quad \text{subject to:}\quad \text{cDAE}_\text{IVP}.
+   \end{array}
+   \end{equation}
+   #+end_problem
+
+   In a typical OCP formulation, /path constraints/ are stated as equality and inequality
+   constraints $g_I(\cdot) \leq 0$ and $g_E(\cdot) = 0$. These constraints are mostly
+   covered in cref:prob:cdaeivp by the algebraic term $f_a(\cdot) = 0$, and
+   $f_y(x_e,x_i,z,u,p,d,t) \in \mathcal{Y}$,
+   which may be written as $y_{\min} \leq f_y(\cdot) \leq y_{\max}$, noting that elements of
+   $y_{\{\min,\max\}}$ can be unbounded.
+   The OCP formulation has the benefit that it often is straightforward to include various
+   types of dynamic systems and restrictions. Finding analytic solutions to these
+   problems are often very difficult, but there exist several approaches to solve the
+   problem numerically.
+
+** Discretization of the continuous time OCP
+
+   The OCP in cref:prob:cdaeivp is a continuous time problem that needs to be made finite
+   dimensional by /transcribing/ it to an NLP. We briefly describe three approaches for
+   achieving the transcription. These three techniques are available as options when
+   solving the /purse planning problem/, but the collocation approach appears to be the
+   preferred choice. For more details on the inner workings of each technique, please
+   refer to for instance cite:Biegler2010.
+
+   One common trait for all discretization approaches below is the notion of time /elements/.
+   We define an /element/ as a time interval in such a way that the time horizon,
+   $\mathbb{T} = [t_0, t_f]$, is divided into $N$ elements of equal
+   length.  The time instant $t_k$ is the time point at beginning of the $k\text{-th}$ element.
+   The discrete time points are $\forall k \in \{ i \in \mathbb{N}_\geq : i < N \} = \mathbb{I}_{\geq,N}$
+   given as $t_k = t_0 + hk$, where $h:=\frac{t_f-t_0}{N}$.
+   Notice that $t_f = t_0 + Nh$. We define the sequence of discrete time points as
+   $\mathbb{T}_d := \{ t \in \mathbb{T} : \forall k \in \mathbb{I}_{\geq,N},\, t = t_0 + hk \}$.
+
+   Our implementation assumes that $u(t)$ is piecewise constant, that is, for all
+   $t \in \mathbb{T}_d$, we have $u(t_k) = u_k$, where $u_k$ is constant. This means that
+   within a single time element, $u$ can be considered a fixed variable, effectively a parameter.
+
+   #+begin_tip
+     If an input signal in the DAE needs to be smoother than piecewise constant, a
+     straightforward way of achieving this is to parameterize $u$ and introduce its
+     parameters as the new input variables. For instance, a piecewise linear signal can be
+     described for element $k$ as
+     \begin{equation}
+     \begin{array}{rl}
+     u_k(t) &= a + \frac{b}{h}(t - t_k), \\
+     u_k(t_{k+1}) &= u_{k+1}(t_{k+1}), \\
+     a &\in [u_{\min}, u_{\max}],\, b \in \left[\dat u_{\min},\dat u_{\max}\right],
+     \end{array}
+     \end{equation}
+     where $\tilde u_k = \col(a,b)$ is the new input vector, and the boundary condition at
+     time point $t_{k+1}$ acts as an equality constraint that ensures zero
+     order continuity between elements.
+   #+end_tip
+
+    #+ATTR_RST: :title DAE Integral
+    #+ATTR_LATEX: :options [DAE Integral]
+    #+name: def:integral
+   #+begin_definition
+   An integral map $F_I(x,z,p,t)$ is the solution to the unconstrained, semi-explicit DAE
+   problem at the end of a time interval.
+   #+name: def:integral
+   \begin{equation}
+   \begin{array}{l}
+    F_I : \mathbb{R}^{n_x} \times \mathbb{R}^{n_z} \times \mathbb{R}^{n_p} \times \mathbb{R}
+    \to \mathbb{R}^{n_x} \times \mathbb{R}^{n_z} \times \mathbb{R}^{n_q} \\
+    (x_0,z_0,p, t_0) \mapsto (x_f, z_f, q_f) := \left(\int_{t_0}^{t_f}\dat x\, dt, z(t_f), \int_{t_0}^{t_f} \dat q\, dt \right)\\
+    \quad \text{subject to:}\\
+    \quad\quad \forall t \in [t_0,t_f]:\quad
+    \left\{
+    \begin{array}{ll}
+    \dat{x} &= f_e(x,z,p,t), \\
+    0 &= f_a(x,z,p,t), \\
+    \dat{q} &= f_q(x,z,p,t),
+    \end{array} \right.\\
+    \quad\quad x(t_0) = x_0,\, q(t_0) = 0,\, z(t_0) \stackrel{?}{=} z_0,\, t_f = t_0 + h,\, h = \text{given},
+    \end{array}
+   \end{equation}
+   where $z_0$ is the initial guess of the algebraic variable. Note that the codomain is a
+   3-tuple, so we may use the tuple selector notation to extract an element of the tuple,
+   for instance $F_I(x_0,z_0,p,t_0)_{\langle 1\rangle} = (x_f,z_f,q_f)_{\langle 1 \rangle} = x_f$.
+   #+end_definition
+
+   #+begin_note
+   In our shooting-based implementations, we assume that the constrained DAE IVP may be
+   reduced to a semi-explicit DAE of index-1, that is, $x_i$ may be reduced to be part of
+   $x_e$, and that $f_a(\cdot)$ is solvable with respect to z.
+   #+end_note
+
+*** Shooting approaches
+
+    In the *single-shooting approach*, the OCP is formulated by applying the integral map successively in
+    a composition-like manner. Let the $k \in \mathbb{I}_{\geq,N}$ be the
+    indices for the time elements of length $h = t_{k+1} - t_k$, where $u_k = u(t_k)\,\, \forall t_k \in \mathbb{T}_d$
+    and $p_k := \col(u_k,d,p)$. Introduce the /Lagrange term/ as a quadrature state
+    $\dat q_L := \phi_L(x,z,u,p,d,t)$, which becomes part the quadrature state vector.
+    The sum of this quadrature state for all elements is equal to the /Lagrange integral term/,
+    #+name: eq:obj_quad
+    \begin{equation}
+    \Phi_L(x,z,u,p,d,t) = \sum_{k \in \mathbb{I}_{>,N}} q_{L}(t_k).
+    \end{equation}
+    State variables are evaluated by repeatedly applying integrals as specified in
+    cref:def:integral, that is,
+    $F_I(x_0, z_0, p_0, t_0) = (x_1, z_1, q_1) =: F_{I,1}$;
+    $F_I(F_{I,1 \langle 1\rangle}, F_{I,1 \langle 2 \rangle} ,p_1, t_1) = F_{I,2}$, and so on.
+
+    #+ATTR_RST: :title Single shooting
+    #+ATTR_LATEX: :options [Single shooting]
+    #+name: prob:nlpss
+    #+begin_problem
+    #+name: prob:nlpss
+    \begin{equation}
+    \begin{array}{l}
+    \text{NLP}_{\text{SS}}:\quad
+    \begin{array}{l}
+    \begin{array}{l}
+     \text{minimize:}\\
+     u_{k \in \mathbb{I}_{\geq, N}}
+    \end{array}
+    \overbrace{\sum_{k \in \mathbb{I}_{>,N}} q_{L}(t_k)}^{\Phi_L(\cdot)} + \Phi_M(p,d,t_f)\\
+    \quad\text{subject to:}\\
+    \quad\quad \forall k \in \mathbb{I}_{\geq, N} :
+    \left\{ \begin{array}{l}
+    F_I(F_{I,k \langle 1 \rangle}, F_{I,k \langle 2 \rangle}, p_k, t_k) = F_{I,k+1} \in \mathcal{X} \times \mathcal{Z} \times \overline{\mathbb{R}}^{n_q},\\
+    f_y(F_{I,k \langle 1 \rangle}, F_{I,k \langle 2 \rangle}, u_k, p, d, t_k) \in \mathcal{Y},\\
+    u_k \in \mathcal{U},
+     \end{array}\right.\\
+    \quad\quad  p = \text{given},\, F_{I,0} = (x(t_0), z(t_0), q(t_0)) = (x_0, z_0, 0),
+    \end{array}
+    \end{array}
+    \end{equation}
+    #+end_problem
+    cref:prob:nlpss is equivalent to cref:prob:nlp and can be achieved by rearranging
+    terms and expressions. The decision variables of cref:prob:nlpss are the discretized
+    inputs $u_k$. Let $u_D := \row_{k \in \mathbb{I}_{\geq,N}}(u_k) \in \mathbb{R}^{n_u \times N}$
+    be the horizontal concatenation of all the discretized $u_k$.
+    The argument that minimizes the single shooting problem is indicated with $\star$ and is
+    $\vek(u_D^\star) \in \arg \min \text{NLP}_\text{SS}$.
+    The piecewise constant input is $u^\star(t) : \mathbb{T} \to \{u \in \mathbb{R}^{n_u} : u(t) = u_D^\star \col_{k \in \mathbb{I}_{\geq, N}}( (t_k \leq t < t_{k+1}) ) \}$,
+    where $(t_k \leq t < t_{k+1}) \in \{0, 1\}$, which ensures to switch on and off the appropriate
+    $u_k^\star$ for its valid time interval. State and output trajectories can be obtained
+    by solving the corresponding cref:prob:cdaeivp with $u(t) = u^\star(t)$.
+
+    The *multi-shooting approach* also uses integral maps, but not as compositions.
+    Let $u_k = u(t_k),\, x_k = x(t_k),\, z_k = z(t_k)\,\, \forall t_k \in \mathbb{T}_d$ be decisions variables.
+    The state variables at the boundary of time elements are explicitly "seamed" together
+    by defining equality constraints, where the integral map must be equal to decision
+    variables, that is,
+    $(F_{I,k+1 \langle 1\rangle}, F_{I,k+1 \langle 2\rangle}) = (x_{k+1}, z_{k+1})$ must hold for all $k$.
+    The multi shooting formulation is stated in cref:prob:nlpms.
+    #+ATTR_RST: :title Multi shooting
+    #+ATTR_LATEX: :options [Multi shooting]
+    #+name: prob:nlpms
+    #+begin_problem
+    #+name: prob:nlpms
+    \begin{equation}
+    \begin{array}{l}
+    \text{NLP}_{\text{MS}}:\quad
+    \begin{array}{l}
+    \begin{array}{l}
+     \text{minimize:}\\
+     \forall k \in \mathbb{I}_{\geq, N},\, u_k,x_k,z_k
+    \end{array}
+    \overbrace{\sum_{k \in \mathbb{I}_{>,N}} q_{L}(t_k)}^{\Phi_L(\cdot)} + \Phi_M(p,d,t_f)\\
+    \quad\text{subject to:}\\
+    \quad\quad \forall k \in \mathbb{I}_{\geq, N} :
+    \left\{ \begin{array}{l}
+    F_I(x_k, z_k, p_k, t_k) = F_{I,k+1} \in \mathcal{X} \times \mathcal{Z} \times \mathbb{R}^{n_q},\\
+    \left(F_{I,k+1 \langle 1 \rangle}, F_{I,k+1 \langle 2 \rangle}\right) = (x_{k+1}, z_{k+1}),\\
+    f_y(x_k, z_k, u_k, p, d, t_k) \in \mathcal{Y}, \\
+    u_k \in \mathcal{U},
+    \end{array}\right.\\
+    \quad\quad  p = \text{given},\, x(t_0) = x_0,\, z(t_0) \stackrel{?}{=} z_0,\, q(t_0) = 0,
+    \end{array}
+    \end{array}
+    \end{equation}
+    #+end_problem
+    Since the decision variables of cref:prob:nlpms are the discretized $u_k$, $x_k$, and $z_k$, we
+    define horizontally stacked discretizations as $u_D = \row_{k \in \mathbb{I}_{\geq,N}}(u_k),\, x_D = \row_{k \in \mathbb{I}_{\geq,N}}(x_k),\, z_D = \row_{k \in \mathbb{I}_{\geq,N}}(z_k)$.
+    The argument that minimizes the multi shooting problem is indicated with $\star$ superscript and is
+    $\col(\vek(u_D^\star),\vek(x_D^\star),\vek(z_D^\star)) \in \arg \min \text{NLP}_{\text{MS}}$.
+    The state and output trajectories can be obtained by solving the cref:prob:cdaeivp in
+    two different manners:
+    1. In a similar fashion as can be done with single shooting by using $u^\star(t)\,\, \forall t \in \mathbb{T}_d$;
+    2. For each $k \in \mathbb{I}_{\geq,N}$ use $u_k^\star, x_k^\star, z_k^\star$ to solve cref:prob:cdaeivp for a total of $N$ number of times.
+    If the element time range is sufficiently short, one may directly use $u_k^\star, x_k^\star, z_k^\star$
+    without solving cref:prob:cdaeivp at all.
+
+*** Collocation
+
+    The collocation methods are a subclass of implicit Runge-Kutta methods, see
+    [[cite:Hairer1993][Sec. II.7]] and [[cite:Hairer2010][Sec. VII.4]]. "For ordinary
+    differential equations it consists in searching for a polynomial of degree $d$ whose
+    derivative coincides ('co-locates') at $d$ given points with the vector field of the
+    differential equation" [[cite:Hairer1993][p. 211]]. In the case of OCP, this amounts
+    to applying the collocation method for each time element. In addition, the state
+    variables are "seamed" together at the boundary of time elements in a similar fashion
+    as was done in multi shooting. In Theorem 7.7 (p. 212) cite:Hairer1993 it is shown
+    that the collocation method is equivalent to a $d\text{-stage}$ implicit Runge-Kutta
+    method. We will relate the collocation equations to the Butcher tableau
+    eqref:eq:butcher and show how the discretization is implemented.
+
+    Suppose $\dat x = f(x,t) \in \mathbb{R}^n$ is to be integrated from $t_n$ to $t_{n+1}$, with $h = t_{n+1}-t_n$.
+    The implicit Runge-Kutta setup is
+
+    #+name: eq:rk
+    \begin{equation}
+     \begin{array}{l}
+     x_{n+1} = x_n + h \sum_{i=1}^{d} b_i k_i,\\
+     k_i = f\left(x_n + h \sum_{j=1}^{d} a_{i,j} k_j, t_n + c_i h\right)\, \forall i \in \mathbb{I}_{>,d},
+     \end{array}
+    \end{equation}
+
+    where $a_{ij},b_i,c_i$ are given coefficients from a chosen discretization scheme, e.g. Gauss-Legendre, see
+    Sec. IV.5 cite:Hairer2010 and the Butcher tableau in eqref:eq:butcher.
+
+    #+name: eq:butcher
+    \begin{equation}
+    \begin{array}
+    {c|cccc}
+    c_1 & a_{1,1} & a_{1,2} & \cdots & a_{1,d}\\
+    c_2 & a_{2,1} & a_{2,2} & \cdots & a_{2,d}\\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\
+    c_d& a_{d,1} & a_{d,2} & \cdots & a_{d,d}\\
+    \hline
+    & b_1 & b_2 & \cdots & b_d
+    \end{array} =\quad
+    \begin{array}
+    {c|c}
+    \tau_{\text{colloc}} & A \\
+    \hline
+    &\boldsymbol{b}^T
+    \end{array}
+    \end{equation}
+    where $\tau_{\text{colloc}}$ and $\boldsymbol{b}$ are column vectors.
+
+    The equations in eqref:eq:rk can be expressed in matrix form.
+    Let $K = \row_{i \in \mathbb{I}_{>,d}}(k_i)$, so $K$ is an $n \times d$ matrix. The summations can be written
+    \begin{equation}
+    \begin{array}{ll}
+    \sum_{i=1}^d b_i k_i &= K\boldsymbol{b},\\
+    \sum_{j=1}^d A_{[i,j]} k_i &= KA^T,
+    \end{array}
+    \end{equation}
+    where we use the coefficients $A$ and $\boldsymbol{b}$ from the Butcher tableau.
+    The 'co-locating' derivatives $k_i$ at time instants $t_{n,i} = t_n + c_i h$, have state variables $x(t_n + c_i h) = x_{n,i}$.
+    Define the state collocation matrix $X_c := \row_{i\in\mathbb{I}_{>,d}}(x_{n,i}) \in \mathbb{R}^{n \times d}$;
+    and by including the initial state: $X_e := \row(x_n, X_c)$. If we collect the expressions
+    $x_{n,i} = x_n + h\sum_{j=1}^d a_{i,j}k_j$ in matrix form, we get
+    \begin{equation}
+    X_e = \rephorz_d(x_n) + hKA^T.
+    \end{equation}
+    By rearranging terms, we see that
+    #+name: eq:colloc_dot
+    \begin{equation}
+    \begin{array}{l}
+    X_e  \col(-1_{1\times d}, I_d) = hKA^T,\\
+    C := \col(-1_{1\times d}, I_d)A^{-T},\\
+    hK = X_e C,
+    \end{array}
+    \end{equation}
+    where $K(\cdot)$ are state derivative expressions at collocation time points, arranged column-wise.
+    By using this result, the state $x_{n+1} = x_n + hK\boldsymbol{b}$ can be written as
+    #+name: eq:colloc_tf
+    \begin{equation}
+    \begin{array}{l}
+    x_{n+1} = x_n + X_e Cb,\\
+    x_{n+1} = X_e\left[ Cb + \col(1, 0_{d \times 1})\right],\\
+    x_{n+1} = X_e \boldsymbol{d}.
+    \end{array}
+    \end{equation}
+
+    In the special case where the variable to be integrated does not explicitly appear in
+    $f(\cdot)$, it is a quadrature. The quadrature differential $\dat q = f_q(x)$ has integral from $t_n$
+    to $t_{n+1}$ with $q(t_n)=0$ expressed as
+
+    #+name: eq:colloc_qf
+    \begin{equation}
+    q_f = \row_{i \in \mathbb{I}_{>,d}}(\dat q(t_{n,i}))\boldsymbol{b}h.
+    \end{equation}
+
+    The results of eqref:eq:colloc_dot, eqref:eq:colloc_tf, and eqref:eq:colloc_qf are
+    used to establish the necessary expressions to formulate the collocation-based
+    transcriptions of the OCP to NLP.  For each element $k$ in $\mathbb{I}_{\geq,N}$ we
+    define state elements $X_{e,k} \in \mathbb {R}^{n_x \times d+1}$.  Further let
+    $K_k(X_{e,k},u_k,p,\tau_{\text{colloc}})$ be the matrix with ODE expressions as
+    columns for all collocation points of element $k$.  We use the same quadrature state
+    $q_L$ as defined in eqref:eq:obj_quad.  Let $x_{k,0}$ be the state at time point
+    $t_k$.  The decision variables for the collocation problem are $u_k$ and
+    $X_{e,k}$. The collocated OCP is stated in cref:prob:nlpcolloc.
+
+    #+ATTR_RST: :title Collocation
+    #+ATTR_LATEX: :options [Collocation]
+    #+name: prob:nlpcolloc
+    #+begin_problem
+    #+name: prob:nlpcolloc
+    \begin{equation}
+    \begin{array}{l}
+    \text{NLP}_{\text{colloc}}:\quad
+    \begin{array}{l}
+    \begin{array}{l}
+     \text{minimize:}\\
+     \forall k \in \mathbb{I}_{\geq, N},\, u_k,X_{e,k}
+    \end{array}
+    \overbrace{\sum_{k \in \mathbb{I}_{>,N}} q_{L}(t_k)}^{\Phi_L(\cdot)} + \Phi_M(p,d,t_f)\\
+    \quad\text{subject to:}\\
+    \quad\quad \forall k \in \mathbb{I}_{\geq, N} :
+    \left\{ \begin{array}{l}
+    hK_k(X_{e,k},u_k,p,t) = X_{e,k} C,\\
+    q_{L}(t_{k+1}) = \row_{i \in \mathbb{I}_{>,d}}(\dat q_L(t_{k,i}))\boldsymbol{b}h, \\
+    X_{e,k}\boldsymbol{d} = x_{k+1,0}, \\
+    f_y(x_{k,i}, u_k, p, d, t_{k,i}) \in \mathcal{Y}\quad \forall i \in \mathbb{I}_{\geq,d+1}, \\
+    X_{e,k} \in \mathcal{X}^{d+1},\\
+    u_k \in \mathcal{U},
+    \end{array}\right.\\
+    \quad\quad  p = \text{given},\, x(t_0) = x_{1,0},\, q(t_0) = 0,
+    \end{array}
+    \end{array}
+    \end{equation}
+    #+end_problem
+
+
+    #+begin_tip
+    casadi provides helper functions to acquire collocation coefficients.
+    The coefficients $\boldsymbol{b}$, $C$, $\boldsymbol{d}$ can be obtained from =casadi::collocation_coeff=,
+    while $\tau_{\text{colloc}}$ are provided by =casadi::collocation_points=.
+    #+end_tip
+
+    #+begin_note
+    The formulation above requires that $A$ is invertible. This is true for at least
+    /Radau/ and /Gauss-Legendre/ collocation coefficients, which are the one supported by
+    =casadi::collocation_coeff=.
+    #+end_note
+
+    #+begin_note
+    We only show the theory for explicit ODE, since the algebraic state variables are not
+    available in our collocation implementation.
+    #+end_note
+
+    Further reading on collocation can be found in cite:Hairer1993,Hairer2010, see especially Eq. 3.1, Def. 4.7, Th. 7.7.
+
+
+** Nonlinear programming problem (NLP)
+
+   Now that we have described discretization approaches for the OCP, we briefly revisit
+   cref:prob:nlp. There are several ways of instantiating an NLP solver in casadi, see
+   [[https://web.casadi.org/python-api/#nlp][Casadi nlpsol]]. In any case, =casadi::nlpsol= are formulated with five main constructs:
+   1. Decision variables $\chi$;
+   2. Parameters $\rho$;
+   3. Objective function $F(\chi,\rho)$;
+   4. Constraint function $g(\chi,\rho)$;
+   5. Bounds $\chi_{\{\min,\max\}}$ and $g_{\{\min,\max\}}$;
+   The NLP formulation on /casadi form/ is stated in cref:prob:nlp_revisit.
+
+   #+ATTR_RST: :title Nonlinear programming problem (casadi)
+   #+ATTR_LATEX: :options [Nonlinear programming problem (casadi)]
+   #+name: prob:nlp_revisit
+   #+begin_problem
+   #+name: prob:nlp_revisit
+   \begin{equation}
+    \text{NLP:}\qquad
+    \begin{array}{lc}
+    \begin{array}{l}
+    \text{minimize:} \\
+    \chi(\cdot) \in \mathbb{R}^{n}
+    \end{array}
+    \quad \displaystyle F(\chi,\rho)\\
+    \quad\text{subject to:} \\
+    \qquad\begin{array}{ll}
+    \chi_{\text{min}} \leq \chi \leq \chi_{\text{max}},\\
+    g_{\text{min}} \leq g(\chi,\rho) \leq g_{\text{max}}, \\
+    \rho= \text{given}\, \in \mathbb{R}^{n_p}
+    \end{array}
+    \end{array}
+   \end{equation}
+   #+end_problem
+
+   We assume that the $\chi$ is the argument of the NLP problem, even though strictly
+   speaking $\rho$ also is an argument, that is, we have
+   $\chi^\star := \arg \min \text{NLP}(\chi_0;\rho)$.
+   $\chi$ generally is a combination of $u_k, x_k, z_k\, \forall k \in \mathbb{I}_{\geq,N}$,
+   so we use helper functions to unpack this vector into a tuple, see further below.
+
+*** Formulation strategies and extensions
+
+    In some cases, the common optimal control problem formulation has limitations on what
+    it can mathematically describe. We extend the NLP formulation to accommodate some
+    additional use cases with the following strategies.
+
+    /Decision parameters/ as described in cref:def:decideparam are useful for cases where
+    parameter determination is a degree of freedom in the optimization problem. A good
+    example of this is a variable time horizon problem, cref:def:variable_horizon. We
+    introduce the notion of /subsystems/ in cref:def:subsystem, so that we can combine
+    different strategies for various parts of a whole problem formulation. In particular,
+    this enables us for instance to use single shooting with a short time horizon for one
+    subsystem and variable time horizon with collocation for another subsystem. One
+    limitation of the subsystem formulation is that we cannot easily support path
+    constraints between the subsystems. Path constraints are valid for all time points in
+    a time interval. Interconnection between subsystems are still possible with the use of
+    /point constraints/, cref:def:point_constraints. The current implementation allows
+    definition of constraints at the time boundaries of the subsystems.
+
+
+    #+ATTR_RST: :title Decision parameters
+    #+ATTR_LATEX: :options [Decision parameters]
+    #+name: def:decideparam
+    #+begin_definition
+    Decision parameters are tunable time-constant parameters
+    #+name: def:decideparam
+    \begin{equation}
+    v \in \mathcal{V} \subseteq \overline{\mathbb{R}}^{n_v},
+    \end{equation}
+    which are to be determined by the optimization problem. They are added to
+    the decision variables of the NLP.
+    #+end_definition
+
+    #+ATTR_RST: :title Variable time horizon
+    #+ATTR_LATEX: :options [Variable time horizon]
+    #+name: def:variable_horizon
+    #+begin_definition
+    In a variable time horizon formulation the final time $t_f$ is to be decided.
+    Suppose $t_f \in [t_{f,\min},t_{f,\max}]$, with $N$ time elements.
+    If we assume regular elements lengths, so that $h = t_{i+1} - t_i$ is equal
+    for all elements, we can introduce
+    #+name: def:variable_horizon
+    \begin{equation}
+    h \in [h_{\min}, h_{\max}],
+    \end{equation}
+    with $h_{\{\min,\max\}}=(t_{\{\min,\max\}}- t_0)/N$ as a decision parameter.
+    This new decision parameter can be used by all discretization techniques
+    described herein to achieve a non-fixed time horizon.
+    #+end_definition
+
+    #+ATTR_RST: :title Subsystems
+    #+ATTR_LATEX: :options [Subsystems]
+    #+name: def:subsystem
+    #+begin_definition
+    A subsystem is a dynamic system of the form given in cref:prob:cdaeivp.  Let $n_{ss}$
+    be the number of subsystems. For each subsystem $i$ we have a distinct time horizon
+    $\mathbb{T}_i$ and discretization technique, so that a subsystem's contribution to the
+    combined NLP is
+    #+name: def:subsystem
+    \begin{equation}
+     \text{NLP}_i:\qquad
+     \begin{array}{lc}
+     \begin{array}{l}
+     \text{minimize:} \\
+     \chi_i(\cdot) \in \mathbb{R}^{n_i}
+     \end{array}
+     \quad \displaystyle F(\chi_i,\rho)\\
+     \quad\text{subject to:} \\
+     \qquad\begin{array}{ll}
+     \chi_{i,\text{min}} \leq \chi_i \leq \chi_{i,\text{max}},\\
+     g_{i,\text{min}} \leq g(\chi_i,\rho) \leq g_{i,\text{max}}, \\
+     \rho= \text{given}\, \in \mathbb{R}^{n_p}
+     \end{array}
+     \end{array}
+    \end{equation}
+    #+end_definition
+
+    #+ATTR_RST: :title Point constraints
+    #+ATTR_LATEX: :options [Point constraints]
+    #+name: def:point_constraints
+    #+begin_definition
+    Let $x_0 = \col(x_{i}(t_0))$ and $x_f = \col(x_{i}(t_f))$ be the combined initial and
+    terminal state of all $n_{ss}$ subsystems. A point constraint is given as
+    #+name: def:point_constraints
+    \begin{equation}
+    g_{\circ}(x_0, x_f, v, p) \in [g_{\circ, \min},g_{\circ, \max}].
+    \end{equation}
+    #+end_definition
+
+** Helper functions
+
+   The numerical solution to the nonlinear programming problem is on a form that needs
+   processing to be used in a receding horizon fashion. Below we will elaborate on several
+   such helper functions.
+
+   #+begin_note
+   The helper functions are currently only implements for cases where there are no
+   algebraic state, that is $z(t) \in \emptyset$. Extending them to also include $z(t)$
+   is straightforward.
+   #+end_note
+
+*** Adding variable bounds =::add_nlp_variable_bounds=
+   :PROPERTIES:
+   :CUSTOM_ID: variable_bounds
+   :END:
+    Let $\chi \in \mathcal{Z} \subseteq \overline{\mathbb{R}}^n$ be the decision variable vector of the NLP.
+    The standard form of the NLP solver is to specify $\chi_{\min} \leq \chi \leq \chi_{\max}$.
+    Suppose $\chi = \col(u_1,u_2,\cdots,u_N)$. Then lower and upper bound can be written as
+    \begin{equation}
+    \begin{array}{l}
+    \chi_{\min} = 1_{N\times 1} \otimes u_{\min} \\
+    \chi_{\max} = 1_{N\times 1} \otimes u_{\max},
+    \end{array}
+    \end{equation}
+    where $\mathcal{U} = [u_{\min}, u_{\max}]$.  In cases where $\chi$ also consists of
+    elements of the state $x_k$, the =::add_nlp_variable_bounds=, takes care of populating
+    $\chi_{\{\min,\max\}}$ according to the variable ordering and repetitions dictated by
+    the chosen discretization technique.
+
+*** Time grid function =::create_solution_timegrid=
+   :PROPERTIES:
+   :CUSTOM_ID: timegrid
+   :END:
+
+    The time grids of the discretized NLP problem depends on the chosen transcription
+    approach, and for collocation, also the polynomial degree.
+    We declare a function that constructs these time grids for a given method/degree as
+    $T_G : \mathbb{R}_{\geq} \to \mathbb{R}_{\geq}^{1+ N(d+1)} \times \mathbb{R}_{\geq}^N$,
+    where $N$ is the number of elements and $d \in \{k \in \mathbb{Z} : k \geq -1\}$.
+    Let $t_0$ be an initial time and $h = t_{k+1} - t_k$ the step size. The time grid function is defined as
+    #+name: eq:timegrid
+    \begin{equation}
+    T_G(t_0) := (T_x(t_0), T_u(t_0)),
+    \end{equation}
+    with $T_x$ and $T_u$ defined as
+    \begin{equation}
+    \begin{array}{l}
+    T_u(t_0) = \col_{k \in \mathbb{I}_{\geq,N}}(t_0 + hk), \\
+    T_x(t_0) = \left\{
+      \begin{array}{llr}t_0,&d=-1,&\text{Single shooting};\\
+      T_u,&d=0,&\text{Multi shooting};\\
+      \col(t_0, T_u(t_0) \otimes 1_{d+1 \times 1} + \repvert_N(\col(\tau_\text{colloc,d},1))),&d\geq 1,&\text{Collocation};
+      \end{array}\right. \\
+    \end{array}
+    \end{equation}
+    where $\tau_{\text{colloc},d}\in \mathbb{R}_{>}^d$ is a column vector of Legendre collocation points of degree $d$.
+
+*** NLP tuple unpacker =::create_solution_unpacker=
+
+    The argument of cref:prob:nlp is $z \in \mathbb{R}^n$, but when a transcription
+    approach has been used, it is necessary to unpack this variable into tuples of
+    discretized control inputs and state variables.
+
+    $F_\text{unpack}: \mathbb{R}^n \to \mathbb{R}^{n_u}\times\mathbb{R}^{n_x} \times \mathbb{R}^{n_x \times N(d+1)}$,
+    where $N$ is the number of elements and $d \in \{k \in \mathbb{Z} : k \geq -1\}$ is the pseudo-degree.
+    #+name: eq:funpack
+    \begin{equation}
+    F_{\text{unpack}}(z) = (u_D, x_0, X_e),
+    \end{equation}
+    where $u_D$ is the inputs $u_k$ arranged in a matrix and the state elements $X_e$ are defined as
+    #+name: eq:funpack_x
+    \begin{equation}
+    X_e = \left\{
+      \begin{array}{llr}\{\},&d=-1,&\text{Single shooting};\\
+      x_D,&d=0,&\text{Multi shooting};\\
+      \row(\row_{k\in \mathbb{I}_{\geq,N}}(X_{c,k}),x_{k+1,0}),&d\geq 1,&\text{Collocation},
+      \end{array}\right.
+    \end{equation}
+    where $X_{c,k}$ are the collocated state variables in element $k$.
+
+*** NLP decision parameters =::create_decision_parameter_extractor=
+
+    In some cases cref:prob:nlp consists of decision parameters. Let $v \in \mathbb{R}^{n_v}$
+    be the decision parameter vector, which is located first in the combined NLP decision
+    variable vector $z = \col(v, s) \in \mathbb{R}^n$, where $s \in\mathbb{R}^{n_s}$ is the
+    remaining decision variables. Extraction of these decision parameters are achieved with
+    #+name: eq:decideunpack
+    \begin{equation}
+    F_{\text{v}}(z) = \row(I_{n_v}, 0_{n_v \times n_s})z = v.
+    \end{equation}
+
+*** NLP subsystem extractor =::create_system_extractor=
+
+    When the cref:prob:nlp consists of subsystems using different discretization schemes,
+    it is practical to first extract the relevant portion of the the whole problem. Let
+    $m$ be the number of subsystems. Suppose $z \in \mathbb{R}^n$ is the whole NLP
+    problem, so that $z = \col(v,s_1,\cdots,s_m)$, where $v \in \mathbb{R}^{n_v}$ is the
+    decision parameters, and $s_i$ is the vectorized discretization for subsystem $i$.
+
+    $F_{\text{extract},i}: \mathbb{R}^n\times \to \mathbb{R}^{n_i}$ is the extractor mapping for subsystem i, so that
+    #+name: eq:sextract
+    \begin{equation}
+    F_{\text{extract},i}(z) = s_i.
+    \end{equation}
+
+    This function is typically used as a composition with e.g. the solution unpacker and
+    horizon shifter to manipulate a particular subsystem's discretization only. For instance
+    $F_{\text{unpack}}(F_{\text{extract},1}(z)) = (u_{1,D}, X_{1,0}, X_{1,e})$.
+
+*** NLP shifter =::create_horizon_shifter=
+
+    The intent of the horizon shifter is to move variables one time element forward.
+    The goal is to prepare a solution to be used as "warm" start for a problem that has progressed in time.
+    There are slight differences in the operation on each variable type.
+    + $u_k$ is shifted, so that an old $u_{k+1}$ becomes the new $u_{k}$.
+      The exception is at the boundary, where the old $u_{N-1}$ is kept.
+    + $x_0$ is unchanged, because it will be overwritten elsewhere.
+    + $X_e$ is shifted, so that an old $x_{k+1}$ becomes the new $x_{k}$, and in the case
+      of collocation: each collocated element matrix is shifted in a similar fashion.
+      The exception is at the boundary, where the old $x_{N-1}$ or $X_{e,N-1}$ is kept.
+
+    The above features are achieved by implementing a binary linear mapping for a column vector.
+    Let $\chi \in \mathbb{R}^{n_uN + n_x + n_x N(d+1)}$ be the column vectorized domain for cref:prob:nlp, given as
+    $\chi = \col(\vek(u_D),x_0, \vek(X_e))$, see eqref:eq:funpack and eqref:eq:funpack_x.
+    Let $n = n_uN + n_x + n_xN(d+1)$ and $A_{\ll} = \band(N,1)$ and $A_{\ll[N,N]} = 1$;
+    $A_{\ll}$ implements the shift-keep operation.
+    The NLP shifter function $F_{\ll}: \mathbb{R}^n \to \mathbb{R}^n$ is defined as
+    #+name: eq:nlp_shifter
+    \begin{equation}
+    F_{\ll}(\chi) := \bdiag(A_{\ll}\otimes I_{n_u}, I_{n_x}, A_{\ll}\otimes I_{n_x(d+1)})\chi.
+    \end{equation}
+
+*** NLP trajectory =::create_trajectory_function=
+
+    The NLP trajectory function solves a series of semi-explicit DAE of index-1 for a given
+    piecewise constant $u(t),\, \forall t \in \mathbb{T}_d$.
+    The solution is evaluated at regular intervals within each element $k \in \mathbb{I}_{\geq,N}$.
+    Let $\mathbb{T}_{k,D} := \left\{ t \in [t_k, t_{k+1}) :\forall i \in \mathbb{I}_{>,d+1}, t = t_k + i\frac{(t_{k+1} - t_k)}{d+1} \right\}$
+    be a sequence of time points as a column vector. The trajectory function is
+
+    #+name: eq:trajectory
+    \begin{equation}
+    \begin{array}{l}
+    F_{\text{traj}} \to \mathbb{R}_>^{1 + N(d+1)} \times \mathbb{R}^{n_x \times (1 + N(d+1))}  \\
+    (u_D, x_0, p, v, t_0) \mapsto (\col_{k \in \mathbb{I}_{>,N}}(\mathbb{T}_{k,D}),
+    \row(x_0,\row_{k\in \mathbb{I}_{\geq,N}}(\row_{i \in \mathbb{I}_{>,d}}(x(t_{k,i}))))),\\
+    \end{array}
+    \end{equation}
+    where $x(t_{k,i}) = F_I(x_{k,i-1},z_{k,i-1},p_k,t_{k,i-1}; h = t_{k,i} - t_{k,i-1})_{\langle 1 \rangle}$ for each $i \in \mathbb{I}_{>,d}$, and $p_k = \col(u_k,p,v)$.

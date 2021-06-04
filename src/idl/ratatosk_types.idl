@@ -1,0 +1,73 @@
+module ratatosk {
+  module types{
+        struct DoubleVal{
+            double val;
+        };
+#pragma keylist DoubleVal
+
+        struct Double2{
+          double x;
+          double y;
+        };
+#pragma keylist Double2
+
+        struct Double3 {
+          double x;
+          double y;
+          double z;
+        };
+#pragma keylist Double3
+
+        struct Double4 {
+          double x;
+          double y;
+          double z;
+          double w;
+        };
+#pragma keylist Double4
+
+        struct PosInfo{
+            double lat;
+            double lon;
+            double sog;
+            double cog;
+        };
+#pragma keylist PosInfo
+
+        struct GyroInfo{
+            double hdt;
+            double rot;
+        };
+#pragma keylist GyroInfo
+
+        struct WindInfo{
+            double trueSpeed;
+            double trueDir;
+            double relSpeed;
+            double relDir;
+            double trueWindRelDir;
+        };
+#pragma keylist WindInfo
+
+        struct DepthInfo{
+            double depth;
+            double depthBelowTransducer;
+        };
+#pragma keylist DepthInfo
+
+        struct LogInfo{
+            double speed;
+        };
+#pragma keylist LogInfo
+
+        struct CurrentAtDepth {
+            double depth, direction, speed;
+        };
+#pragma keylist CurrentAtDepth
+
+        struct CurrentProfile {
+            sequence<CurrentAtDepth> currents;
+        };
+#pragma keylist CurrentProfile
+  };
+};

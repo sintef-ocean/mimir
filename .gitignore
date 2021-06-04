@@ -1,0 +1,11 @@
+build*/
+bld
+external
+docs/org/ltximg
+docs/static/*.png
+docs/static/*.svg
+docs/static/*.gp
+*GPATH
+*GRTAGS
+*GTAGS
+*ltximg*

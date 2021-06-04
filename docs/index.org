@@ -1,0 +1,71 @@
+* Mimir: Purse seine path planner
+Documentation created: {{{time(%F %H:%M)}}}
+
+#+BEGIN_EXPORT rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Overview
+   :glob:
+
+   rst/intro.rst
+   rst/installation.rst
+   rst/extending.rst
+
+.. toctree::
+   :caption: Manpage
+
+   rst/usage.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Implementation
+
+   rst/formulation.rst
+   rst/planner.rst
+   rst/libraries.rst
+   rst/yamlconfig.rst
+#+END_EXPORT
+
+#+BEGIN_src emacs-lisp :results drawer :exports results  :wrap EXPORT rst
+(make-variable-buffer-local 'with-api-doc)
+(if with-api-doc
+""
+"   rst/zbibliography.rst")
+#+end_src
+
+#+RESULTS:
+#+begin_EXPORT rst
+   rst/zbibliography.rst
+#+end_EXPORT
+
+#+BEGIN_src emacs-lisp :results drawer :exports results  :wrap EXPORT rst
+(make-variable-buffer-local 'with-api-doc)
+(if with-api-doc
+  ".. toctree::
+     :maxdepth: 3
+     :caption: API Reference
+     :glob:
+
+     api/library-api
+     api_private/library-api-private
+     rst/zbibliography.rst"
+  "")
+#+end_src
+
+#+RESULTS:
+#+begin_EXPORT rst
+#+end_EXPORT
+
+
+#+BEGIN_src emacs-lisp :results drawer :exports results  :wrap EXPORT rst
+(make-variable-buffer-local 'with-api-doc)
+(if with-api-doc
+  "
+:ref:`genindex`
+~~~~~~~~~~~~~~~~~" "")
+#+end_src
+
+#+RESULTS:
+#+begin_EXPORT rst
+#+end_EXPORT

@@ -1,0 +1,339 @@
+variables: &global-variables
+  ARTIFACTORY_REPO: kluster
+  APTLY_REPO: sintef-testing
+  APTLY_DIST: buster
+  APTLY_COMP: testing
+  OSPL_HOME: /opt/opensplice-hde
+  CONAN_SYSREQUIRES_MODE: enabled
+  CONAN_SYSREQUIRES_SUDO: 1
+  CONAN_NON_INTERACTIVE: 1
+  CONAN_LOGIN_USERNAME: ${KLUSTER_ARTIFACTORY_USER}
+  CONAN_PASSWORD: ${KLUSTER_ARTIFACTORY_PASSWORD}
+  KLUSTER_REMOTE: ${KLUSTER_ARTIFACTORY_URL}/artifactory/api/conan/conan-local
+  HSL_ARCHIVE: http://${KLUSTER_ARTIFACTORY_URL}/artifactory/sintef/hsl/coinhsl-2014.01.10.tar.gz
+  HSL_USER: ${KLUSTER_ARTIFACTORY_USER}
+  HSL_PASSWORD: ${KLUSTER_ARTIFACTORY_PASSWORD}
+
+stages:
+  - builder_build
+  - build
+  - test
+  - deploy
+  - test_repo
+
+.armhfspec:
+  image: ${KLUSTER_REGISTRY_URL}/mimir/builder/buster/armhf
+
+.amd64spec:
+  image: ${KLUSTER_REGISTRY_URL}/mimir/builder/buster/amd64
+
+.conanlinuxspec:
+  image: conanio/gcc8
+  tags:
+    - amd64
+
+.winspec:
+  image: localhost:5000/kluster2004
+  tags:
+    - windows
+
+.build:setup:
+  before_script:
+    - conan remote add kluster http://${KLUSTER_REMOTE}
+    - conan remote add sintef https://conan.sintef.io/public
+    - conan user ${CONAN_LOGIN_USERNAME} -p -r kluster
+    - conan config set general.revisions_enabled=1
+
+#=========================================
+# Docker image runner spawns job within
+
+.builder_build:buster:
+  image: docker:19.03.8
+  stage: builder_build
+  script:
+    - >
+       ARCH=`uname -m` &&
+       if [ "$ARCH" == "x86_64" ]; then
+       ARCHITECTURE="amd64";
+       elif [ "$ARCH" == "armv7l" ]; then
+       ARCHITECTURE="armhf";
+       elif [ "$ARCH" == "arm64" ]; then
+       ARCHITECTURE="arm64";
+       else
+       ARCHITECTURE="${ARCH}";
+       fi
+    - >
+       docker build -f tools/docker/builder.df -t mimir/builder/buster/${ARCHITECTURE}
+       --target gitlab-builder
+       --build-arg APTLY_USR=${KLUSTER_APTLY_USER}
+       --build-arg APTLY_PWD=${KLUSTER_APTLY_PASSWORD}
+       --build-arg APTLY_URL=${KLUSTER_APTLY_URL}
+       --build-arg APTLY_PREFIX=/${APTLY_REPO}
+       --build-arg APTLY_DIST=${APTLY_DIST}
+       --build-arg APTLY_COMP=${APTLY_COMP}
+       --build-arg CACHE_BUST=$(date +%Y%m%d-%H%M%S)
+       .
+    - docker login -u ${KLUSTER_REGISTRY_USER} -p ${KLUSTER_REGISTRY_PASSWORD} ${KLUSTER_REGISTRY_URL}
+    - docker tag mimir/builder/buster/${ARCHITECTURE} ${KLUSTER_REGISTRY_URL}/mimir/builder/buster/${ARCHITECTURE}
+    - docker push ${KLUSTER_REGISTRY_URL}/mimir/builder/buster/${ARCHITECTURE}
+  rules:
+    - changes:
+      - tools/docker/builder.df
+    - if: '$CI_COMMIT_MESSAGE =~ /.*build builder.*/i'
+
+builder_build:buster:armhf:
+  extends: .builder_build:buster
+  tags:
+    - armhf
+
+builder_build:buster:amd64:
+  extends: .builder_build:buster
+  tags:
+    - amd64
+
+#=========================================
+# Simple build of Release
+
+.build:mimir:
+  stage: build
+  script:
+    - python3 -m pip install -r docs/requirements.txt --upgrade
+    - mkdir build
+    - cd build
+    - cmake -DWITH_DOC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/opt/fkin ..
+    - cmake --build .
+  artifacts:
+    paths:
+      - build/
+    expire_in: 3 hrs
+
+build:mimir:amd64:
+  extends:
+    - .build:mimir
+    - .amd64spec
+  tags:
+    - amd64
+
+build:mimir:armhf:
+  extends:
+    - .build:mimir
+    - .armhfspec
+  tags:
+    - armhf
+
+#================ CONAN LINUX ================
+
+build:conan:linux:
+  stage: build
+  variables:
+    <<: *global-variables
+  extends:
+    - .conanlinuxspec
+    - .build:setup
+  script:
+    - sudo python -m pip install --upgrade pip setuptools wheel
+    - sudo python -m pip install --upgrade conan
+    - sudo apt-get update && sudo apt-get install -y imagemagick
+    - sudo apt-get -y install gfortran-8 doxygen emacs-nox graphviz plantuml wget pandoc
+    - sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-8 20
+    - wget https://sourceforge.net/projects/plantuml/files/plantuml.jar
+    - sudo mv plantuml.jar /usr/share/plantuml/
+    - echo "To work around pesky gnutls issue Emacs, install newer emacs"
+    - sudo apt-get install -y software-properties-common
+    - sudo add-apt-repository -y ppa:kelleyk/emacs
+    - sudo apt-get update && sudo apt-get install -y emacs26-nox
+    - sudo update-alternatives --set emacs /usr/bin/emacs26
+    - echo "Workaround steps complete"
+    - emacs -Q --batch -l docs/emacs-install-pkgs.el
+    - sudo python -m pip install -r docs/requirements.txt --upgrade
+    - echo Installed prerequisites
+    - conan profile new default --detect
+    - conan profile update settings.compiler.libcxx=libstdc++11 default
+    - mkdir build && cd build
+    - conan install ..
+        -o mimir:with_doc=True
+        -o mimir:with_CICD=True
+        -o casadi:thread=True
+        -o casadi:with_common=True
+        -o casadi:hsl=True
+        -o casadi:ipopt=True
+        -o ipopt:with_hsl=True
+        -o yaml-cpp:shared=True
+        --build missing
+    - conan upload --all -c -r kluster casadi/*
+    - conan upload --all -c -r kluster ipopt/*
+    - conan upload --all -c -r kluster openblas/*
+    - conan build ..
+    - source activate_run.sh
+    - conan package ..
+
+#=============== CONAN WINDOWS ===============
+
+build:conan:windows:
+  stage: build
+  variables:
+    <<: *global-variables
+    CONAN_USE_ALWAYS_SHORT_PATHS: 1
+  extends:
+    - .winspec
+    - .build:setup
+  script:
+    - python -m pip install --upgrade pip setuptools wheel
+    - python -m pip install --upgrade conan
+    - python -m pip install -r docs/requirements.txt --upgrade
+    - choco install -y pandoc nsis
+    - choco upgrade -y plantuml
+    - emacs -Q --batch -l docs/emacs-install-pkgs.el
+    - conan profile new default --detect
+    - mkdir build
+    - cd build
+    - conan install ..
+        -o mimir:with_doc=True
+        -o mimir:with_CICD=True
+        --build missing
+    - conan upload --all -c -r kluster casadi/*
+    - conan build ..
+    - conan package ..
+
+
+#=========================================
+# Deploy artifacts to artifactory
+
+.artifactory:mimir:
+  stage: deploy
+  variables:
+    <<: *global-variables
+    ARTIFACTORY_REPO: sintef
+  script:
+    - >
+       ARCH=`uname -m` &&
+       if [ "$ARCH" == "x86_64" ]; then
+       B_TARGET="docs_deploy";
+       else
+       B_TARGET="upload";
+       fi
+    - python3 -m pip install -r docs/requirements.txt --upgrade
+    - cd build
+    - cmake -DWITH_DOC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/opt/fkin ..
+    - cmake --build . --target ${B_TARGET}
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master"
+
+artifactory:mimir:amd64:
+  dependencies:
+    - build:mimir:amd64
+  extends:
+    - .artifactory:mimir
+    - .amd64spec
+  tags:
+    - amd64
+
+artifactory:mimir:armhf:
+  dependencies:
+    - build:mimir:armhf
+  extends:
+    - .artifactory:mimir
+    - .armhfspec
+  tags:
+    - armhf
+
+#=========================================
+# Deploy packages to aptly xx-testing
+
+.aptly_testing:mimir:
+  stage: deploy
+  variables:
+    <<: *global-variables
+    APTLY_REPO: sintef-testing
+    APTLY_COMP: testing
+  script:
+    - python3 -m pip install -r docs/requirements.txt --upgrade
+    - cd build
+    - cmake -DWITH_DOC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/opt/fkin ..
+    - cmake --build . --target deploy
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master"
+
+aptly_testing:mimir:amd64:
+  dependencies:
+    - build:mimir:amd64
+  extends:
+    - .aptly_testing:mimir
+    - .amd64spec
+  tags:
+    - amd64
+
+aptly_testing:mimir:armhf:
+  dependencies:
+    - build:mimir:armhf
+  extends:
+    - .aptly_testing:mimir
+    - .armhfspec
+  tags:
+    - armhf
+
+#=========================================
+# Deploy packages to aptly xx-release
+
+.aptly_release:mimir:
+  stage: deploy
+  variables:
+    <<: *global-variables
+    APTLY_REPO: sintef-release
+    APTLY_COMP: release
+  script:
+    - python3 -m pip install -r docs/requirements.txt --upgrade
+    - cd build
+    - cmake -DWITH_DOC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/opt/fkin ..
+    - cmake --build . --target deploy
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: manual
+    - if: '$CI_COMMIT_MESSAGE =~ /.deploy release.*/i'
+
+
+aptly_release:mimir:amd64:
+  dependencies:
+    - build:mimir:amd64
+  extends:
+    - .aptly_release:mimir
+    - .amd64spec
+  tags:
+    - amd64
+
+aptly_release:mimir:armhf:
+  dependencies:
+    - build:mimir:armhf
+  extends:
+    - .aptly_release:mimir
+    - .armhfspec
+  tags:
+    - armhf
+
+#=========================================
+# Test package, WIP
+# only test on amd64 for now
+
+test_release:mimir:
+  image: docker:19.03.8
+  stage: test_repo
+  variables:
+    <<: *global-variables
+    APTLY_REPO: sintef-release
+    APTLY_COMP: release
+  script:
+    - >
+       docker build -f tools/docker/run-mimir.df -t test-project/mimir
+       --build-arg APTLY_USR=${KLUSTER_APTLY_USER}
+       --build-arg APTLY_PWD=${KLUSTER_APTLY_PASSWORD}
+       --build-arg APTLY_URL=${KLUSTER_APTLY_URL}
+       --build-arg APTLY_PREFIX=/${APTLY_REPO}
+       --build-arg APTLY_DIST=${APTLY_DIST}
+       --build-arg APTLY_COMP=${APTLY_COMP}
+       --build-arg CACHE_BUST=$(date +%Y%m%d-%H%M%S)
+       .
+    - docker run --rm test-project/mimir
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: manual
+    - if: '$CI_COMMIT_MESSAGE =~ /.deploy release.*/i'

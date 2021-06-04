@@ -1,0 +1,27 @@
+---
+
+dds:
+  domain: 0
+
+algorithm:
+  name: Leadline
+  command:
+    request_topic: fkinCmd
+    reply_topic: fkinCmdResp
+    recipient: Leadline
+  notifier:
+    notify_topic: fkinStateNotification
+    identifier: Leadline
+
+Leadline:
+  time_step_ms: 500
+  prediction_horizon_sec: 1000
+  inputs:
+    parameters:
+      topic: balder_leadline_parameters
+      id: Leadline
+      default: [350, 160]
+  outputs:
+    depth:
+      topic: mimir_leadline_response
+      id: Leadline

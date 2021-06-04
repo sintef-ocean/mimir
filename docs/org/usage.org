@@ -1,0 +1,105 @@
+#+TITLE: MIMIR
+#+SECTION: 1
+#+FOOTER: mimir 0.3.0
+#+HEADER: Usage manual
+#+AUTHOR: Joakim Haugen (joakim.haugen@sintef.no)
+#+EMAIL: joakim.haugen@sintef.no
+#+DATE: February 2021
+
+# Run this an copy its contents to the header to get an updated version
+# Todo: figure out how to do this automatically
+#+begin_src bash :exports none :results output
+  local_version=$(cat ../../version.txt)
+  echo "#+FOOTER: mimir $local_version"
+#+end_src
+
+* NAME
+
+  =mimir= -- an optimization-based purse seine path planner
+
+* SYNOPSIS
+
+  ~/opt/sintef/bin/mimir [OPTIONS] CONFIG~
+
+* DESCRIPTION
+
+  A purse seine path planner algorithm that calculates suggested deployment paths based on
+  user preferences and environmental conditions.
+
+* OPTIONS
+
+  The command is valid with install prefix set to /~/opt/sintef~/. If =$PATH= has
+  =/opt/sintef/bin=, the executable name is simply =mimir=.
+
+  + =CONFIG= :: Path to YAML config file.
+  + =-h, --help= :: Display the help message.
+  + =-v number, --severity number= :: Print severity, with /number/ as defined in /Severity/ below, default: 3.
+  + =-l number, --log number= :: Log file severity: with /number/ as defined in /Severity/ below, default: 3.
+
+  /Severity/ is an integer /number/ in [0-5], 5: trace, 4: debug, 3: info, 2: warning, 1: error, 0: fatal
+
+* CONFIGURATION
+
+  The YAML configuration file follows a specific schema, with two common map attributes:
+  /dds/ and /algorithm/. The /algorithm:name/ defines the name of the algorithm to be run
+  and imples that a map with the same name is present in the YAML file. The configuration
+  specification for a selected algorithm is specific to that particular algorithm. See [[EXAMPLE]] below.
+
+* ENVIRONMENT
+
+  - =OSPL_URI= :: If =$OSPL_URI= is not set, it defaults to  /~file:///opt/sintef/etc/config/ospl.xml~/. This is the configuration file for the OpenSplice middleware service used by the application. See *OpenSplice deployment* for details on configuring the middleware service.
+  - =OSPL_HOME= :: If =$OSPL_HOME= is not set, it defaults to /~/opt/sintef/~/. This is the root path used by the OpenSplice middleware.
+
+* FILES
+
+  - /~/opt/sintef/etc/config/ospl.xml/~/ :: OpenSplice configuration file as described in *OpenSplice deployment*.
+
+* EXAMPLE
+
+  - ~/opt/sintef/bin/mimir -v 0 -l 3 /path/to/config.yml~ :: Run algorithm specified in
+    /~/path/to/config.yml/~/ with fatal severity output to terminal, and info severity
+    output to log file. The YAML config file below shows the common schema that =mimir=
+    expects. Note that the algoritm enters a standby state and will not execute before a
+    =START_PROCESS= command is issued to the =request_topic= specified in the config file.
+
+*** YAML config file
+
+    The =algorithm:command= and =algorithm:notifier= entries are used to configure the DDS
+    topics for user commands and state machine transition notifications. They use the
+    interface definition language types indicated in the comment, which are defined in the
+    =RatatoskIDL= dependency. Each algorithm has its own /algorithm-specific/ schema;
+    consult the documentation for the algorithm you intend to use.
+
+    #+begin_src yaml
+      # Excerpt of /path/to/config.yml, with 'algorithm-specific' map not expanded:
+      ---
+      dds:
+        domain: 0                                # DDS domain to connect to
+      algorithm:
+        name: PursePlanner                       # Name identifier of algorithm
+        command:
+          request_topic: fkin_cmd                # IDL type: fkin::Command
+          reply_topic: fkin_cmd_resp             # IDL type: fkin::CommandResponse
+          recipient: PursePlanner                # Recipient identifier request/reply
+        notifier:
+          notify_topic: fkin_state_notification  # IDL type: fkin::ProcessStateKind
+          identifier: PursePlanner               # Identifier of notification
+
+      PursePlanner:
+        *algorithm-specific
+      ...
+    #+end_src
+
+* NOTES
+
+  Currently, the log outputs are only printed to stdout. This means that the *=-l | --log=* option
+  has no effect.
+
+* SEE ALSO
+
+  - *yamllint*.1 can be useful to validate the YAML config file (not installed by default).
+  - [[http://download.prismtech.com/docs/Vortex/html/ospl/DeploymentGuide/guide.html][OpenSplice deployment]]
+
+* COPYRIGHT
+
+Copyright © 2021 SINTEF Ocean AS.  License: [[http://www.apache.org/licenses/LICENSE-2.0][Apache-2.0]].

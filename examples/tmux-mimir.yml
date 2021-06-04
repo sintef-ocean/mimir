@@ -1,0 +1,40 @@
+# This is a configuration to load a series of simulation with tmuxinator in a tmux
+# This file assumes that the project is located in ~/dev/mimir.
+# How to use:
+# - Create a symbolic link in ~/.tmuxinator:
+#     $> ln -s /path/to/this-folder/tmux-mimir.yml ~/.tmuxinator/mimir.yml
+# - Run it:
+#     $> tmuxinator start mimir
+# - Kill it:
+#     $> CTRL-a (or b) :kill-session
+#     $> CTRL-a X (If you have 'bind X confirm-before kill-session' in your tmux.conf)
+
+name: mimir
+pre_window: source /opt/opensplice/release.com
+startup_window: mimir_algorithms
+
+windows:
+  - mimir_algorithms:
+      root: ~/dev/mimir/build
+      layout: tiled
+      panes:
+        - vessel:
+          - src/mimir ../examples/vessel.yml -v 4
+        - fish:
+          - src/mimir ../examples/fish.yml -v 4
+        - leadline:
+          - src/mimir ../examples/leadline.yml -v 4
+        - top:
+          - top
+        #- estimator:
+        #  - src/mimir --help
+          - #src/mimir ../examples/estimator.yml -v 4
+        #- planner:
+        #  - src/mimir --help
+        #  - #src/mimir ../examples/planner.yml -v 4
+  - sinspekto_gui:
+      root: ~/dev/balder/build
+      layout: tiled
+      panes:
+        - sinspekto:
+          - src/balder -platform wayland

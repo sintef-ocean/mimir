@@ -1,0 +1,74 @@
+name: GCC Conan
+
+on: [push]
+
+env:
+  DEBIAN_FRONTEND: noninteractive
+  CONAN_UPLOAD: ${{ secrets.CONAN_URL }}
+  CONAN_PASSWORD_SINTEF: ${{ secrets.CONAN_PASSWORD }}
+  CONAN_LOGIN_USERNAME_SINTEF: ${{ secrets.CONAN_USER }}
+  CONAN_NON_INTERACTIVE: True
+  CONAN_USE_ALWAYS_SHORT_PATHS: True
+  CONAN_SYSREQUIRES_MODE: enabled
+  CONAN_SYSREQUIRES_SUDO: 1
+
+jobs:
+  conan-with-gcc:
+    name: Conan
+    runs-on: ubuntu-20.04
+    container:
+      image: conanio/gcc${{ matrix.compiler_version }}
+      options: -u 0
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler_version: [8, 9, 10]
+        build_type: [Release]
+        with_doc: ["True", "False"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz imagemagick pandoc plantuml wget
+          wget https://sourceforge.net/projects/plantuml/files/plantuml.jar
+          sudo mv plantuml.jar /usr/share/plantuml/
+          sudo pip install --upgrade pip setuptools wheel
+          sudo pip install --upgrade conan
+          sudo pip install -r docs/requirements.txt --upgrade
+          sudo apt-get -y install gfortran-${{ matrix.compiler_version }}
+          sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-${{ matrix.compiler_version }} 20
+        if: ${{ matrix.compiler_version == 8 }}
+        run: |
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository -y ppa:kelleyk/emacs
+          sudo apt-get update && sudo apt-get install -y emacs26-nox
+          sudo update-alternatives --set emacs /usr/bin/emacs26
+      - name: Install emacs from repo
+        if: ${{ matrix.compiler_version > 8 }}
+        run: |
+          sudo apt-get install -y emacs-nox
+      - name: Install emacs packages
+        run: |
+          emacs -Q --batch -l docs/emacs-install-pkgs.el
+      - name: Configure Conan
+        run : |
+          conan remote add sintef ${{ secrets.CONAN_URL }}
+          conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
+          conan profile new default --detect
+          conan profile update settings.compiler.libcxx=libstdc++11 default
+          conan config set general.revisions_enabled=1
+      - name: Conan build
+        run: |
+          mkdir build
+          cd build
+          conan install .. \
+            -s build_type=${{ matrix.build_type }} \
+            -s compiler.version=${{ matrix.compiler_version }} \
+            -o mimir:with_doc=${{ matrix.with_doc }} \
+            -o yaml-ccp:shared=True
+            -b missing -b outdated
+          conan upload --all -c -r sintef openblas/* --retry 5 --retry-wait 30
+          conan build ..
+          . ${PWD}/activate_run.sh
+          conan package ..

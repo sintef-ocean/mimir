@@ -1,0 +1,4 @@
+<entry>
+<version>${PROJECT_VERSION}</version>
+<url>${FEED_HOST}/${PROJECT_NAME}_${PROJECT_VERSION}_docset.tar.gz</url>
+</entry>

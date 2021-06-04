@@ -1,0 +1,28 @@
+---
+
+dds:
+  domain: 0
+
+algorithm:
+  name: TestAlgorithm
+  command:
+    request_topic: fkinCmd
+    reply_topic: fkinCmdResp
+    recipient: Test
+  notifier:
+    notify_topic: fkinStateNotification
+    identifier: Test
+
+TestAlgorithm:
+  time_step_ms: 100
+  inputs:
+    signal:
+      topic: anInput
+      id: Test
+      max_age_ms: 3000
+  outputs:
+    response:
+      topic: fkinTestDepth
+      id: Test
+  initial_conditions:
+    x_0: [0]

@@ -1,0 +1,34 @@
+---
+
+dds:
+  domain: 0
+
+algorithm:
+  name: KinematicVessel
+  command:
+    request_topic: fkinCmd
+    reply_topic: fkinCmdResp
+    recipient: Vessel
+  notifier:
+    notify_topic: fkinStateNotification
+    identifier: Vessel
+
+# KinematicVessel simulator with controllable input
+KinematicVessel:
+  time_step_ms: 200
+  # could add integrator options, but not now
+  inputs:
+    vessel_ctrl:
+      topic: fkinVesselCtrl
+      id: Vessel
+      max_age_ms: -1
+  outputs:
+    kinematics:
+      topic: fkinKinematics2D
+      id: Vessel
+  initial_conditions:
+    position_course:
+      topic: fkinPositionCourse
+      id: Vessel
+      max_wait_ms: 50
+      fallback: [0, 50, 0]

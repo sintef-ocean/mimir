@@ -1,0 +1,35 @@
+FROM debian:buster-slim
+MAINTAINER Joakim Haugen <joakim.haugen@sintef.no>
+RUN apt-get update && apt-get install -y --no-install-recommends \
+ apt-utils \
+ gnupg \
+ wget \
+ && \
+ rm -rf /var/lib/apt/lists/*
+
+ARG APTLY_URL
+ARG APTLY_USR
+ARG APTLY_PWD
+ARG APTLY_PREFIX
+ARG APTLY_DIST
+ARG APTLY_COMP
+ARG CACHE_BUST=unknown
+RUN wget http://${APTLY_USR}:${APTLY_PWD}@${APTLY_URL}/gpg-key.pub \
+  && apt-key add gpg-key.pub \
+  && rm gpg-key.pub
+RUN echo "deb http://${APTLY_URL}${APTLY_PREFIX} ${APTLY_DIST} ${APTLY_COMP}" > /etc/apt/sources.list.d/kluster.list
+RUN echo "machine ${APTLY_URL} login ${APTLY_USR} password ${APTLY_PWD}" >> /etc/apt/auth.conf
+
+RUN apt-get -q update \
+  && apt-get install -y \
+  mimir-runtime \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV LD_LIBRARY_PATH=/usr/local/lib:/opt/fkin/lib
+
+# Environment setup
+COPY tools/scripts/bashrcpost.sh /tmp_file.sh
+RUN cat /tmp_file.sh >> ${HOME}/.bashrc && rm /tmp_file.sh
+
+ENTRYPOINT ["/bin/bash","-c"]
+CMD ["source /opt/opensplice-rts/release.com && /usr/local/bin/mimir --help"]

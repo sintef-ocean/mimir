@@ -1,0 +1,40 @@
+Language: Cpp
+Standard: Cpp14
+BasedOnStyle: WebKit
+NamespaceIndentation: None
+IndentCaseLabels: true
+IndentPPDirectives: AfterHash
+FixNamespaceComments: true
+MaxEmptyLinesToKeep: 2
+SpaceAfterTemplateKeyword: false
+AllowShortCaseLabelsOnASingleLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortIfStatementsOnASingleLine: true
+AllowShortBlocksOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+BreakBeforeBinaryOperators: None
+Cpp11BracedListStyle: true
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterEnum: true
+  AfterStruct: true
+  AfterClass: true
+  SplitEmptyFunction: false
+  AfterFunction: true
+  AfterNamespace : true
+  AfterControlStatement: false
+
+IncludeBlocks:   Regroup
+IncludeCategories:
+  - Regex: '^(<|")(gtest|dds|boost|Eigen|yaml-cpp)/'
+    Priority: 5
+  - Regex: '^(<|")(qwt_)'
+    Priority: 5
+  - Regex: '^(<|")(jh|whatever)/'
+    Priority: 3
+  - Regex:           '^"'
+    Priority:        2
+  - Regex:           '.*'
+    Priority:        11
+
+AlignConsecutiveAssignments: true

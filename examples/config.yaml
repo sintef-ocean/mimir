@@ -1,0 +1,12 @@
+---
+# Configuration example "schema"
+
+algorithm:
+  name: StateEstimator
+  command:
+    request_topic: fkinCmd
+    reply_topic: fkinCmdResp
+    recipient: Estimator
+  notifier:
+    notify_topic: fkinStateNotification
+    identifier: Estimator

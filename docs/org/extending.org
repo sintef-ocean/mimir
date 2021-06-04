@@ -1,0 +1,16 @@
+* Creating a new algorithm
+
+  It is possible to create a new algorithm to be run with /mimir/. Currently, the system
+  is not pluggable, meaning that when a new algorithm is to be supported, the application
+  needs to be recompiled. Generally, we do not recommend to use /mimir/ to develop new
+  algorithms. There is a plethora of choices available. The [[https://fmi-standard.org/][Functional Mock-up Interface]]
+  (FMI) cite:fmi2 is recommended. Converting a mimir algorithm to use FMI is straightforward.
+
+  To add a new algorithm you need to:
+  - Create new files =src/mimir/algorithm/<ALGORITHM_NAME>{.cpp,.hpp}=
+  - Implement the interface @@rst::cpp:class:`mimir::IAlgorithm`@@, use other algorithms as examples.
+  - Add its =.cpp= to =MIMIR_SRC= in =mimir/src/CMakeLists.txt=
+  - Include header in @@rst::ref:`file_src_mimir_algorithm_AlgorithmFactory.hpp`@@.
+  - Instantiate it in @@rst::cpp:func:`mimir::AlgorithmCreator`@@.
+  - Optionally add a startup banner in @@rst::ref:`file_src_mimir_mimir.hpp`@@,
+    =src/mimir/MimirPriv.cpp=, and a call it in the if-else block of =src/programs/mimir.cpp=.

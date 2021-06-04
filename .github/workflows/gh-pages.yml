@@ -1,0 +1,74 @@
+name: github pages
+
+on:
+  push:
+    branches:
+      - main
+env:
+  DEBIAN_FRONTEND: noninteractive
+  CONAN_UPLOAD: ${{ secrets.CONAN_URL }}
+  CONAN_PASSWORD_SINTEF: ${{ secrets.CONAN_PASSWORD }}
+  CONAN_LOGIN_USERNAME_SINTEF: ${{ secrets.CONAN_USER }}
+  CONAN_NON_INTERACTIVE: True
+  CONAN_USE_ALWAYS_SHORT_PATHS: True
+  CONAN_SYSREQUIRES_MODE: enabled
+  CONAN_SYSREQUIRES_SUDO: 1
+
+jobs:
+  deploy:
+    name: Docs Deploy
+    runs-on: ubuntu-20.04
+    container:
+      image: conanio/gcc${{ matrix.compiler_version }}
+      options: -u 0
+    strategy:
+      fail-fase: false
+      matrix:
+        compiler_version: [8]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz imagemagick pandoc plantuml wget
+          wget https://sourceforge.net/projects/plantuml/files/plantuml.jar
+          sudo mv plantuml.jar /usr/share/plantuml/
+          sudo apt-get -y install gfortran-${{ matrix.compiler_version }}
+          sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-${{ matrix.compiler_version }} 20
+          sudo pip install --upgrade pip setuptools wheel
+          sudo pip install --upgrade conan
+          sudo pip install -r docs/requirements.txt --upgrade
+      - name: Workaround pesky gnutls issue emacs
+        # not needed for gcc9 and gcc10
+        run : |
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository -y ppa:kelleyk/emacs
+          sudo apt-get update && sudo apt-get install -y emacs26-nox
+          sudo update-alternatives --set emacs /usr/bin/emacs26
+          emacs -Q --batch -l docs/emacs-install-pkgs.el
+      - name: Configure Conan
+        run : |
+          conan remote add sintef ${{ secrets.CONAN_URL }}
+          conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
+          conan profile new default --detect
+          conan profile update settings.compiler.libcxx=libstdc++11 default
+          conan config set general.revisions_enabled=1
+      - name: Build
+        run: |
+          mkdir public
+          mkdir build
+          cd build
+          conan install .. -o mimir:with_doc=True --build missing
+          cmake -DWITH_DOC=ON -DCMAKE_INSTALL_PREFIX=install ..
+          cmake --build . --target doc
+          cmake -DCOMPONENT=doc -P cmake_install.cmake
+          mv install/share/doc/mimir/html/* ../public/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages

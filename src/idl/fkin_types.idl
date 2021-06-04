@@ -1,0 +1,226 @@
+module fkin
+{
+  struct Bit
+  {
+    boolean value;
+  };
+#pragma keylist Bit
+
+
+  struct Real
+  {
+    double value;
+  };
+#pragma keylist Real
+
+  struct Vector1d
+  {
+    double x;
+  };
+#pragma keylist Vector1d
+
+  struct Vector2d
+  {
+    double x;
+    double y;
+  };
+#pragma keylist Vector2d
+
+  struct Vector3d
+  {
+    double x;
+    double y;
+    double z;
+  };
+#pragma keylist Vector3d
+
+  struct Vector4d
+  {
+    double x;
+    double y;
+    double z;
+    double w;
+  };
+#pragma keylist Vector4d
+
+  struct Timestamp
+  {
+    long long unixMillis;
+  };
+
+  struct IdVec1d
+  {
+    string id;
+    Vector1d vec;
+  };
+#pragma keylist IdVec1d id
+
+  struct IdVec2d
+  {
+    string id;
+    Vector2d vec;
+  };
+#pragma keylist IdVec2d id
+
+  struct IdVec3d
+  {
+    string id;
+    Vector3d vec;
+  };
+#pragma keylist IdVec3d id
+
+  struct IdVec4d
+  {
+    string id;
+    Vector4d vec;
+  };
+#pragma keylist IdVec4d id
+
+  struct BatchIdVec1d
+  {
+    string id;
+    sequence<IdVec1d> batch;
+    sequence<Timestamp> timestamps;
+  };
+#pragma keylist BatchIdVec1d id
+
+
+  struct Kinematics2D
+  {
+    string id;
+    Vector2d position;
+    Vector1d course;
+    Vector1d speed;
+  };
+#pragma keylist Kinematics2D id
+
+  struct BatchKinematics2D
+  {
+    string id;
+    sequence<Kinematics2D> batch;
+    sequence<Timestamp> timestamps;
+  };
+#pragma keylist BatchKinematics2D id
+
+  struct Kinematics6D
+  {
+    string id;
+    Vector3d position;
+    Vector3d velocity;
+    Vector3d euler;
+  };
+#pragma keylist Kinematics6D id
+
+  struct BatchKinematics6D
+  {
+    string id;
+    sequence<Kinematics6D> batch;
+    sequence<Timestamp> timestamps;
+  };
+#pragma keylist BatchKinematics6D id
+
+
+
+  // Process state
+  enum ProcessStateKind
+  {
+   IDLE,
+   INITIALIZING,
+   RUNNING,
+   FAILURE,
+   DEAD,
+   UNKNOWN
+  };
+
+  struct ProcessStateAutomaton
+  {
+    string identifier;
+    ProcessStateKind state;
+  };
+#pragma keylist ProcessStateAutomaton identifier
+
+  struct MessageID
+  {
+    string senderUUID;
+    long sequenceNumber;
+  };
+
+  struct RequestHeader
+  {
+    MessageID requestID;
+    string recipient;
+  };
+
+  struct ReplyHeader
+  {
+    MessageID relatedRequestID;
+  };
+
+  enum CommandType
+  {
+   START_PROCESS,
+   STOP_PROCESS,
+   TERMINATE_PROCESS,
+   BOGUS_COMMAND
+  };
+
+  struct Command
+  {
+    RequestHeader header;
+    CommandType command;
+  };
+#pragma keylist Command header.recipient
+
+  struct CommandResponse
+  {
+    ReplyHeader header;
+    boolean success;
+    string message;
+  };
+#pragma keylist CommandResponse
+
+  struct NlpFuncStat
+  {
+    double callback_fcn;
+    double nlp_f;
+    double nlp_g;
+    double nlp_grad;
+    double nlp_grad_f;
+    double nlp_hess_l;
+    double nlp_jac_g;
+    double total;
+  };
+
+  struct OptiStats
+  {
+    string id;
+    unsigned long iterations;
+    boolean status;
+    string status_text;
+    NlpFuncStat n_call;
+    NlpFuncStat t_proc;
+    NlpFuncStat t_wall;
+    double obj;
+    sequence<double> p;
+    sequence<double> x0;
+  };
+#pragma keylist OptiStats id
+
+
+  struct NlpConfig
+  {
+    string id;
+    string technique;
+    long degree;
+    string solver;
+    double horizon;
+    unsigned long elements;
+    unsigned long nx;
+    unsigned long np;
+    unsigned long ng;
+  };
+#pragma keylist NlpConfig id
+
+
+
+};

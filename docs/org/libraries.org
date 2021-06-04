@@ -1,0 +1,35 @@
+* A note on library dependencies
+
+  The nonlinear programming (NLP) formulations in /mimir/ uses Casadi's =nlpsol=
+  interface. Casadi implements interfaces to various third-party solvers, but several of
+  them require a commercial license to use. Casadi also provides textbook or experimental
+  solvers to solve such problems, but it is generally recommended to use a third-party
+  solver for best performance and reliability, see cite:Andersson2019casadi for general
+  recommendations. Solvers usually depend on low level routines such as LAPACK/BLAS or
+  METIS. In cref:tab:MimirDependencies we provide an overview of various libraries with
+  their license and availability on Linux and Windows. There are alternatives to these
+  libraries, but these are the options /mimir/ can support without extra effort.
+
+  The choice of solver can have large impact on solve time of an optimization problem,
+  especially for large problems and by exploiting knowledge of problem structure. There
+  are also other factors that can improve the solution times, including solver settings,
+  using OpenMP, multi-threading, c-code generation, and discretization approach. We have
+  not exhausted the performance improvement potential in our implementation efforts, so
+  there is very likely performance gains available.
+
+
+  #+CAPTION: Library dependencies for /mimir/; a summary.
+  #+name: tab:MimirDependencies
+  | Name                                              | Purpose                 | License      | Conan recipe                 | Recipe Platforms [fn:: Platform support only reflects what the referenced recipes can build.] | Requires                  |
+  |---------------------------------------------------+-------------------------+--------------+------------------------------+-----------------------------------------------------------------------------------------------+---------------------------|
+  | [[https://web.casadi.org][CasADi]] cite:Andersson2019casadi                   | Computer algebra system | LGPL-3.0     | [[https://github.com/sintef-ocean/conan-casadi][conan-casadi]]                 | Linux, Window                                                                                 |                           |
+  | sqpmethod                                         | NLP solver              | LGPL-3.0     | with casadi recipe           | Linux, Windows                                                                                | A QO solver (e.g. qrqp)   |
+  | [[https://github.com/djanka2/blockSQP][blockSQP]] cite:Janka2016blocksqp                   | NLP solver              | zlib         | with casadi recipe           | Linux, Windows                                                                                | qpOASES                   |
+  | [[https://coin-or.github.io/Ipopt/][Ipopt]] cite:Wachter2006ipopt                       | NLP solver              | EPL-2.0      | [[https://github.com/sintef-ocean/conan-ipopt][conan-ipopt]]                  | Linux                                                                                         | MUMPS/HSL or other solver |
+  | [[https://github.com/coin-or/qpOASES][qpOASES]] cite:Ferreau2014qpoases                   | QP solver               | LGPL-2.1     | with casadi recipe           | Linux, Windows                                                                                | LAPACK, BLAS              |
+  | qrqp                                              | QP solver               | LGPL-3.0     | with casadi recipe           | Linux, Windows                                                                                |                           |
+  | [[http://mumps.enseeiht.fr/][MUMPS]] cite:Amestoy2001mumps,Amestoy2019mumps      | Linear solver           | CeCILL-C     | [[https://github.com/sintef-ocean/conan-coinmumps][conan-coinmumps]]              | Linux                                                                                         | LAPACK, BLAS, (METIS)     |
+  | [[http://www.hsl.rl.ac.uk/ipopt/][HSL]] cite:HSL2021                                  | Linear solvers          | [[http://www.hsl.rl.ac.uk/ipopt/][Various]]      | [[https://github.com/sintef-ocean/conan-coinhsl][conan-coinhsl]]                | Linux                                                                                         | LAPACK, BLAS, (METIS)     |
+  | [[http://glaros.dtc.umn.edu/gkhome/metis/metis/overview][METIS]] cite:Karypis1998metis,Karypis2011metis      | Matrix ordering         | [[https://github.com/CIBC-Internal/metis-4.0.3/blob/master/LICENSE][Custom]]       | [[https://github.com/sintef-ocean/conan-coinmetis][conan-coinmetis]]              | Linux, Windows                                                                                |                           |
+  | [[https://www.openblas.net/][OpenBLAS]] cite:Xianyi2012openblas,Qian2013openblas | BLAS, LAPACK            | BSD 3-Clause | [[https://conan.io/center/openblas][conan center]], [[https://github.com/sintef-ocean/conan-openblas][conan-openblas]] | Linux, Windows                                                                                |                           |
+  | [[https://computing.llnl.gov/projects/sundials][SUNDIALS]] cite:Hindmarsh2005sundials               | Numerical integrators   | BSD 3-Clause | with casadi recipe           | Linux, Windows                                                                                |                           |

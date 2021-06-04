@@ -1,0 +1,242 @@
+#+TITLE: README mimir
+#+AUTHOR: Joakim Haugen
+#+EMAIL: joakim.haugen@sintef.com
+#+DATE: [2019-10-02 Wed]
+#+TODO: TODO(t) | DONE(d)
+#+STARTUP: overview
+#+STARTUP: logdone
+
+* Online documentation [[file:./data/icons/icon@2x.png]]
+
+  The online documentation for this repository is found at [[https://sintef-ocean.github.io/mimir]].
+  For more information on the associated project, see [[https://docs.sintef.io/#fhf-catch-control-in-purse-seine][FHF catch control in purse seine]].
+
+* Build instructions
+
+  You need a compiler that supports /c++17/ to build =mimir=. It is known to compile with
+  =gcc 8=, =clang 9=, and =msvc++ 14.2=. You need the [[https://cmake.org/][CMake]] build system generator. The
+  application requires RatatoskIDL, [[https://github.com/ADLINK-IST/opensplice][opensplice-ce]], [[https://web.casadi.org/][casadi]], =yaml-cpp=, and =boost=.
+
+  The *recommended* approach to build the application is with the help of [[https://conan.io/][conan]]. =conan= is
+  a python tool, and once installed, you need to set the following conan remotes.
+  #+begin_src bash
+    python -m pip install conan
+
+    conan remote add sintef https://artifactory.smd.sintef.no/api/conan/conan-local
+    conan config set general.revisions_enabled=1
+  #+end_src
+
+  Building the documentation is /optional/. It is generated using =doxygen=, =sphinx=,
+  =emacs=, and =plantuml=. You also need the following python modules
+  (=docs/requirements.txt=):
+  #+INCLUDE: "docs/requirements.txt" src ini
+
+  Instructions for each platform is found below.
+
+** Configuration options and targets
+
+   The table below specifies available options when building the application.
+
+   | CMake Option                 | conan option   | Default | Comment                                     |
+   |------------------------------+----------------+---------+---------------------------------------------|
+   | See comment                  | =with_fPIC=    | True    | =CMAKE_POSITION_INDEPENDENT_CODE=ON=        |
+   | =WITH_DOC=                   | =with_doc=     | False   | Use =cmake --build . --target doc=          |
+   | =MIMIR_WITH_GNUPLOT=         | =with_gnuplot= | False   | Build with =gnuplot= visualization          |
+   | =MIMIR_SKIP_UNOFFICIAL_DEPS= | N/A            | False   | Skip non-public dependencies in /.deb/ file |
+
+   The following extra build targets are available:
+   + =doc= will build documentation html.
+   + =package_it= will create /.deb/ (linux), /.exe/ (windows), and /.tar.gz/
+   If the executable is built without =conan=, the Debian packages
+   will contain dependencies to system packages and non-standard
+   packages: =casadi-dep=, =casadi=, =opensplice-{hde,rts}=, which can
+   be skipped with =MIMIR_SKIP_UNOFFICIAL_DEPS=ON=. This variable has
+   no effect if the package is built with conan.
+   + An additional option =WITH_API_DOC=OFF= disables API documentation, and enables LaTeX
+     and PDF output of the user documentation. This currently requires linux OS,
+     =inkscape=, =latexmk=, and a LaTeX distribution to be installed. The output will be
+     available in =<build_folder>/docs/sphinx/latex/=.
+
+** Linux
+
+*** Prerequisites (debian-based)
+    These instructions assume a =gcc= compiler and using =conan=.
+
+   #+begin_src bash :results output :shebang "#!/bin/bash"
+     apt-get install -y build-essential cmake pkg-config python3-pip readelf
+     python -m pip install setuptools wheel conan
+   #+end_src
+
+   #+begin_note
+     There may be other (unknown) packages needed by transitive dependencies, which are
+     not installed by conan. You may either install them manually when build errors occur,
+     or you can set environment variable [[https://docs.conan.io/en/latest/reference/env_vars.html#conan-sysrequires-mode][CONAN SYSREQUIRES MODE=enabled]], which lets conan
+     automatically install them for you.
+   #+end_note
+
+*** Documentation prerequisites /(optional)/
+
+   #+begin_src bash :results output :shebang "#!/bin/bash"
+     apt-get install -y doxygen emacs-nox graphviz plantuml wget pandoc
+     python -m pip install -r docs/requirements.txt --upgrade
+     emacs -Q --batch -l docs/emacs-install-pkgs.el
+   #+end_src
+
+   If your distribution is a bit old, you may have to update =plantuml=.
+   #+begin_src bash :results output :shebang "#!/bin/bash"
+     wget https://sourceforge.net/projects/plantuml/files/plantuml.jar
+     mv plantuml.jar /usr/share/plantuml/
+   #+end_src
+
+*** Building and running (debian-based)
+
+    To install dependencies and build the application you can run the following commands:
+     #+begin_src bash :results output :shebang "#!/bin/bash"
+       mkdir build && cd build
+       conan install .. \
+         --options mimir:with_doc=True \
+         --build missing \
+         --settings compiler.libcxx=libstdc++11
+       conan build ..
+     #+end_src
+
+     You need to activate virtual environments to run the built application.
+     #+begin_src bash
+       . activate.sh     # Opensplice environment variables
+       . activate_run.sh # Dynamic libraries added to LD_LIBRARY_PATH
+       bin/mimir /path/to/config.yml
+     #+end_src
+
+     Note that if HSL solvers are to be used, they need to be enabled, for instance as
+     follows, where you provide an absolute path to your HSL source copy:
+     #+begin_src bash :results output :shebang "#!/bin/bash"
+       conan install .. \
+         -o casadi:with_common=True \
+         -o casadi:hsl=True \
+         -o coinhsl:hsl_archive=<path to coinhsl.tar.gz> \
+         -o ipopt:with_hsl=True
+     #+end_src
+
+
+*** Packaging into artifacts
+
+    The project builds into various artifacts on Linux.
+    + /.deb/ package, build target =package_it=.
+    + /.tar.gz/ archive, build target =package_it=.
+    + =conan package ..= will build all supported targets into the
+      =package= subdirectory of your build directory. You must call
+      =conan install ..= as described above first.
+
+    #+begin_warning
+      When building with conan, the /.deb/ packages will only be built
+      with very limited number of system package dependencies. This is
+      because the dependencies are bundled with the package to ensure
+      that the versions are as the built executable expects. Notable
+      exceptions are OpenMP and Fortran runtimes. They are guessed by
+      the compiler version used, but can be overridden by specifying
+      =MIMIR_OMP= and =MIMIR_FORTRAN_RT=, e.g. =libomp5= and
+      =libgfortran6=.
+    #+end_warning
+
+    - By default, the application loads a bundled config file. It can be overridden by
+      setting the environment variable: =export OSPL_URI=file:///path/to/ospl.xml=.
+    - *Note*, the automatically set =OSPL_URI= and =OSPL_HOME= only
+      works if you install to the default location specified by
+      =MIMIR_INSTALL_PREFIX= in =CMakeLists.txt=, it is =/opt/sintef=
+      with conan and =/usr/local= otherwise.
+
+** Windows
+*** Prerequisites
+
+    Prerequisites using =conan=. Most commands expect you to run with elevated privileges.
+    We make use of [[https://chocolatey.org/][chocolatey]] package manager for windows:
+    #+begin_src sh
+      powershell -Command Set-ExecutionPolicy Bypass -Scope Process -Force; \
+        [System.Net.ServicePointManager]::SecurityProtocol = \
+        [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; \
+        iex ((New-Object System.Net.WebClient).DownloadString( \
+        'https://chocolatey.org/install.ps1'))
+    #+end_src
+
+    #+begin_src sh
+      choco install -y python3 Wget
+      choco install -y cmake --installargs '"ADD_CMAKE_TO_PATH=System"'
+      choco install -y git.install --params "/GitAndUnixToolsOnPath"
+      python -m pip install setuptools wheel conan win-unicode-console
+    #+end_src
+
+    Microsoft Visual Studio build tools if they are not already installed.
+    These commands must to be run with =cmd.exe=.
+    *Note* that the =vs_buildtools.exe= will run in the background.
+    These steps are not necessary if you have Visual Studio with C++ compilers installed.
+    #+begin_src sh
+      mkdir C:\TEMP && cd C:\TEMP
+      wget https://aka.ms/vs/16/release/vs_buildtools.exe
+      vs_buildtools.exe --quiet --norestart --wait --nocache \
+        --installPath C:\BuildTools \
+        --add Microsoft.VisualStudio.Workload.MSBuildTools \
+        --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended
+      setx path "%path%;C:\BuildTools\Common7\Tools"
+    #+end_src
+
+    #+begin_tip
+      You may need to start new command window sessions between commands to load the new PATH variables.
+    #+end_tip
+
+*** Documentation prerequisites on Windows /(optional)/
+
+    #+begin_src sh
+      choco install -y doxygen.install emacs plantuml pandoc
+      choco install -y graphviz.portable --force # Maybe optional: 2.44 broken, downgrades to 2.38
+      python -m pip install -r docs/requirements.txt --upgrade
+      emacs -Q --batch -l docs/emacs-install-pkgs.el
+    #+end_src
+
+*** Building and running
+
+    To install dependencies and build the application you can run the following commands:
+     #+begin_src bash
+       mkdir build
+       cd build
+       conan install .. \
+         --options mimir:with_doc=True \
+         --build missing
+       conan build ..
+     #+end_src
+
+     You need to use a virtual environment to run the application.
+     - =activate.bat= sets =OSPL_URI= and =OSPL_HOME= environment variables.
+     - =activate_run.bat= sets =PATH= to directories with dynamic libraries.
+     #+begin_src bash
+       activate.bat
+       activate_run.bat
+       cd bin
+       mimir.exe -v 4 ../path/to/config.yml
+     #+end_src
+
+*** Packaging into installer and archive
+
+    The project is set up with packaging into an executable installer (/.exe./) and an
+    archive (/.tar.gz/) using the build target named =package_it=. The installer is made
+    with [[https://nsis.sourceforge.io/Main_Page][NSIS]] through CPack. NSIS and can be installed with chocolatey:
+    #+begin_src bash
+      choco install -y nsis
+    #+end_src
+
+    This step assumes that you have called =conan install= as described above.
+    #+begin_src bash
+      cd build
+      conan package ..
+      # or
+      cmake --build . --config Release --target package_it
+    #+end_src
+    - By default, the application loads a bundled configuration file =ospl.xml=. It can be
+      overridden by setting the environment variable: ~set OSPL_URI=file://C:\\path\\to\\ospl.xml~.
+    - *Note*, the automatically set =OSPL_URI= and =OSPL_HOME= only works if you install
+      to the default location specified by =MIMIR_INSTALL_PREFIX= in =CMakeLists.txt=,
+      which is =C:/Program Files/mimir-<version>=.
+
+    #+begin_tip
+      If the package is installed with docs, =WIN + "Mimir
+      Documentation'"= should link to the bundled html documentation.
+    #+end_tip

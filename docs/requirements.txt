@@ -1,0 +1,8 @@
+breathe
+Sphinx >= 4.0.0
+exhale
+sphinx-rtd-theme
+sphinxcontrib-plantuml
+sphinxcontrib-bibtex
+sphinxcontrib-svg2pdfconverter
+doc2dash
