@@ -67,7 +67,7 @@ jobs:
             -s build_type=${{ matrix.build_type }} \
             -s compiler.version=${{ matrix.compiler_version }} \
             -o mimir:with_doc=${{ matrix.with_doc }} \
-            -o yaml-ccp:shared=True
+            -o yaml-ccp:shared=True \
             -b missing -b outdated
           conan upload --all -c -r sintef openblas/* --retry 5 --retry-wait 30
           conan build ..
