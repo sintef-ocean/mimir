@@ -1,0 +1,754 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Class PursePlanner &mdash; mimir  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/eq_fix.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/enumerable.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/icon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="../_static/mathwork.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class PursePlannerFormulation" href="classmimir_1_1algorithm_1_1PursePlannerFormulation.html" />
+    <link rel="prev" title="Class Leadline" href="classmimir_1_1algorithm_1_1Leadline.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #00457c" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> mimir
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rst/intro.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/intro.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/intro.html#running-an-algorithm">Running an algorithm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/intro.html#yaml-config-file">YAML config file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/intro.html#interacting-with-the-algorithm">Interacting with the algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/installation.html">Build instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/installation.html#configuration-options-and-targets">Configuration options and targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/installation.html#linux">Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#prerequisites-debian-based">Prerequisites (debian-based)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#documentation-prerequisites-optional">Documentation prerequisites <em>(optional)</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#building-and-running-debian-based">Building and running (debian-based)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#packaging-into-artifacts">Packaging into artifacts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/installation.html#windows">Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#documentation-prerequisites-on-windows-optional">Documentation prerequisites on Windows <em>(optional)</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#building-and-running">Building and running</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#packaging-into-installer-and-archive">Packaging into installer and archive</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/extending.html">Creating a new algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Manpage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rst/usage.html">MIMIR</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#name">NAME</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#synopsis">SYNOPSIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#description">DESCRIPTION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#options">OPTIONS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#configuration">CONFIGURATION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#environment">ENVIRONMENT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#files">FILES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#example">EXAMPLE</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/usage.html#yaml-config-file">YAML config file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#notes">NOTES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#see-also">SEE ALSO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#copyright">COPYRIGHT</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Implementation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rst/formulation.html">Nonlinear programming formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#brief-introduction-to-nonlinear-programming-problems">Brief introduction to nonlinear programming problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#formulating-an-nlp-from-dae-ocp-and-discretization">Formulating an NLP from DAE, OCP and discretization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-formulation-overview">NLP formulation overview</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#receding-horizon">Receding horizon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#mathematical-notation">Mathematical notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#differential-algebraic-equations-daes">Differential-algebraic equations (DAEs)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#the-constrained-dae-initial-value-problem-ivp">The constrained DAE initial value problem (IVP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#optimal-control-problem-ocp">Optimal control problem (OCP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#discretization-of-the-continuous-time-ocp">Discretization of the continuous time OCP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#shooting-approaches">Shooting approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#collocation">Collocation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#nonlinear-programming-problem-nlp">Nonlinear programming problem (NLP)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#formulation-strategies-and-extensions">Formulation strategies and extensions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#helper-functions">Helper functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#adding-variable-bounds-add-nlp-variable-bounds">Adding variable bounds <code class="docutils literal notranslate"><span class="pre">::add_nlp_variable_bounds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#time-grid-function-create-solution-timegrid">Time grid function <code class="docutils literal notranslate"><span class="pre">::create_solution_timegrid</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-tuple-unpacker-create-solution-unpacker">NLP tuple unpacker <code class="docutils literal notranslate"><span class="pre">::create_solution_unpacker</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-decision-parameters-create-decision-parameter-extractor">NLP decision parameters <code class="docutils literal notranslate"><span class="pre">::create_decision_parameter_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-subsystem-extractor-create-system-extractor">NLP subsystem extractor <code class="docutils literal notranslate"><span class="pre">::create_system_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-shifter-create-horizon-shifter">NLP shifter <code class="docutils literal notranslate"><span class="pre">::create_horizon_shifter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-trajectory-create-trajectory-function">NLP trajectory <code class="docutils literal notranslate"><span class="pre">::create_trajectory_function</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/planner.html">Path planner for deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/planner.html#motivation-and-rationale">Motivation and rationale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/planner.html#problem-statement-of-the-purse-seine-path-planner">Problem statement of the purse seine path planner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/planner.html#purse-planner-formulation">Purse planner formulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#notation">Notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#sea-current-and-surface-current-water-frame">Sea current and surface current water frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#fishing-vessel">Fishing vessel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#fish-school">Fish school</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#leadline-sinking-response">Leadline sinking response</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#purse-planner-criteria">Purse planner criteria</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../rst/planner.html#objective-function-terms">Objective function terms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#nonlinear-programming-problem-for-purse-seine-deployment">Nonlinear programming problem for purse seine deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#receding-horizon">Receding horizon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#discussion-on-solution-strategies-and-improvements">Discussion on solution strategies and improvements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/planner.html#appendix">Appendix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#regularly-parameterized-paths-and-path-following">Regularly parameterized paths and path following</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../rst/planner.html#regularly-parameterized-paths">Regularly parameterized paths</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rst/planner.html#path-tangential-frame-and-arc-length">Path-tangential frame and arc length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rst/planner.html#particle-feedback-laws">Particle feedback laws</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rst/planner.html#slip-angle">Slip angle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/libraries.html">A note on library dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/yamlconfig.html">YAML configuration files and schemas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/yamlconfig.html#purse-planner-configuration-schema">Purse planner configuration schema</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../api/library-api.html">Public API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#items-listing">Items listing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/library-api.html#namespaces">Namespaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/namespace_mimir.html">Namespace mimir</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/library-api.html#classes-and-structs">Classes and Structs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classmimir_1_1IAlgorithm.html">Class IAlgorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="library-api-private.html">Private API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="library-api-private.html#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="library-api-private.html#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="library-api-private.html#items-listing">Items listing</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="library-api-private.html#namespaces">Namespaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="namespace_mimir.html">Namespace mimir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="namespace_mimir__algorithm.html">Namespace mimir::algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="namespace_mimir__control.html">Namespace mimir::control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="namespace_mimir__detail.html">Namespace mimir::detail</a></li>
+<li class="toctree-l4"><a class="reference internal" href="namespace_mimir__program.html">Namespace mimir::program</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="reference internal" href="library-api-private.html#classes-and-structs">Classes and Structs</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1algorithm_1_1NlpProblemBuilder.html">Struct NlpProblemBuilder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1algorithm_1_1NlpStructure.html">Struct NlpStructure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1Evaluating.html">Struct Evaluating</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvError.html">Struct EvError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvInterrupt.html">Struct EvInterrupt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvKill.html">Struct EvKill</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvReady.html">Struct EvReady</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvRestart.html">Struct EvRestart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvRunningOK.html">Struct EvRunningOK</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvStart.html">Struct EvStart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvStop.html">Struct EvStop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvTimeout.html">Struct EvTimeout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1Initializing.html">Struct Initializing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1Running.html">Struct Running</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1ShutDown.html">Struct ShutDown</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1Standby.html">Struct Standby</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1StateMachine.html">Struct StateMachine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1Waiting.html">Struct Waiting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1FishSchool.html">Class FishSchool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1KinematicVessel.html">Class KinematicVessel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1Leadline.html">Class Leadline</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Class PursePlanner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1PursePlannerFormulation.html">Class PursePlannerFormulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1TestAlgorithm.html">Class TestAlgorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1control_1_1CommandListener.html">Template Class CommandListener</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1control_1_1CommandResponder.html">Class CommandResponder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1control_1_1StateNotifier.html">Class StateNotifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1Options.html">Class Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="library-api-private.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1a3aefdada3944d997af13a71cded2ba72.html">Function mimir::AlgorithmCreator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1detail_1a4edbe193d90ba66d98d42b380008c618.html">Function mimir::detail::NotifierQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1detail_1ab2f8aaf370c0379e1e5ed16cdfd819c3.html">Function mimir::detail::RepWriterQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1detail_1a495352727411b7952358e031d0b4398e.html">Function mimir::detail::ReqReaderQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1program_1a7337f2e8311a587cd0c5683bb0f9c38e.html">Function mimir::program::parse_config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1program_1a61839fde6d16792c4662769b5116da05.html">Function mimir::program::read_doc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1program_1a0322295105de34488b656521c2c13e49.html">Function mimir::program::read_leaf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1program_1afe086b58811123bc3ba0b551d350f38e.html">Function mimir::program::read_list</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1program_1abe1e85d21335ab8c9c36ff4c84f648cf.html">Function mimir::program::read_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1a79d81e727aac93be814fb51da9fef88a.html">Function mimir::SIGTERMHandler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1a60f83e0bee821b6af5a9444be2ebe445.html">Function mimir::transform_severity</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="library-api-private.html#variables">Variables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="variable_namespacemimir_1a8a483b262641a4af7cfab764663d851a.html">Variable mimir::signaled</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/zbibliography.html">Bibliography</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">mimir</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="library-api-private.html">Private API</a> &raquo;</li>
+        
+      <li>Class PursePlanner</li>
+    
+    
+
+<li class="wy-breadcrumbs-aside">
+  <a href="https://github.com/sintef-ocean/mimir" class="fa fa-github"> Source on GitHub</a>
+  <a href="https://docs.sintef.io" class="icon icon-home"> docs.sintef.io</a>
+</li>
+
+
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="classmimir_1_1algorithm_1_1PursePlannerFormulation.html" class="btn btn-neutral float-right" title="Class PursePlannerFormulation" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="classmimir_1_1algorithm_1_1Leadline.html" class="btn btn-neutral float-left" title="Class Leadline" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-purseplanner">
+<span id="exhale-class-classmimir-1-1algorithm-1-1purseplanner"></span><h1>Class PursePlanner<a class="headerlink" href="#class-purseplanner" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_mimir_algorithm_PursePlanner.hpp.html#file-src-mimir-algorithm-purseplanner-hpp"><span class="std std-ref">File PursePlanner.hpp</span></a></p></li>
+</ul>
+<div class="section" id="inheritance-relationships">
+<h2>Inheritance Relationships<a class="headerlink" href="#inheritance-relationships" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="base-type">
+<h3>Base Type<a class="headerlink" href="#base-type" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">IAlgorithm</span></code></p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="class-documentation">
+<h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlannerE">
+<span id="_CPPv3N5mimir9algorithm12PursePlannerE"></span><span id="_CPPv2N5mimir9algorithm12PursePlannerE"></span><span id="mimir::algorithm::PursePlanner"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">mimir</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">PursePlanner</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../api/classmimir_1_1IAlgorithm.html#_CPPv4N5mimir10IAlgorithmE" title="mimir::IAlgorithm"><span class="n"><span class="pre">IAlgorithm</span></span></a><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlannerE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Purse seine deployment planner algorithm wrapper. </p>
+<p><p><p>This class wraps the optimization planner algorithm formulated in
+<a class="reference internal" href="classmimir_1_1algorithm_1_1PursePlannerFormulation.html#_CPPv4N5mimir9algorithm23PursePlannerFormulationE" title="mimir::algorithm::PursePlannerFormulation"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">mimir::algorithm::PursePlannerFormulation</span></code></a> into the <a class="reference internal" href="../api/classmimir_1_1IAlgorithm.html#_CPPv4N5mimir10IAlgorithmE" title="mimir::IAlgorithm"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">mimir::IAlgorithm</span></code></a>
+interface.</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Add table with input, output parameters.</p>
+</div>
+</p>
+ </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner12PursePlannerERKN4YAML4NodeERN5boost10statechart14fifo_schedulerIEEN5boost10statechart14fifo_schedulerIE16processor_handleEN3dds3pub9PublisherEN3dds3sub10SubscriberE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner12PursePlannerERKN4YAML4NodeERN5boost10statechart14fifo_schedulerIEEN5boost10statechart14fifo_schedulerIE16processor_handleEN3dds3pub9PublisherEN3dds3sub10SubscriberE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner12PursePlannerERKN4YAML4NodeERN5boost10statechart14fifo_schedulerIEEN5boost10statechart14fifo_schedulerIE16processor_handleEN3dds3pub9PublisherEN3dds3sub10SubscriberE"></span><span id="mimir::algorithm::PursePlanner::PursePlanner__YAML::NodeCR.boost::statechart::fifo_scheduler::R.boost::statechart::fifo_scheduler::::processor_handle.dds::pub::Publisher.dds::sub::Subscriber"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1ab9c1e1a4af173adf04e281a1672cc476"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PursePlanner</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">YAML</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Node</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">config</span></span>, <span class="n"><span class="pre">boost</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">statechart</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">fifo_scheduler</span></span><span class="p"><span class="pre">&lt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scheduler</span></span>, <span class="n"><span class="pre">boost</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">statechart</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">fifo_scheduler</span></span><span class="p"><span class="pre">&lt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">processor_handle</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">machine</span></span>, <span class="n"><span class="pre">dds</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">pub</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Publisher</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">publisher</span></span>, <span class="n"><span class="pre">dds</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">sub</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Subscriber</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">subscriber</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner12PursePlannerERKN4YAML4NodeERN5boost10statechart14fifo_schedulerIEEN5boost10statechart14fifo_schedulerIE16processor_handleEN3dds3pub9PublisherEN3dds3sub10SubscriberE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><a class="reference internal" href="#classmimir_1_1algorithm_1_1PursePlanner"><span class="std std-ref">PursePlanner</span></a> constructor. </p>
+<p><p>The constructor parses the specification from the given YAML node. It establishes
+data structures and sets up DDS readers and writers according to the input/output
+scheme of the algorithm. The following YAML code block shows the expected layout
+of the <code class="docutils literal notranslate"><span class="pre">PursePlanner</span></code> map of a input config file.  The inputs, outputs,
+parameters, and initial conditions are communicated with DDS communication
+(settings are fixed). Common is their DDS topic and DDS identifier. The
+PursePlanner has a potentially large input file, because of the variety of
+formulation approach and solvers involved. Configuration may be propagated to
+casadi to be parsed according to a solver’s supported settings. Currently, the
+YAML configuration file comes with its schema together with the specification.
+This is because some settings, for instance a solver’s options must be detailed
+with data type, so that the parser is able to cast the input to appropriate type
+expected by the solver interfaces.
+See <a class="reference internal" href="../rst/yamlconfig.html#purse-planner-configuration-schema"><span class="std std-ref">Purse planner configuration schema</span></a>.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">config</span><span class="p">:</span>
+  <span class="nt">initial_condition</span><span class="p">:</span>     <span class="p p-Indicator">{</span><span class="nt"> x0</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span> <span class="nv">0</span><span class="p p-Indicator">,</span> <span class="nv">0</span><span class="p p-Indicator">,</span> <span class="nv">0</span><span class="p p-Indicator">,</span> <span class="nv">100</span><span class="p p-Indicator">,</span> <span class="nv">200</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}</span>
+  <span class="nt">parameters</span><span class="p">:</span>
+    <span class="nt">setting_speed</span><span class="p">:</span>       <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">balder_setting_speed</span><span class="p p-Indicator">,</span><span class="nt">        id</span><span class="p">:</span> <span class="nv">PursePlanner</span><span class="p p-Indicator">,</span><span class="nt"> default</span><span class="p">:</span> <span class="nv">6</span> <span class="p p-Indicator">}</span>
+    <span class="nt">setting_radius</span><span class="p">:</span>      <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">balder_setting_radius</span><span class="p p-Indicator">,</span><span class="nt">       id</span><span class="p">:</span> <span class="nv">PursePlanner</span><span class="p p-Indicator">,</span><span class="nt"> default</span><span class="p">:</span> <span class="nv">150</span> <span class="p p-Indicator">}</span>
+    <span class="nt">aim_point_arc</span><span class="p">:</span>       <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">balder_aim_point_arc_length</span><span class="p p-Indicator">,</span><span class="nt"> id</span><span class="p">:</span> <span class="nv">PursePlanner</span><span class="p p-Indicator">,</span><span class="nt"> default</span><span class="p">:</span> <span class="nv">471</span> <span class="p p-Indicator">}</span>
+    <span class="nt">leadline</span><span class="p">:</span>            <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">balder_leadline_parameters</span><span class="p p-Indicator">,</span><span class="nt">  id</span><span class="p">:</span> <span class="nv">Leadline</span><span class="p p-Indicator">,</span><span class="nt">     default</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">330</span><span class="p p-Indicator">,</span> <span class="nv">160</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}</span>
+    <span class="nt">current_surface</span><span class="p">:</span>     <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">balder_current_surface</span><span class="p p-Indicator">,</span><span class="nt">      default</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span> <span class="nv">0</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}</span>
+    <span class="nt">current_fish</span><span class="p">:</span>        <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">balder_current_fish</span><span class="p p-Indicator">,</span><span class="nt">         default</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span> <span class="nv">0</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}</span>
+    <span class="nt">fish_water_velocity</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">balder_fish_water_velocity</span><span class="p p-Indicator">,</span><span class="nt">  default</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">0</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}</span>
+    <span class="nt">fish_depth</span><span class="p">:</span>          <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">balder_fish_depth</span><span class="p p-Indicator">,</span><span class="nt">           id</span><span class="p">:</span> <span class="nv">Fish</span><span class="p p-Indicator">,</span><span class="nt"> default</span><span class="p">:</span> <span class="nv">50</span> <span class="p p-Indicator">}</span>
+
+  <span class="nt">inputs</span><span class="p">:</span>
+    <span class="nt">GPS_origin</span><span class="p">:</span>          <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">mimir_gps_origin</span><span class="p p-Indicator">,</span><span class="nt">            default</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">63.4581027</span><span class="p p-Indicator">,</span> <span class="nv">10.3683367</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}</span>
+    <span class="nt">vessel_pos_info</span><span class="p">:</span>     <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">vessel_global_pos_vel</span> <span class="p p-Indicator">}</span>      <span class="c1"># should max_age_ms</span>
+    <span class="nt">vessel_gyro_info</span><span class="p">:</span>    <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">vessel_heading_rot</span> <span class="p p-Indicator">}</span>
+    <span class="nt">fish_pos_info</span><span class="p">:</span>       <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">fish_global_pos_vel</span> <span class="p p-Indicator">}</span>
+    <span class="nt">fish_relative_pos</span><span class="p">:</span>   <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">fish_relative_pos_3d</span> <span class="p p-Indicator">}</span>
+  <span class="nt">outputs</span><span class="p">:</span>
+    <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">PursePlanner</span>
+    <span class="nt">trajectory_vessel</span><span class="p">:</span>   <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">mimir_vessel_trajectory</span> <span class="p p-Indicator">}</span>
+    <span class="nt">trajectory_fish</span><span class="p">:</span>     <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">mimir_fish_trajectory</span> <span class="p p-Indicator">}</span>
+    <span class="nt">nlp_config</span><span class="p">:</span>          <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">mimir_nlp_config</span> <span class="p p-Indicator">}</span>
+    <span class="nt">nlp_stats</span><span class="p">:</span>           <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">mimir_nlp_stats</span> <span class="p p-Indicator">}</span>
+    <span class="nt">vessel_speed</span><span class="p">:</span>        <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">vessel_speed_command</span> <span class="p p-Indicator">}</span>
+    <span class="nt">vessel_heading_rate</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">vessel_heading_rate_command</span> <span class="p p-Indicator">}</span>
+    <span class="nt">deploy_position</span><span class="p">:</span>     <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">vessel_deploy_position</span> <span class="p p-Indicator">}</span>
+    <span class="nt">collide_position</span><span class="p">:</span>    <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="nv">fish_collide_position</span> <span class="p p-Indicator">}</span>
+
+  <span class="nt">settings</span><span class="p">:</span>
+    <span class="nt">plot</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+    <span class="nt">time_step_ms</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3000</span>
+    <span class="nt">nlp</span><span class="p">:</span>
+      <span class="nt">horizon_length</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">240</span>
+      <span class="nt">formulation</span><span class="p">:</span>
+        <span class="nt">heading_rot_max</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.10</span>
+        <span class="nt">heading_acc_max</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">6.28</span>
+        <span class="nt">deploy_clockwise</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+        <span class="nt">objective</span><span class="p">:</span>
+          <span class="nt">vessel_fish_distance</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.001</span>
+          <span class="nt">heading_rate</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.1</span>
+          <span class="nt">heading_acceleration</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.05</span>
+          <span class="nt">heading_post_deploy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">200</span>
+          <span class="nt">vessel_fish_distance_violation</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
+          <span class="nt">leadline_reward</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.00</span>
+          <span class="nt">aim_reward</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+      <span class="nt">with_callback</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+      <span class="nt">solver</span><span class="p">:</span>
+        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ipopt</span>
+        <span class="nt">options</span><span class="p">:</span>
+          <span class="nv">*ipopt-options</span>
+      <span class="nt">discretization</span><span class="p">:</span>
+        <span class="nv">*colloc-settings</span>
+
+    <span class="nt">integrator</span><span class="p">:</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">collocation</span>
+      <span class="nt">options</span><span class="p">:</span>
+        <span class="nt">print_stats</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+        <span class="c1">#abstol: 1e-6</span>
+        <span class="nt">collocation_scheme</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">legendre</span>
+        <span class="nt">interpolation_order</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
+        <span class="nt">number_of_finite_elements</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">60</span>
+
+<span class="nt">schema</span><span class="p">:</span>
+  <span class="nv">*documented-elsewhere</span>
+</pre></div>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> – <strong>[in]</strong> YAML configuration from input file. </p></li>
+<li><p><strong>scheduler</strong> – <strong>[in]</strong> State machine scheduler, needed to post events to state machine. </p></li>
+<li><p><strong>machine</strong> – <strong>[in]</strong> State machine processor handle, needed to post events to state machine. </p></li>
+<li><p><strong>publisher</strong> – DDS data writer to send data. </p></li>
+<li><p><strong>subscriber</strong> – DDS data reader to receive data. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlannerD0Ev">
+<span id="_CPPv3N5mimir9algorithm12PursePlannerD0Ev"></span><span id="_CPPv2N5mimir9algorithm12PursePlannerD0Ev"></span><span id="mimir::algorithm::PursePlanner::~PursePlanner"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1aec513d6b33b447b4437ddf5081b7a302"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~PursePlanner</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlannerD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner5solveERKNSt6atomicIbEE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner5solveERKNSt6atomicIbEE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner5solveERKNSt6atomicIbEE"></span><span id="mimir::algorithm::PursePlanner::solve__std::atomic:b:CR"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1ad6604984d92c3569553e0af8541c13ee"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">solve</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">atomic</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">cancel_token</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner5solveERKNSt6atomicIbEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>See base class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner10initializeERKNSt6atomicIbEE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner10initializeERKNSt6atomicIbEE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner10initializeERKNSt6atomicIbEE"></span><span id="mimir::algorithm::PursePlanner::initialize__std::atomic:b:CR"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1aa34b898ef7cd6f14da41940952662f45"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">initialize</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">atomic</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">cancel_token</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner10initializeERKNSt6atomicIbEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>See base class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner5timerERKNSt6atomicIbEE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner5timerERKNSt6atomicIbEE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner5timerERKNSt6atomicIbEE"></span><span id="mimir::algorithm::PursePlanner::timer__std::atomic:b:CR"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a7eaab7cd506bb5a357af16bdb914e6a9"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timer</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">atomic</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">cancel_token</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner5timerERKNSt6atomicIbEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>See base class. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner4nameEv">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner4nameEv"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner4nameEv"></span><span id="mimir::algorithm::PursePlanner::name"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a50d3a8a67cb271680507deb7a7f943fc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">name</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner4nameEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Name identifier of algorithm. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner5eventEPCN5boost10statechart10event_baseE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner5eventEPCN5boost10statechart10event_baseE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner5eventEPCN5boost10statechart10event_baseE"></span><span id="mimir::algorithm::PursePlanner::event__boost::statechart::event_basePC"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1af4f026fdc2313e88c1cf63fafbeba4cb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">event</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">boost</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">statechart</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">event_base</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">event</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner5eventEPCN5boost10statechart10event_baseE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Helper function that queues event to state machine. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner12PursePlannerERK12PursePlanner">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner12PursePlannerERK12PursePlanner"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner12PursePlannerERK12PursePlanner"></span><span id="mimir::algorithm::PursePlanner::PursePlanner__PursePlannerCR"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a7ef6ed8426a47430c847429198b677cc"></span><span class="sig-name descname"><span class="n"><span class="pre">PursePlanner</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N5mimir9algorithm12PursePlanner12PursePlannerERK12PursePlanner" title="mimir::algorithm::PursePlanner::PursePlanner"><span class="n"><span class="pre">PursePlanner</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner12PursePlannerERK12PursePlanner" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanneraSERK12PursePlanner">
+<span id="_CPPv3N5mimir9algorithm12PursePlanneraSERK12PursePlanner"></span><span id="_CPPv2N5mimir9algorithm12PursePlanneraSERK12PursePlanner"></span><span id="mimir::algorithm::PursePlanner::assign-operator__PursePlannerCR"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a546085633fb2809794e54440346d6d97"></span><a class="reference internal" href="#_CPPv4N5mimir9algorithm12PursePlannerE" title="mimir::algorithm::PursePlanner"><span class="n"><span class="pre">PursePlanner</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N5mimir9algorithm12PursePlannerE" title="mimir::algorithm::PursePlanner"><span class="n"><span class="pre">PursePlanner</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanneraSERK12PursePlanner" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner12PursePlannerERR12PursePlanner">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner12PursePlannerERR12PursePlanner"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner12PursePlannerERR12PursePlanner"></span><span id="mimir::algorithm::PursePlanner::PursePlanner__PursePlannerRR"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1ac0e97d4b9c3cadad0c77fdb8ce823370"></span><span class="sig-name descname"><span class="n"><span class="pre">PursePlanner</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5mimir9algorithm12PursePlanner12PursePlannerERR12PursePlanner" title="mimir::algorithm::PursePlanner::PursePlanner"><span class="n"><span class="pre">PursePlanner</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner12PursePlannerERR12PursePlanner" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanneraSERR12PursePlanner">
+<span id="_CPPv3N5mimir9algorithm12PursePlanneraSERR12PursePlanner"></span><span id="_CPPv2N5mimir9algorithm12PursePlanneraSERR12PursePlanner"></span><span id="mimir::algorithm::PursePlanner::assign-operator__PursePlannerRR"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a1d13c7f14633eaff8f24be61344b6faa"></span><a class="reference internal" href="#_CPPv4N5mimir9algorithm12PursePlannerE" title="mimir::algorithm::PursePlanner"><span class="n"><span class="pre">PursePlanner</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5mimir9algorithm12PursePlannerE" title="mimir::algorithm::PursePlanner"><span class="n"><span class="pre">PursePlanner</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanneraSERR12PursePlanner" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner9step_timeEv">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner9step_timeEv"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner9step_timeEv"></span><span id="mimir::algorithm::PursePlanner::step_time"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a1184d65953fed535d90c41d7988a017f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">step_time</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner9step_timeEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>March simulation time one time step ahead. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner4plotEb">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner4plotEb"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner4plotEb"></span><span id="mimir::algorithm::PursePlanner::plot__b"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a403ad0cfe8779fa15392e3f0daf5a299"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">plot</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">do_plot</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner4plotEb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Blot with Gnuplot (if enabled) </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner15read_parametersEv">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner15read_parametersEv"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner15read_parametersEv"></span><span id="mimir::algorithm::PursePlanner::read_parameters"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a62a2807ff8f14260fe4ab70a90e26dd7"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">read_parameters</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner15read_parametersEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Read parameters. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner11read_inputsEv">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner11read_inputsEv"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner11read_inputsEv"></span><span id="mimir::algorithm::PursePlanner::read_inputs"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a3dd6b7f95982137376d50bec36226ba1"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">read_inputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner11read_inputsEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Read inputs. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner12PursePlannerEv">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner12PursePlannerEv"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner12PursePlannerEv"></span><span id="mimir::algorithm::PursePlanner::PursePlanner"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1ab7d28ef1e3bc817772126659ce22a62a"></span><span class="sig-name descname"><span class="n"><span class="pre">PursePlanner</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner12PursePlannerEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner5modelEv">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner5modelEv"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner5modelEv"></span><span id="mimir::algorithm::PursePlanner::model"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a7164910d92c13065f8b90f983b564e5c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">Impl</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">model</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner5modelEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Pointer to implementation (model) container. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner6m_implE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner6m_implE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner6m_implE"></span><span id="mimir::algorithm::PursePlanner::m_impl__std::unique_ptr:Impl:"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a13bd4aaf7a2e043c3f59397317078e6e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">Impl</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_impl</span></span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner6m_implE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Holds the implementation of the algorithm. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner11m_schedulerE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner11m_schedulerE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner11m_schedulerE"></span><span id="mimir::algorithm::PursePlanner::m_scheduler__boost::statechart::fifo_schedulerR"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a13a164ceaca852a7f437cbfd5b5a20b6"></span><span class="n"><span class="pre">boost</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">statechart</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">fifo_scheduler</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">m_scheduler</span></span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner11m_schedulerE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Members for state machine. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner14m_stateMachineE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner14m_stateMachineE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner14m_stateMachineE"></span><span id="mimir::algorithm::PursePlanner::m_stateMachine__boost::statechart::fifo_scheduler::processor_handle"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1ae481c34dd55b01673ba129d9e671ac8b"></span><span class="n"><span class="pre">boost</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">statechart</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">fifo_scheduler</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">processor_handle</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_stateMachine</span></span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner14m_stateMachineE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Members for state machine. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner11m_time_stepE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner11m_time_stepE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner11m_time_stepE"></span><span id="mimir::algorithm::PursePlanner::m_time_step__std::chrono::millisecondsC"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a290bad175209811bf9809196568921f2"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">chrono</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">milliseconds</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_time_step</span></span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner11m_time_stepE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Discrete time step. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner4m_t0E">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner4m_t0E"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner4m_t0E"></span><span id="mimir::algorithm::PursePlanner::m_t0__std::chrono::steady_clock::time_point"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a5f27e90b1f22e0e773cf4a2c1080295c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">chrono</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">steady_clock</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">time_point</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_t0</span></span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner4m_t0E" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Internal clock <span class="math notranslate nohighlight">\(t_0\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner11m_next_stepE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner11m_next_stepE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner11m_next_stepE"></span><span id="mimir::algorithm::PursePlanner::m_next_step__std::chrono::steady_clock::time_point"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a90192fe8044dece0f33b4073dd9d9a59"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">chrono</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">steady_clock</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">time_point</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_next_step</span></span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner11m_next_stepE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Simulation time point. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner9m_t0_wallE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner9m_t0_wallE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner9m_t0_wallE"></span><span id="mimir::algorithm::PursePlanner::m_t0_wall__std::chrono::system_clock::time_point"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1aa5c40ca6a82481afe7e93b5c07882d85"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">chrono</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">system_clock</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">time_point</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_t0_wall</span></span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner9m_t0_wallE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Wallclock <span class="math notranslate nohighlight">\(t_0\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner8m_configE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner8m_configE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner8m_configE"></span><span id="mimir::algorithm::PursePlanner::m_config__YAML::NodeC"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1af072d2655f4c0e45122074bc722e7ede"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">YAML</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Node</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_config</span></span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner8m_configE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>YAML configuration for algorithm. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner9m_retriesE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner9m_retriesE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner9m_retriesE"></span><span id="mimir::algorithm::PursePlanner::m_retries__std::uint8_t"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a71921e51a2571933a07243ffb0662c96"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_retries</span></span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner9m_retriesE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir9algorithm12PursePlanner15m_keep_solutionE">
+<span id="_CPPv3N5mimir9algorithm12PursePlanner15m_keep_solutionE"></span><span id="_CPPv2N5mimir9algorithm12PursePlanner15m_keep_solutionE"></span><span id="mimir::algorithm::PursePlanner::m_keep_solution__b"></span><span class="target" id="classmimir_1_1algorithm_1_1PursePlanner_1a73a780782501a006723a49a8b848e123"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">m_keep_solution</span></span></span><a class="headerlink" href="#_CPPv4N5mimir9algorithm12PursePlanner15m_keep_solutionE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="classmimir_1_1algorithm_1_1PursePlannerFormulation.html" class="btn btn-neutral float-right" title="Class PursePlannerFormulation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="classmimir_1_1algorithm_1_1Leadline.html" class="btn btn-neutral float-left" title="Class Leadline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, SINTEF Ocean.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. <jinja2.runtime.BlockReference object at 0x7f6b7f99e0d0>
+
+<br /><br />
+<table>
+  <tr>
+    <td width="120" style="vertical-align:middle;text-align:center">
+      <img alt="FHF" style="border-width:0" width="100" src="../_static/FHF-black-txt.png" />
+    </td>
+    <td>
+      This work was funded by <a href="https://www.fhf.no/fhf/about-fhf-english">FHF &ndash; Norwegian Seafood Research Fund</a> with <a href="https://www.fhf.no/prosjekter/prosjektbasen/901350/">Grant No. 901350</a>.<br /><br />
+    </td>
+  </tr>
+  <tr>
+    <td width="32" style="vertical-align:middle;text-align:center">
+      <img alt="Apache License, Version 2.0" style="border-width:0" width="32" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Apache_Feather_Logo.svg" />
+    </td>
+    <td>
+      This work is licensed under the Apache License, Version 2.0 (the "License").
+      You may obtain a copy of the License at
+      <a rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a><br />
+      Unless required by applicable law or agreed to in writing,
+      software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+      WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+      specific language governing permissions and limitations under the License.
+    </td>
+  </tr>
+</table>
+
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

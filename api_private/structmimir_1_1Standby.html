@@ -1,0 +1,517 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Struct Standby &mdash; mimir  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/eq_fix.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/enumerable.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/icon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/mathwork.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Struct StateMachine" href="structmimir_1_1StateMachine.html" />
+    <link rel="prev" title="Struct ShutDown" href="structmimir_1_1ShutDown.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #00457c" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> mimir
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rst/intro.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/intro.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/intro.html#running-an-algorithm">Running an algorithm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/intro.html#yaml-config-file">YAML config file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/intro.html#interacting-with-the-algorithm">Interacting with the algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/installation.html">Build instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/installation.html#configuration-options-and-targets">Configuration options and targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/installation.html#linux">Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#prerequisites-debian-based">Prerequisites (debian-based)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#documentation-prerequisites-optional">Documentation prerequisites <em>(optional)</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#building-and-running-debian-based">Building and running (debian-based)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#packaging-into-artifacts">Packaging into artifacts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/installation.html#windows">Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#documentation-prerequisites-on-windows-optional">Documentation prerequisites on Windows <em>(optional)</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#building-and-running">Building and running</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/installation.html#packaging-into-installer-and-archive">Packaging into installer and archive</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/extending.html">Creating a new algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Manpage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rst/usage.html">MIMIR</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#name">NAME</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#synopsis">SYNOPSIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#description">DESCRIPTION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#options">OPTIONS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#configuration">CONFIGURATION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#environment">ENVIRONMENT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#files">FILES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#example">EXAMPLE</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/usage.html#yaml-config-file">YAML config file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#notes">NOTES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#see-also">SEE ALSO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/usage.html#copyright">COPYRIGHT</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Implementation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rst/formulation.html">Nonlinear programming formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#brief-introduction-to-nonlinear-programming-problems">Brief introduction to nonlinear programming problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#formulating-an-nlp-from-dae-ocp-and-discretization">Formulating an NLP from DAE, OCP and discretization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-formulation-overview">NLP formulation overview</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#receding-horizon">Receding horizon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#mathematical-notation">Mathematical notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#differential-algebraic-equations-daes">Differential-algebraic equations (DAEs)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#the-constrained-dae-initial-value-problem-ivp">The constrained DAE initial value problem (IVP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#optimal-control-problem-ocp">Optimal control problem (OCP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#discretization-of-the-continuous-time-ocp">Discretization of the continuous time OCP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#shooting-approaches">Shooting approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#collocation">Collocation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#nonlinear-programming-problem-nlp">Nonlinear programming problem (NLP)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#formulation-strategies-and-extensions">Formulation strategies and extensions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/formulation.html#helper-functions">Helper functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#adding-variable-bounds-add-nlp-variable-bounds">Adding variable bounds <code class="docutils literal notranslate"><span class="pre">::add_nlp_variable_bounds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#time-grid-function-create-solution-timegrid">Time grid function <code class="docutils literal notranslate"><span class="pre">::create_solution_timegrid</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-tuple-unpacker-create-solution-unpacker">NLP tuple unpacker <code class="docutils literal notranslate"><span class="pre">::create_solution_unpacker</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-decision-parameters-create-decision-parameter-extractor">NLP decision parameters <code class="docutils literal notranslate"><span class="pre">::create_decision_parameter_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-subsystem-extractor-create-system-extractor">NLP subsystem extractor <code class="docutils literal notranslate"><span class="pre">::create_system_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-shifter-create-horizon-shifter">NLP shifter <code class="docutils literal notranslate"><span class="pre">::create_horizon_shifter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/formulation.html#nlp-trajectory-create-trajectory-function">NLP trajectory <code class="docutils literal notranslate"><span class="pre">::create_trajectory_function</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/planner.html">Path planner for deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/planner.html#motivation-and-rationale">Motivation and rationale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/planner.html#problem-statement-of-the-purse-seine-path-planner">Problem statement of the purse seine path planner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/planner.html#purse-planner-formulation">Purse planner formulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#notation">Notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#sea-current-and-surface-current-water-frame">Sea current and surface current water frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#fishing-vessel">Fishing vessel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#fish-school">Fish school</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#leadline-sinking-response">Leadline sinking response</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#purse-planner-criteria">Purse planner criteria</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../rst/planner.html#objective-function-terms">Objective function terms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#nonlinear-programming-problem-for-purse-seine-deployment">Nonlinear programming problem for purse seine deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#receding-horizon">Receding horizon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#discussion-on-solution-strategies-and-improvements">Discussion on solution strategies and improvements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../rst/planner.html#appendix">Appendix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../rst/planner.html#regularly-parameterized-paths-and-path-following">Regularly parameterized paths and path following</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../rst/planner.html#regularly-parameterized-paths">Regularly parameterized paths</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rst/planner.html#path-tangential-frame-and-arc-length">Path-tangential frame and arc length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rst/planner.html#particle-feedback-laws">Particle feedback laws</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rst/planner.html#slip-angle">Slip angle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/libraries.html">A note on library dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/yamlconfig.html">YAML configuration files and schemas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rst/yamlconfig.html#purse-planner-configuration-schema">Purse planner configuration schema</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../api/library-api.html">Public API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#items-listing">Items listing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/library-api.html#namespaces">Namespaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/namespace_mimir.html">Namespace mimir</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/library-api.html#classes-and-structs">Classes and Structs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classmimir_1_1IAlgorithm.html">Class IAlgorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="library-api-private.html">Private API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="library-api-private.html#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="library-api-private.html#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="library-api-private.html#items-listing">Items listing</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="library-api-private.html#namespaces">Namespaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="namespace_mimir.html">Namespace mimir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="namespace_mimir__algorithm.html">Namespace mimir::algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="namespace_mimir__control.html">Namespace mimir::control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="namespace_mimir__detail.html">Namespace mimir::detail</a></li>
+<li class="toctree-l4"><a class="reference internal" href="namespace_mimir__program.html">Namespace mimir::program</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="reference internal" href="library-api-private.html#classes-and-structs">Classes and Structs</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1algorithm_1_1NlpProblemBuilder.html">Struct NlpProblemBuilder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1algorithm_1_1NlpStructure.html">Struct NlpStructure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1Evaluating.html">Struct Evaluating</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvError.html">Struct EvError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvInterrupt.html">Struct EvInterrupt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvKill.html">Struct EvKill</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvReady.html">Struct EvReady</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvRestart.html">Struct EvRestart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvRunningOK.html">Struct EvRunningOK</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvStart.html">Struct EvStart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvStop.html">Struct EvStop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1EvTimeout.html">Struct EvTimeout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1Initializing.html">Struct Initializing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1Running.html">Struct Running</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1ShutDown.html">Struct ShutDown</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Struct Standby</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1StateMachine.html">Struct StateMachine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="structmimir_1_1Waiting.html">Struct Waiting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1FishSchool.html">Class FishSchool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1KinematicVessel.html">Class KinematicVessel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1Leadline.html">Class Leadline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1PursePlanner.html">Class PursePlanner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1PursePlannerFormulation.html">Class PursePlannerFormulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1algorithm_1_1TestAlgorithm.html">Class TestAlgorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1control_1_1CommandListener.html">Template Class CommandListener</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1control_1_1CommandResponder.html">Class CommandResponder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1control_1_1StateNotifier.html">Class StateNotifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="classmimir_1_1Options.html">Class Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="library-api-private.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1a3aefdada3944d997af13a71cded2ba72.html">Function mimir::AlgorithmCreator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1detail_1a4edbe193d90ba66d98d42b380008c618.html">Function mimir::detail::NotifierQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1detail_1ab2f8aaf370c0379e1e5ed16cdfd819c3.html">Function mimir::detail::RepWriterQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1detail_1a495352727411b7952358e031d0b4398e.html">Function mimir::detail::ReqReaderQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1program_1a7337f2e8311a587cd0c5683bb0f9c38e.html">Function mimir::program::parse_config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1program_1a61839fde6d16792c4662769b5116da05.html">Function mimir::program::read_doc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1program_1a0322295105de34488b656521c2c13e49.html">Function mimir::program::read_leaf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1program_1afe086b58811123bc3ba0b551d350f38e.html">Function mimir::program::read_list</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1_1program_1abe1e85d21335ab8c9c36ff4c84f648cf.html">Function mimir::program::read_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1a79d81e727aac93be814fb51da9fef88a.html">Function mimir::SIGTERMHandler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="function_namespacemimir_1a60f83e0bee821b6af5a9444be2ebe445.html">Function mimir::transform_severity</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="library-api-private.html#variables">Variables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="variable_namespacemimir_1a8a483b262641a4af7cfab764663d851a.html">Variable mimir::signaled</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rst/zbibliography.html">Bibliography</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">mimir</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="library-api-private.html">Private API</a> &raquo;</li>
+        
+      <li>Struct Standby</li>
+    
+    
+
+<li class="wy-breadcrumbs-aside">
+  <a href="https://github.com/sintef-ocean/mimir" class="fa fa-github"> Source on GitHub</a>
+  <a href="https://docs.sintef.io" class="icon icon-home"> docs.sintef.io</a>
+</li>
+
+
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="structmimir_1_1StateMachine.html" class="btn btn-neutral float-right" title="Struct StateMachine" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="structmimir_1_1ShutDown.html" class="btn btn-neutral float-left" title="Struct ShutDown" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="struct-standby">
+<span id="exhale-struct-structmimir-1-1standby"></span><h1>Struct Standby<a class="headerlink" href="#struct-standby" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_mimir_StateMachine.hpp.html#file-src-mimir-statemachine-hpp"><span class="std std-ref">File StateMachine.hpp</span></a></p></li>
+</ul>
+<div class="section" id="inheritance-relationships">
+<h2>Inheritance Relationships<a class="headerlink" href="#inheritance-relationships" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="base-type">
+<h3>Base Type<a class="headerlink" href="#base-type" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">boost::statechart::state&lt;</span> <span class="pre">Standby,</span> <span class="pre">StateMachine</span> <span class="pre">&gt;</span></code></p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="struct-documentation">
+<h2>Struct Documentation<a class="headerlink" href="#struct-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir7StandbyE">
+<span id="_CPPv3N5mimir7StandbyE"></span><span id="_CPPv2N5mimir7StandbyE"></span><span id="mimir::Standby"></span><span class="target" id="structmimir_1_1Standby"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">mimir</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">Standby</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">boost</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">statechart</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N5mimir7StandbyE" title="mimir::Standby"><span class="n"><span class="pre">Standby</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="structmimir_1_1StateMachine.html#_CPPv4N5mimir12StateMachineE" title="mimir::StateMachine"><span class="n"><span class="pre">StateMachine</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N5mimir7StandbyE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The state machine is in standby, not running algorithm. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir7Standby9reactionsE">
+<span id="_CPPv3N5mimir7Standby9reactionsE"></span><span id="_CPPv2N5mimir7Standby9reactionsE"></span><span id="mimir::Standby::reactions"></span><span class="target" id="structmimir_1_1Standby_1a10cacb6ad60eb29c16b5dbb3548ebd31"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="n"><span class="pre">mpl</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">list</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">bsc</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">transition</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="structmimir_1_1EvStart.html#_CPPv4N5mimir7EvStartE" title="mimir::EvStart"><span class="n"><span class="pre">EvStart</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="structmimir_1_1Running.html#_CPPv4N5mimir7RunningE" title="mimir::Running"><span class="n"><span class="pre">Running</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">bsc</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">transition</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="structmimir_1_1EvKill.html#_CPPv4N5mimir6EvKillE" title="mimir::EvKill"><span class="n"><span class="pre">EvKill</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="structmimir_1_1ShutDown.html#_CPPv4N5mimir8ShutDownE" title="mimir::ShutDown"><span class="n"><span class="pre">ShutDown</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">bsc</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">custom_reaction</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="structmimir_1_1EvTimeout.html#_CPPv4N5mimir9EvTimeoutE" title="mimir::EvTimeout"><span class="n"><span class="pre">EvTimeout</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reactions</span></span></span><a class="headerlink" href="#_CPPv4N5mimir7Standby9reactionsE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Admissible reactions for the state. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir7Standby7StandbyE10my_context">
+<span id="_CPPv3N5mimir7Standby7StandbyE10my_context"></span><span id="_CPPv2N5mimir7Standby7StandbyE10my_context"></span><span id="mimir::Standby::Standby__my_context"></span><span class="target" id="structmimir_1_1Standby_1a15b79d6e665e37e8e0036ab260c6c9de"></span><span class="sig-name descname"><span class="n"><span class="pre">Standby</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">my_context</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">ctx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir7Standby7StandbyE10my_context" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir7StandbyD0Ev">
+<span id="_CPPv3N5mimir7StandbyD0Ev"></span><span id="_CPPv2N5mimir7StandbyD0Ev"></span><span id="mimir::Standby::~Standby"></span><span class="target" id="structmimir_1_1Standby_1a520faff72af9014f44d1c5629e0df36f"></span><span class="sig-name descname"><span class="n"><span class="pre">~Standby</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir7StandbyD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Destructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5mimir7Standby5reactERK9EvTimeout">
+<span id="_CPPv3N5mimir7Standby5reactERK9EvTimeout"></span><span id="_CPPv2N5mimir7Standby5reactERK9EvTimeout"></span><span id="mimir::Standby::react__EvTimeoutCR"></span><span class="target" id="structmimir_1_1Standby_1a55e9c56ce6e3e6c829eaa0a7ce0497d3"></span><span class="n"><span class="pre">bsc</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">result</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">react</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="structmimir_1_1EvTimeout.html#_CPPv4N5mimir9EvTimeoutE" title="mimir::EvTimeout"><span class="n"><span class="pre">EvTimeout</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5mimir7Standby5reactERK9EvTimeout" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Custom reaction (extra function calls) in the event of <a class="reference internal" href="structmimir_1_1EvTimeout.html#structmimir_1_1EvTimeout"><span class="std std-ref">EvTimeout</span></a>. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="structmimir_1_1StateMachine.html" class="btn btn-neutral float-right" title="Struct StateMachine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="structmimir_1_1ShutDown.html" class="btn btn-neutral float-left" title="Struct ShutDown" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, SINTEF Ocean.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. <jinja2.runtime.BlockReference object at 0x7f6b7f471ed0>
+
+<br /><br />
+<table>
+  <tr>
+    <td width="120" style="vertical-align:middle;text-align:center">
+      <img alt="FHF" style="border-width:0" width="100" src="../_static/FHF-black-txt.png" />
+    </td>
+    <td>
+      This work was funded by <a href="https://www.fhf.no/fhf/about-fhf-english">FHF &ndash; Norwegian Seafood Research Fund</a> with <a href="https://www.fhf.no/prosjekter/prosjektbasen/901350/">Grant No. 901350</a>.<br /><br />
+    </td>
+  </tr>
+  <tr>
+    <td width="32" style="vertical-align:middle;text-align:center">
+      <img alt="Apache License, Version 2.0" style="border-width:0" width="32" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Apache_Feather_Logo.svg" />
+    </td>
+    <td>
+      This work is licensed under the Apache License, Version 2.0 (the "License").
+      You may obtain a copy of the License at
+      <a rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a><br />
+      Unless required by applicable law or agreed to in writing,
+      software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+      WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+      specific language governing permissions and limitations under the License.
+    </td>
+  </tr>
+</table>
+
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

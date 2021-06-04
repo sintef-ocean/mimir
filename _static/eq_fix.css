@@ -1,0 +1,38 @@
+/*.wy-nav-content {
+  max-width: 1200px;
+}*/
+
+.eqno {
+  margin-left: 5px;
+  float: right;
+}
+.math .headerlink {
+  display: none;
+  visibility: hidden;
+}
+.math:hover .headerlink {
+  display: inline-block;
+  visibility: visible;
+  margin-right: -0.7em;
+}
+
+div.instruction::before{
+  content:"Instruction:";
+  font-weight: bold;
+}
+div.instruction_title{
+  font-weight: bold;
+  font-style: italic;
+}
+div.instruction_body{
+  padding-left: 1em;
+}
+p.flushleft{
+  text-align: left;
+}
+p.flushright{
+  text-align: right;
+}
+p.center{
+  text-align: center;
+}

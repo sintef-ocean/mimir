@@ -1,0 +1,1411 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Nonlinear programming formulation &mdash; mimir  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/eq_fix.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/enumerable.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/icon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="../_static/mathwork.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Path planner for deployment" href="planner.html" />
+    <link rel="prev" title="MIMIR" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #00457c" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> mimir
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#running-an-algorithm">Running an algorithm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#yaml-config-file">YAML config file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#interacting-with-the-algorithm">Interacting with the algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Build instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#configuration-options-and-targets">Configuration options and targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#linux">Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#prerequisites-debian-based">Prerequisites (debian-based)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#documentation-prerequisites-optional">Documentation prerequisites <em>(optional)</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#building-and-running-debian-based">Building and running (debian-based)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#packaging-into-artifacts">Packaging into artifacts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#windows">Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#documentation-prerequisites-on-windows-optional">Documentation prerequisites on Windows <em>(optional)</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#building-and-running">Building and running</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#packaging-into-installer-and-archive">Packaging into installer and archive</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Creating a new algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Manpage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">MIMIR</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#name">NAME</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#synopsis">SYNOPSIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#description">DESCRIPTION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#options">OPTIONS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#configuration">CONFIGURATION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#environment">ENVIRONMENT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#files">FILES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#example">EXAMPLE</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage.html#yaml-config-file">YAML config file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#notes">NOTES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#see-also">SEE ALSO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#copyright">COPYRIGHT</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Implementation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Nonlinear programming formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#brief-introduction-to-nonlinear-programming-problems">Brief introduction to nonlinear programming problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#formulating-an-nlp-from-dae-ocp-and-discretization">Formulating an NLP from DAE, OCP and discretization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nlp-formulation-overview">NLP formulation overview</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#receding-horizon">Receding horizon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mathematical-notation">Mathematical notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#differential-algebraic-equations-daes">Differential-algebraic equations (DAEs)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-constrained-dae-initial-value-problem-ivp">The constrained DAE initial value problem (IVP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#optimal-control-problem-ocp">Optimal control problem (OCP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#discretization-of-the-continuous-time-ocp">Discretization of the continuous time OCP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#shooting-approaches">Shooting approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#collocation">Collocation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nonlinear-programming-problem-nlp">Nonlinear programming problem (NLP)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#formulation-strategies-and-extensions">Formulation strategies and extensions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#helper-functions">Helper functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adding-variable-bounds-add-nlp-variable-bounds">Adding variable bounds <code class="docutils literal notranslate"><span class="pre">::add_nlp_variable_bounds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#time-grid-function-create-solution-timegrid">Time grid function <code class="docutils literal notranslate"><span class="pre">::create_solution_timegrid</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nlp-tuple-unpacker-create-solution-unpacker">NLP tuple unpacker <code class="docutils literal notranslate"><span class="pre">::create_solution_unpacker</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nlp-decision-parameters-create-decision-parameter-extractor">NLP decision parameters <code class="docutils literal notranslate"><span class="pre">::create_decision_parameter_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nlp-subsystem-extractor-create-system-extractor">NLP subsystem extractor <code class="docutils literal notranslate"><span class="pre">::create_system_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nlp-shifter-create-horizon-shifter">NLP shifter <code class="docutils literal notranslate"><span class="pre">::create_horizon_shifter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nlp-trajectory-create-trajectory-function">NLP trajectory <code class="docutils literal notranslate"><span class="pre">::create_trajectory_function</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="planner.html">Path planner for deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="planner.html#motivation-and-rationale">Motivation and rationale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="planner.html#problem-statement-of-the-purse-seine-path-planner">Problem statement of the purse seine path planner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="planner.html#purse-planner-formulation">Purse planner formulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#notation">Notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#sea-current-and-surface-current-water-frame">Sea current and surface current water frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#fishing-vessel">Fishing vessel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#fish-school">Fish school</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#leadline-sinking-response">Leadline sinking response</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#purse-planner-criteria">Purse planner criteria</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="planner.html#objective-function-terms">Objective function terms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#nonlinear-programming-problem-for-purse-seine-deployment">Nonlinear programming problem for purse seine deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#receding-horizon">Receding horizon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#discussion-on-solution-strategies-and-improvements">Discussion on solution strategies and improvements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="planner.html#appendix">Appendix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#regularly-parameterized-paths-and-path-following">Regularly parameterized paths and path following</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="planner.html#regularly-parameterized-paths">Regularly parameterized paths</a></li>
+<li class="toctree-l4"><a class="reference internal" href="planner.html#path-tangential-frame-and-arc-length">Path-tangential frame and arc length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="planner.html#particle-feedback-laws">Particle feedback laws</a></li>
+<li class="toctree-l4"><a class="reference internal" href="planner.html#slip-angle">Slip angle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libraries.html">A note on library dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yamlconfig.html">YAML configuration files and schemas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yamlconfig.html#purse-planner-configuration-schema">Purse planner configuration schema</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/library-api.html">Public API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#items-listing">Items listing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/library-api.html#namespaces">Namespaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/namespace_mimir.html">Namespace mimir</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/library-api.html#classes-and-structs">Classes and Structs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classmimir_1_1IAlgorithm.html">Class IAlgorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_private/library-api-private.html">Private API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api_private/library-api-private.html#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_private/library-api-private.html#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_private/library-api-private.html#items-listing">Items listing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#namespaces">Namespaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir.html">Namespace mimir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__algorithm.html">Namespace mimir::algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__control.html">Namespace mimir::control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__detail.html">Namespace mimir::detail</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__program.html">Namespace mimir::program</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#classes-and-structs">Classes and Structs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1algorithm_1_1NlpProblemBuilder.html">Struct NlpProblemBuilder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1algorithm_1_1NlpStructure.html">Struct NlpStructure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Evaluating.html">Struct Evaluating</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvError.html">Struct EvError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvInterrupt.html">Struct EvInterrupt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvKill.html">Struct EvKill</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvReady.html">Struct EvReady</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvRestart.html">Struct EvRestart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvRunningOK.html">Struct EvRunningOK</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvStart.html">Struct EvStart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvStop.html">Struct EvStop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvTimeout.html">Struct EvTimeout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Initializing.html">Struct Initializing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Running.html">Struct Running</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1ShutDown.html">Struct ShutDown</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Standby.html">Struct Standby</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1StateMachine.html">Struct StateMachine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Waiting.html">Struct Waiting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1FishSchool.html">Class FishSchool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1KinematicVessel.html">Class KinematicVessel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1Leadline.html">Class Leadline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1PursePlanner.html">Class PursePlanner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1PursePlannerFormulation.html">Class PursePlannerFormulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1TestAlgorithm.html">Class TestAlgorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1control_1_1CommandListener.html">Template Class CommandListener</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1control_1_1CommandResponder.html">Class CommandResponder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1control_1_1StateNotifier.html">Class StateNotifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1Options.html">Class Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1a3aefdada3944d997af13a71cded2ba72.html">Function mimir::AlgorithmCreator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1detail_1a4edbe193d90ba66d98d42b380008c618.html">Function mimir::detail::NotifierQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1detail_1ab2f8aaf370c0379e1e5ed16cdfd819c3.html">Function mimir::detail::RepWriterQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1detail_1a495352727411b7952358e031d0b4398e.html">Function mimir::detail::ReqReaderQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1a7337f2e8311a587cd0c5683bb0f9c38e.html">Function mimir::program::parse_config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1a61839fde6d16792c4662769b5116da05.html">Function mimir::program::read_doc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1a0322295105de34488b656521c2c13e49.html">Function mimir::program::read_leaf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1afe086b58811123bc3ba0b551d350f38e.html">Function mimir::program::read_list</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1abe1e85d21335ab8c9c36ff4c84f648cf.html">Function mimir::program::read_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1a79d81e727aac93be814fb51da9fef88a.html">Function mimir::SIGTERMHandler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1a60f83e0bee821b6af5a9444be2ebe445.html">Function mimir::transform_severity</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#variables">Variables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/variable_namespacemimir_1a8a483b262641a4af7cfab764663d851a.html">Variable mimir::signaled</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="zbibliography.html">Bibliography</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">mimir</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Nonlinear programming formulation</li>
+    
+    
+
+<li class="wy-breadcrumbs-aside">
+  <a href="https://github.com/sintef-ocean/mimir" class="fa fa-github"> Source on GitHub</a>
+  <a href="https://docs.sintef.io" class="icon icon-home"> docs.sintef.io</a>
+</li>
+
+
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="planner.html" class="btn btn-neutral float-right" title="Path planner for deployment" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="usage.html" class="btn btn-neutral float-left" title="MIMIR" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nonlinear-programming-formulation">
+<h1>Nonlinear programming formulation<a class="headerlink" href="#nonlinear-programming-formulation" title="Permalink to this headline">¶</a></h1>
+<p>This chapter describes theory for mathematical optimization used in this project.
+It includes mathematical constructs that constitute our implementations.
+You can skip this chapter, but it is advisable to at least read <a class="reference internal" href="#nlp-formulation-overview">NLP formulation overview</a> and <a class="reference internal" href="#receding-horizon">Receding horizon</a>.</p>
+<div class="section" id="brief-introduction-to-nonlinear-programming-problems">
+<h2>Brief introduction to nonlinear programming problems<a class="headerlink" href="#brief-introduction-to-nonlinear-programming-problems" title="Permalink to this headline">¶</a></h2>
+<p>Dynamical systems can often be formulated with a system of differential-algebraic
+equations (DAE). The DAEs can describe phenomena that one want to interact with to
+achieve a specific <em>objective</em>. A dynamical system usually evolve as time progresses,
+and therefore depends on a continuous time variable. We define an <em>objective</em> as a
+quantifiable goal, which is related to the dynamical response of the DAE by means of
+input signals. An optimal control problem (OCP) deals with finding control inputs in
+such a way that the <em>objective</em> is minimized.  This formulation rarely has an explicit
+solution and needs to be solved numerically. One approach for solving OCPs is to
+implement a “discretize then optimize” numerical algorithm
+<span id="id1">[<a class="reference internal" href="zbibliography.html#id8" title="Lorenz T. Biegler. Nonlinear Programming: Concepts, Algorithms &amp; Applications to Chemical Processes. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 2010. ISBN 978-0-898-71702-0. doi:10.1137/1.9780898719383.">7</a>]</span>, such as single shooting, multiple shooting, direct
+collocation, or a hybrid technique <span id="id2">[<a class="reference internal" href="zbibliography.html#id37" title="Anders Albert, Lars Imsland, and Joakim Haugen. Numerical optimal control mixing collocation with single shooting: a case study. IFAC-PapersOnLine, 49(7):290–295, 2016. 11th IFAC Symposium on Dynamics and Control of Process SystemsIncluding Biosystems DYCOPS-CAB 2016. doi:10.1016/j.ifacol.2016.07.307.">1</a>]</span>. These techniques quickly
+become computationally demanding, so a <em>receding horizon</em> approach is usually employed
+to strive for solutions in real time. In a receding horizon implementation, successive
+finite time horizon problems are solved. When the optimization objective is to control
+the process, a reciding horizon OCP is often called <em>model predictive control</em>
+(MPC). The resulting discretized problem formulation takes the form of a so-called
+nonlinear programming (NLP) problem.</p>
+<p>A nonlinear programming (NLP) problem is a subclass of optimization problems, which can
+be stated in minimization form as in <a class="reference internal" href="#prob:nlp"><span class="std std-numref">Problem 1</span></a>.</p>
+<div class="enumerable admonition" id="prob:nlp">
+<p class="admonition-title"><span class="caption-number">Problem 1 </span>  (Nonlinear programming problem)</p>
+<div class="math notranslate nohighlight" id="equation-prob-nlp">
+<span class="eqno">(1)<a class="headerlink" href="#equation-prob-nlp" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{llll}
+\begin{array}{l}
+  \text{minimize:}\\
+  z(\cdot) \in \mathbb{R}^n
+\end{array} &amp;
+\displaystyle F(z) &amp;
+\quad\text{subject to:} &amp;
+\begin{array}{l}
+  g(z) = 0,\\
+  h(z) \leq 0,
+\end{array}
+\end{array}
+\end{equation}\end{split}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(g(z) \in \mathbb{R}^{n_g}\)</span> and <span class="math notranslate nohighlight">\(h(z) \in \mathbb{R}^{n_h}\)</span> are equality and
+inequality constraint functions, respectively. <span class="math notranslate nohighlight">\(F(z): \mathbb{R}^n \to \mathbb{R}\)</span> is
+defined as the <em>objective function</em>, which is to be minimized by determining <span class="math notranslate nohighlight">\(z\)</span>. This
+formulation is very general and it is necessary to impose restrictions on, or
+assumptions about, the properties of the involved functions. As an example, the
+function <span class="math notranslate nohighlight">\(F(z)\)</span> may only have one global minimum, but many local minima. An iterative
+numerical solver may converge to a local minimum depending on the starting condition of
+the solver. Therefore, one usually set necessary and sufficient conditions to define
+that a local minimum is an acceptable solution to the problem stated above. Resources
+on numerical optimization, OCP, NLP and discretization techniques can be found in
+e.g. <span id="id3">[<a class="reference internal" href="zbibliography.html#id6" title="John T. Betts. Practical Methods for Optimal Control and Estimation Using Nonlinear Programming. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 2 edition, 2010. ISBN 978-0-898-71688-7. doi:10.1137/1.9780898718577.">6</a>, <a class="reference internal" href="zbibliography.html#id8" title="Lorenz T. Biegler. Nonlinear Programming: Concepts, Algorithms &amp; Applications to Chemical Processes. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 2010. ISBN 978-0-898-71702-0. doi:10.1137/1.9780898719383.">7</a>, <a class="reference internal" href="zbibliography.html#id17" title="Ernst Hairer, Syvert P. Nørsett, and Gerhard Wanner. Solving Ordinary Differential Equations I. Springer-Verlag, 2 edition, 1993. ISBN 978-3-540-78862-1. doi:10.1007/978-3-540-78862-1.">13</a>, <a class="reference internal" href="zbibliography.html#id27" title="Jorge Nocedal and Stephen J Wright. Numerical Optimization. Springer-Verlag, Berlin Heidelberg, Germany, 2 edition, 2006. ISBN 978-0387-30303-1.">23</a>]</span>.</p>
+</div>
+<div class="section" id="formulating-an-nlp-from-dae-ocp-and-discretization">
+<span id="sec-procedure"></span><h2>Formulating an NLP from DAE, OCP and discretization<a class="headerlink" href="#formulating-an-nlp-from-dae-ocp-and-discretization" title="Permalink to this headline">¶</a></h2>
+<p>Our chosen procedure of formulating a nonlinear programming problem involves the steps below.</p>
+<ol class="arabic simple">
+<li><p>Describe the process under scrutiny with a system of a differential-algebraic equations (DAE).</p></li>
+<li><p>Formulate the optimal control problem (OCP) with the desired objective and other constructs.</p></li>
+<li><p>Use a discretization technique to convert the OCP to a nonlinear programming (NLP) problem.</p></li>
+<li><p>Set initial conditions, solve the NLP and extract the solution.</p></li>
+</ol>
+<p>The procedure involves implementation of systematic techniques, but also a fair amount
+of iterative processes such as tuning, redesign and application of engineering skills.
+In the following sections we provide mathematical descriptions of the steps outlined
+above and attempt to closely relate them to the source code implementation in <a class="reference internal" href="#nlp-formulation-overview">NLP formulation overview</a>.</p>
+<p>The NLP is solved in a receding horizon fashion. This means that the problem is solved
+with a limited, but moving time horizon, which is described in <a class="reference internal" href="#receding-horizon">Receding horizon</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We describe the procedure generally, but the implementation is currently not
+generalized, that is, it is only available within the path planner formulation source
+code.</p>
+</div>
+<div class="section" id="nlp-formulation-overview">
+<h3>NLP formulation overview<a class="headerlink" href="#nlp-formulation-overview" title="Permalink to this headline">¶</a></h3>
+<p>The above outline procedure outlined is implemented in
+<a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1PursePlannerFormulation.html#_CPPv4N5mimir9algorithm23PursePlannerFormulationE" title="mimir::algorithm::PursePlannerFormulation"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">mimir::algorithm::PursePlannerFormulation</span></code></a>. The sequence of
+execution is indicated by <a class="reference internal" href="#tab-formulate"><span class="std std-numref">Table 1</span></a>. Note that the functions with an
+anonymous namespace reside in the <code class="docutils literal notranslate"><span class="pre">.cpp</span></code> of <code class="docutils literal notranslate"><span class="pre">PursePlannerFormulation</span></code>.
+We provide details on each of these items in the remainder of this chapter.</p>
+<table class="docutils align-default" id="tab-formulate">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">The NLP formulation procedure.</span><a class="headerlink" href="#tab-formulate" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 26%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Step</p></th>
+<th class="head"><p>Theory</p></th>
+<th class="head"><p>Implementation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Matematically model system</p></td>
+<td><p><a class="reference internal" href="#prob:cdaeivp"><span class="std std-numref">Problem 2</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::formulate_dynamics</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Formulate optimal control problem</p></td>
+<td><p><a class="reference internal" href="#prob:ocp"><span class="std std-numref">Problem 3</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::formulate_dynamics</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Transcribe OCP to NLP</p></td>
+<td><p><a class="reference internal" href="#prob:nlpss"><span class="std std-numref">Problem 4</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::formulate_single_shoot</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><a class="reference internal" href="#prob:nlpms"><span class="std std-numref">Problem 5</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::formulate_multi_shoot</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><a class="reference internal" href="#prob:nlpcolloc"><span class="std std-numref">Problem 6</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::formulate_collocation</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Rearrange NLP on <em>casadi form</em></p></td>
+<td><p><a class="reference internal" href="#prob:nlp_revisit"><span class="std std-numref">Problem 7</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::formulate_nlp</span></code></p></td>
+</tr>
+<tr class="row-even"><td><ul class="simple">
+<li><p>Instantiates  <code class="docutils literal notranslate"><span class="pre">casadi::nlpsol</span></code></p></li>
+</ul>
+</td>
+<td><p><a class="reference internal" href="#variable-bounds">variable_bounds</a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::add_nlp_variable_bounds</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Prepare <a class="reference internal" href="#helper-functions">Helper functions</a></p></td>
+<td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::create_helper_functions</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><a class="reference internal" href="#equation-eq-timegrid">Eq. (26)</a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::create_solution_timegrid</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><a class="reference internal" href="#equation-eq-funpack">Eq. (28)</a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::create_solution_unpacker</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><a class="reference internal" href="#equation-eq-nlp-shifter">Eq. (32)</a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::create_horizon_shifter</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><a class="reference internal" href="#equation-eq-trajectory">Eq. (33)</a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::create_trajectory_function</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><a class="reference internal" href="#equation-eq-decideunpack">Eq. (30)</a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::create_decision_parameter_extractor</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><a class="reference internal" href="#equation-eq-sextract">Eq. (31)</a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">::create_system_extractor</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="receding-horizon">
+<h2>Receding horizon<a class="headerlink" href="#receding-horizon" title="Permalink to this headline">¶</a></h2>
+<p>The NLP formulation procedure of <a class="reference internal" href="#tab-formulate"><span class="std std-numref">Table 1</span></a> only defines the necessary
+functions to be used. To actually use them we need to put them in an event loop that
+properly prepares and solves the NLP, and then extracts information from the solution.
+These steps are done within an implementation of the function
+<a class="reference internal" href="../api/classmimir_1_1IAlgorithm.html#_CPPv4N5mimir10IAlgorithm5solveERKNSt6atomicIbEE" title="mimir::IAlgorithm::solve"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">mimir::IAlgorithm::solve()</span></code></a>. Below we list the actions performed in
+such a solve step.</p>
+<ol class="arabic simple">
+<li><p>Fetch inputs and parameters from DDS; prepare <span class="math notranslate nohighlight">\(x(t_0)\)</span> and <span class="math notranslate nohighlight">\(p\)</span>;</p></li>
+<li><p>Shift solution from previous step using <a class="reference internal" href="#equation-eq-nlp-shifter">Eq. (32)</a> – for warm starting optimization problem;</p></li>
+<li><p>Set initial condition for <span class="math notranslate nohighlight">\(x(t_0)\)</span>;</p></li>
+<li><p>Solve <a class="reference internal" href="#prob:nlp_revisit"><span class="std std-numref">Problem 7</span></a>;</p></li>
+<li><p>Verify successful solution and publish statistics on DDS;</p></li>
+<li><p>Extract solution and store in data structures in preparation for next time step;</p></li>
+<li><p>Acquire solution trajectories with the help of <a class="reference internal" href="#equation-eq-timegrid">Eq. (26)</a>, <a class="reference internal" href="#equation-eq-funpack">Eq. (28)</a>, <a class="reference internal" href="#equation-eq-trajectory">Eq. (33)</a>;</p></li>
+<li><p>Publish solution trajectories on DDS;</p></li>
+</ol>
+<p>The above steps are executed on regular intervals and as
+time progresses, we achieve a receding horizon NLP problem solving.</p>
+</div>
+<div class="section" id="mathematical-notation">
+<h2>Mathematical notation<a class="headerlink" href="#mathematical-notation" title="Permalink to this headline">¶</a></h2>
+<p>This document contains terminology that should be clarified.</p>
+<ul class="simple">
+<li><p>We use over-dot notation for time derivatives, that is <span class="math notranslate nohighlight">\(\dat x := \frac{dx}{dt}\)</span>.</p></li>
+<li><p>Denote the <em>extended real number line</em> as <span class="math notranslate nohighlight">\(\overline{\mathbb{R}} := \mathbb{R} \cup \{-\infty,+\infty\}\)</span>.
+The reason for introducing <span class="math notranslate nohighlight">\(\overline{\mathbb{R}}\)</span> is that some numerical
+algorithms treat <span class="math notranslate nohighlight">\(\pm \infty\)</span> distinctly from a “not quite infinity” number.</p></li>
+<li><p>The orientation space is defined by <span class="math notranslate nohighlight">\(\mathbb{S} \in [-\pi,\pi)\)</span>.</p></li>
+<li><p>We use subscripts <span class="math notranslate nohighlight">\(\geq\)</span> and <span class="math notranslate nohighlight">\(&gt;\)</span> to indicate non-negative and positive subsets;
+so <span class="math notranslate nohighlight">\(\mathbb{R}_{\geq} := \{ x \in \mathbb{R} : x \geq 0\}\)</span>,
+and <span class="math notranslate nohighlight">\(\mathbb{R}_{&gt;} := \{ x \in \mathbb{R} : x &gt; 0\}\)</span>.</p></li>
+<li><p>Similarly, <span class="math notranslate nohighlight">\(\mathbb{N}_\geq\)</span> and <span class="math notranslate nohighlight">\(\mathbb{N}_&gt;\)</span> are non-negative and positive integers, or natural numbers.</p></li>
+<li><p>Countable finite index sets of non-negative and positive natural numbers are defined as
+<span class="math notranslate nohighlight">\(\mathbb{I}_{\geq,n} := \{i \in \mathbb{N}_\geq : i &lt; n \}\)</span> and <span class="math notranslate nohighlight">\(\mathbb{I}_{&gt;,n} := \{i \in \mathbb{N}_&gt; : i \leq n \}\)</span>, both with cardinality <span class="math notranslate nohighlight">\(n\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(I_n\)</span> is the <span class="math notranslate nohighlight">\(n\times n\)</span> identity matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(1_{n\times m}\)</span> is an <span class="math notranslate nohighlight">\(n\text{-by-}m\)</span> matrix of ones.</p></li>
+<li><p><span class="math notranslate nohighlight">\(0_{n\times m}\)</span> is an <span class="math notranslate nohighlight">\(n\text{-by-}m\)</span> matrix of zeros.</p></li>
+<li><p><span class="math notranslate nohighlight">\(A_{[i,j]}\)</span> is the matrix element at the <span class="math notranslate nohighlight">\(i\text{-th}\)</span> row and <span class="math notranslate nohighlight">\(j\text{-th}\)</span> column.</p></li>
+<li><p>Define a tuple selector operator subscript <span class="math notranslate nohighlight">\(\langle m \rangle\)</span> as a mapping that extracts the <span class="math notranslate nohighlight">\(m\text{-th}\)</span> element of an n-tuple, so <span class="math notranslate nohighlight">\((x_1,x_2,\cdots, x_m,\cdots,x_n)_{\langle m\rangle} = x_m\)</span>.</p></li>
+<li><p>A block diagonal matrix of other matrices <span class="math notranslate nohighlight">\(X_{i\in \mathbb{I}_{&gt;,s}} \in \mathbb{R}^{m_i\times n_i}\)</span> is defined as
+<span class="math notranslate nohighlight">\(\bdiag_{i \in \mathbb{I}_{&gt;,s}}(X_i) := \bigoplus_{i \in \mathbb{I}_{&gt;,s}} X_i\)</span>, where <span class="math notranslate nohighlight">\(\oplus\)</span> is the direct sum.</p></li>
+<li><p>The symbol <span class="math notranslate nohighlight">\(\otimes\)</span> is the Kronecker product.</p></li>
+<li><p>The vertically stacked matrix of other matrices <span class="math notranslate nohighlight">\(X_{i \in \mathbb{I}_{&gt;,s}} \in \mathbb{R}^{m_i \times n}\)</span> is denoted
+<span class="math notranslate nohighlight">\(\col_{i \in \mathbb{I}_{&gt;,s}}(X_i) := \bdiag_{i\in \mathbb{I}_{&gt;,s}}(X_i) \cdot (1_{s \times 1} \otimes I_n)\)</span>.</p></li>
+<li><p>The horizontally stacked matrix of other matrices <span class="math notranslate nohighlight">\(X_{i \in \mathbb{I}_{&gt;,s}} \in \mathbb{R}^{m \times n_i}\)</span> is denoted
+<span class="math notranslate nohighlight">\(\row_{i \in \mathbb{I}_{&gt;,s}}(X_i) := \col_{i\in \mathbb{I}_{&gt;,s}}(X_i^T)^T\)</span>.</p></li>
+<li><p>Let <span class="math notranslate nohighlight">\(e_i\)</span> be the <span class="math notranslate nohighlight">\(i\text{-th}\)</span> canonical basis for an <span class="math notranslate nohighlight">\(n\text{-dimensional}\)</span> space.
+The column vectorization of a matrix <span class="math notranslate nohighlight">\(X \in \mathbb{R}^{m\times n}\)</span> is denoted <span class="math notranslate nohighlight">\(\vek(X) := \sum_{i\in \mathbb{I}_{&gt;,n}} e_i \otimes X e_i\)</span>.</p></li>
+<li><p>Vertically stacked identical matrices <span class="math notranslate nohighlight">\(X \in \mathbb{R}^{m\times n}\)</span> for an <span class="math notranslate nohighlight">\(s\)</span> number of times is denoted
+<span class="math notranslate nohighlight">\(\repvert_s(X) :=  1_{s\times 1} \otimes X\)</span>.</p></li>
+<li><p>Horizontally stacked identical matrices <span class="math notranslate nohighlight">\(X \in \mathbb{R}^{m\times n}\)</span> for an <span class="math notranslate nohighlight">\(s\)</span> number of times is denoted
+<span class="math notranslate nohighlight">\(\rephorz_s(X) :=  1_{1\times s} \otimes X\)</span>.</p></li>
+<li><p>A band diagonal square matrix of size <span class="math notranslate nohighlight">\(n\)</span> with ones at superdiagonal <span class="math notranslate nohighlight">\(k\)</span> is denoted
+<span class="math notranslate nohighlight">\(\band(n, k)\)</span>.</p></li>
+</ul>
+</div>
+<div class="section" id="differential-algebraic-equations-daes">
+<h2>Differential-algebraic equations (DAEs)<a class="headerlink" href="#differential-algebraic-equations-daes" title="Permalink to this headline">¶</a></h2>
+<p>A system of differential-algebraic equations (DAEs) is a class of equations where some
+of the differential states cannot be written explicitly, and/or there are algebraic
+constraints. Here, we consider first order DAEs with explicit, implicit, and algebraic
+equations. Let <span class="math notranslate nohighlight">\(t\in \mathbb{R}_&gt;\)</span> be the independent time variable. Define
+<span class="math notranslate nohighlight">\(x_e(t) \in \mathbb{R}^{n_e}\)</span> and <span class="math notranslate nohighlight">\(x_i(t) \in \mathbb{R}^{n_i}\)</span> as the explicit
+and implicit differential state variables, and let <span class="math notranslate nohighlight">\(q(t) \in \mathbb{R}^{n_q}\)</span> be
+quadrature differential states for which do not explicitly appear in the function mappings.
+Further, let <span class="math notranslate nohighlight">\(z(t) \in \mathbb{R}^{n_z}\)</span> be algebraic variables,
+<span class="math notranslate nohighlight">\(u(t) \in \mathbb{R}^{n_u}\)</span> input variables, and <span class="math notranslate nohighlight">\(y(t) \in \mathbb{R}^{n_y}\)</span>
+output variables. In addition, we define <span class="math notranslate nohighlight">\(p \in \mathbb{R}^{n_p}\)</span> as
+time-independent fixed and tunable parameters <a class="footnote-reference brackets" href="#id19" id="id4">1</a> , and
+finally, <span class="math notranslate nohighlight">\(d \in \mathbb{R}^{n_d}\)</span>, which is a dependent variable vector, but independent of time.
+A DAE system can be stated as</p>
+<div class="math notranslate nohighlight" id="equation-rst-formulation-0">
+<span class="eqno">(2)<a class="headerlink" href="#equation-rst-formulation-0" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+ \text{DAE:}\quad
+ \left\{
+ \begin{array}{ll}
+ \dat{x}_e &amp;= f_e(x_e,x_i,z,u,p,d,t), \\
+ 0 &amp;= f_i(x_e,x_i,z,u,p,d,t,\dat{x}_i), \\
+ 0 &amp;= f_a(x_e,x_i,z,u,p,d,t), \\
+ \dat{q} &amp;= f_q(x_e,x_i,z,u,p,d,t), \\
+ d &amp;= f_d(p,d), \\
+ y &amp;= f_y(x_e,x_i,z,u,p,d,t),
+ \end{array} \right.
+ \end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(f_e(\cdot)\)</span> is the ordinary differential equations (ODE), and <span class="math notranslate nohighlight">\(f_a(\cdot)\)</span> is
+the algebraic expression function.  If <span class="math notranslate nohighlight">\(x_i(t) \in \emptyset\)</span>, the DAE can be seen as a
+set of ODEs with constraints, but it is usually called a semi-explicit DAE. Our
+formulation can be further condensed by combining functions to get a standard form;
+perhaps even made semi-explicit DAE of index 1, see e.g. <span id="id5">[<a class="reference internal" href="zbibliography.html#id18" title="Ernst Hairer and Gerhard Wanner. Solving Ordinary Differential Equations II. Springer-Verlag, 2 edition, 2010. ISBN 978-3-642-05221-7. doi:10.1007/978-3-642-05221-7.">14</a>]</span>.
+We retain the current form, because it closely resembles the notation used in
+casadi’s <a class="reference external" href="https://web.casadi.org/docs/#the-daebuilder-class">DaeBuilder</a>, which is also used in our implementation.</p>
+<p>Numerically solving a DAE requires special attention to the properties of the problem
+at hand, in addition to knowledge about the capabilities and limitations of the applied
+solvers, see <span id="id6">[<a class="reference internal" href="zbibliography.html#id18" title="Ernst Hairer and Gerhard Wanner. Solving Ordinary Differential Equations II. Springer-Verlag, 2 edition, 2010. ISBN 978-3-642-05221-7. doi:10.1007/978-3-642-05221-7.">14</a>]</span> for a detailed account on the matter. A DAE can be stated
+as a boundary value problem or an initial value problem (IVP). We concern ourselves
+with the IVP form, where the problem is to solve the system of equations given initial
+conditions for the differential states. It should be noted that the “discretize then
+optimize” technique is a powerful approach, since it can deal with DAEs
+by using direct collocation <span id="id7">[<a class="reference internal" href="zbibliography.html#id18" title="Ernst Hairer and Gerhard Wanner. Solving Ordinary Differential Equations II. Springer-Verlag, 2 edition, 2010. ISBN 978-3-642-05221-7. doi:10.1007/978-3-642-05221-7.">14</a>]</span> or a DAE-capable solver,
+such as <a class="reference external" href="https://computing.llnl.gov/projects/sundials/idas">IDAS</a> from SUNDIALS <span id="id8">[<a class="reference internal" href="zbibliography.html#id21" title="Alan C Hindmarsh, Peter N Brown, Keith E Grant, Steven L Lee, Radu Serban, Dan E Shumaker, and Carol S Woodward. SUNDIALS: suite of nonlinear and differential/algebraic equation solvers. ACM Transactions on Mathematical Software (TOMS), 31(3):363–396, September 2005. doi:10.1145/1089014.1089020.">17</a>]</span>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<ul class="simple">
+<li><p>casadi’s <a class="reference external" href="https://web.casadi.org/docs/#the-daebuilder-class">DaeBuilder</a> simplifies the formulation of a DAE to be used with the casadi
+framework. We use it in <code class="docutils literal notranslate"><span class="pre">::formulate_dynamics()</span></code> of <code class="docutils literal notranslate"><span class="pre">src/algorithm/PursePlannerFormulation.cpp</span></code>.</p></li>
+<li><p>casadi’s <a class="reference external" href="https://web.casadi.org/docs/#initial-value-problems-and-sensitivity-analysis">Integrator</a> supports various solvers, including IDAS and collocation. Note
+that a DAE needs to be made semi-explicit and be of index-1 in order to be used
+with this integrator. There are functions in DaeBuilder that may help in achieving
+this.</p></li>
+</ul>
+</div>
+<div class="section" id="the-constrained-dae-initial-value-problem-ivp">
+<h3>The constrained DAE initial value problem (IVP)<a class="headerlink" href="#the-constrained-dae-initial-value-problem-ivp" title="Permalink to this headline">¶</a></h3>
+<p>We introduce the concept of a constrained DAE initial value problem <span class="math notranslate nohighlight">\(\left(\text{cDAE}_\text{IVP}\right)\)</span> as a
+problem where the variables of a DAE may be restricted to a subset of all extended real
+numbers. These restrictions can either be imposed by the phenomena they are
+describing, or indirectly through the optimal control problem formulation.
+Care must be taken when constraining the problem. Adding unreasonably strict
+constraints may render the IVP inconsistent and unsolvable.</p>
+<p>Let <span class="math notranslate nohighlight">\(\mathbb{T} := [t_0, t_f]\)</span> be the time interval for the IVP.
+Suppose <span class="math notranslate nohighlight">\(u(t) \in \mathcal{U}\subseteq \overline{\mathbb{R}}^{n_u}\)</span> is known for <span class="math notranslate nohighlight">\(t\in \mathbb{T}\)</span>,
+with <span class="math notranslate nohighlight">\(x_e(t_0)=x_{e,0}\)</span>, <span class="math notranslate nohighlight">\(x_i(t_0) = x_{i,0}\)</span>, <span class="math notranslate nohighlight">\(q(t_0)=0\)</span>, and <span class="math notranslate nohighlight">\(p = \text{given}\)</span>, and consistent.
+The constrained DAE IVP is stated in <a class="reference internal" href="#prob:cdaeivp"><span class="std std-numref">Problem 2</span></a>. The solution to
+<span class="math notranslate nohighlight">\(\left(\text{cDAE}_\text{IVP}\right)\)</span> are <span class="math notranslate nohighlight">\(\forall t \in \mathbb{T}\)</span> the trajectories
+<span class="math notranslate nohighlight">\(x_e(t)\)</span>, <span class="math notranslate nohighlight">\(x_i(t)\)</span>, <span class="math notranslate nohighlight">\(z(t)\)</span>, <span class="math notranslate nohighlight">\(q(t)\)</span>, and <span class="math notranslate nohighlight">\(y(t)\)</span>.  The control input <span class="math notranslate nohighlight">\(u(t)\)</span> is usually
+something to be determined based on a quantifiable goal or objective.</p>
+<div class="enumerable admonition" id="prob:cdaeivp">
+<p class="admonition-title"><span class="caption-number">Problem 2 </span>  (Constrained DAE IVP)</p>
+<div class="math notranslate nohighlight" id="equation-prob-cdaeivp">
+<span class="eqno">(3)<a class="headerlink" href="#equation-prob-cdaeivp" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+ \text{cDAE}_\text{IVP}:\qquad
+ \begin{array}{l}
+ \,\forall t \in \mathbb{T}\, \left\{
+ \begin{array}{ll}
+ \dat{x}_e &amp;= f_e(x_e,x_i,z,u,p,t), \\
+ 0 &amp;= f_i(x_e,x_i,z,u,p,t,\dat{x}_i), \\
+ 0 &amp;= f_a(x_e,x_i,z,u,p,t), \\
+ \dat{q} &amp;= f_q(x_e,x_i,z,u,p,t), \\
+ d &amp;= f_d(p,d), \\
+ y &amp;= f_y(x_e,x_i,z,u,p,t),
+ \end{array} \right. \\
+ x_e \in \mathcal{X}_e \subseteq \overline{\mathbb{R}}^{n_e},
+ \, x_i \in \mathcal{X}_i \subseteq \overline{\mathbb{R}}^{n_i},
+ \,z \in \mathcal{Z} \subseteq \overline{\mathbb{R}}^{n_z}, \\
+ u \in \mathcal{U}\subseteq \overline{\mathbb{R}}^{n_u}, \\
+ y \in \mathcal{Y} \subseteq \overline{\mathbb{R}}^{n_y}.\\
+ x_e(t_0) = x_{e,0},
+ \, x_i(t_0) = x_{i,0},
+ \, q(t_0) = 0,\\
+  p = \text{given},\\
+  u(t) = \text{defined}.
+  \end{array}
+ \end{array}
+\end{equation}\end{split}\]</div>
+</div>
+</div>
+</div>
+<div class="section" id="optimal-control-problem-ocp">
+<h2>Optimal control problem (OCP)<a class="headerlink" href="#optimal-control-problem-ocp" title="Permalink to this headline">¶</a></h2>
+<p>The task of the optimal control problem (OCP) is, by means of determining the control
+input <span class="math notranslate nohighlight">\(u(t)\)</span>, to find a solution to the constrained DAE IVP in <a class="reference internal" href="#prob:cdaeivp"><span class="std std-numref">Problem 2</span></a>, while
+(locally) minimizing some scalar objective function. Thus, the two main components in
+an OCP are:</p>
+<ol class="arabic simple">
+<li><p>the objective function,</p></li>
+<li><p>the constrained initial value problem.</p></li>
+</ol>
+<p>The objective function can take several forms, but herein we use the general Bolza-type
+optimal control problem <span id="id10">[<a class="reference internal" href="zbibliography.html#id8" title="Lorenz T. Biegler. Nonlinear Programming: Concepts, Algorithms &amp; Applications to Chemical Processes. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 2010. ISBN 978-0-898-71702-0. doi:10.1137/1.9780898719383.">7</a>]</span>. Let us use the same entities as
+defined earlier, but also let <span class="math notranslate nohighlight">\(x(t) := \col(x_i(t), x_e(t))\)</span>. The objective function
+maps to a scalar value and is declared as</p>
+<div class="math notranslate nohighlight" id="equation-eq-objective">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-objective" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+J(x,z,u,p,d,t) = \Phi_L(x,z,u,p,d,t) + \Phi_M(p,d,t_f)\, \in \mathbb{R},
+\end{equation}\]</div>
+<p>where the terms are</p>
+<div class="math notranslate nohighlight" id="equation-rst-formulation-1">
+<span class="eqno">(5)<a class="headerlink" href="#equation-rst-formulation-1" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{llr}
+\Phi_L(x,z,u,p,d,t) &amp;= \int_{t_0}^{t_f}\phi_L(x,z,u,p,d,t) dt,&amp; \text{Lagrange integral term}\\
+\Phi_M(p,d,t_f) &amp;= \phi_M(x(t_f),z(t_f),p,d,t_f),&amp; \text{Mayer terminal cost term}
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>and should be sufficiently smooth. The structure and properties of the
+objective function have large impact on the optimal control problem, refer to
+<span id="id11">[<a class="reference internal" href="zbibliography.html#id8" title="Lorenz T. Biegler. Nonlinear Programming: Concepts, Algorithms &amp; Applications to Chemical Processes. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 2010. ISBN 978-0-898-71702-0. doi:10.1137/1.9780898719383.">7</a>, <a class="reference internal" href="zbibliography.html#id27" title="Jorge Nocedal and Stephen J Wright. Numerical Optimization. Springer-Verlag, Berlin Heidelberg, Germany, 2 edition, 2006. ISBN 978-0387-30303-1.">23</a>]</span> for details.</p>
+<p>Now that the two main components are declared, we present the OCP in <a class="reference internal" href="#prob:ocp"><span class="std std-numref">Problem 3</span></a>.</p>
+<div class="enumerable admonition" id="prob:ocp">
+<p class="admonition-title"><span class="caption-number">Problem 3 </span>  (Optimal control problem)</p>
+<div class="math notranslate nohighlight" id="equation-prob-ocp">
+<span class="eqno">(6)<a class="headerlink" href="#equation-prob-ocp" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+ \text{OCP:}\quad
+\begin{array}{l}
+  \text{minimize:}\,\\
+  u(\cdot) \in \mathcal{U}
+\end{array}
+J(x,z,u,p,d,t)\quad \text{subject to:}\quad \text{cDAE}_\text{IVP}.
+\end{array}
+\end{equation}\end{split}\]</div>
+</div>
+<p>In a typical OCP formulation, <em>path constraints</em> are stated as equality and inequality
+constraints <span class="math notranslate nohighlight">\(g_I(\cdot) \leq 0\)</span> and <span class="math notranslate nohighlight">\(g_E(\cdot) = 0\)</span>. These constraints are mostly
+covered in <a class="reference internal" href="#prob:cdaeivp"><span class="std std-numref">Problem 2</span></a> by the algebraic term <span class="math notranslate nohighlight">\(f_a(\cdot) = 0\)</span>, and
+<span class="math notranslate nohighlight">\(f_y(x_e,x_i,z,u,p,d,t) \in \mathcal{Y}\)</span>,
+which may be written as <span class="math notranslate nohighlight">\(y_{\min} \leq f_y(\cdot) \leq y_{\max}\)</span>, noting that elements of
+<span class="math notranslate nohighlight">\(y_{\{\min,\max\}}\)</span> can be unbounded.
+The OCP formulation has the benefit that it often is straightforward to include various
+types of dynamic systems and restrictions. Finding analytic solutions to these
+problems are often very difficult, but there exist several approaches to solve the
+problem numerically.</p>
+</div>
+<div class="section" id="discretization-of-the-continuous-time-ocp">
+<h2>Discretization of the continuous time OCP<a class="headerlink" href="#discretization-of-the-continuous-time-ocp" title="Permalink to this headline">¶</a></h2>
+<p>The OCP in <a class="reference internal" href="#prob:cdaeivp"><span class="std std-numref">Problem 2</span></a> is a continuous time problem that needs to be made finite
+dimensional by <em>transcribing</em> it to an NLP. We briefly describe three approaches for
+achieving the transcription. These three techniques are available as options when
+solving the <em>purse planning problem</em>, but the collocation approach appears to be the
+preferred choice. For more details on the inner workings of each technique, please
+refer to for instance <span id="id12">[<a class="reference internal" href="zbibliography.html#id8" title="Lorenz T. Biegler. Nonlinear Programming: Concepts, Algorithms &amp; Applications to Chemical Processes. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 2010. ISBN 978-0-898-71702-0. doi:10.1137/1.9780898719383.">7</a>]</span>.</p>
+<p>One common trait for all discretization approaches below is the notion of time <em>elements</em>.
+We define an <em>element</em> as a time interval in such a way that the time horizon,
+<span class="math notranslate nohighlight">\(\mathbb{T} = [t_0, t_f]\)</span>, is divided into <span class="math notranslate nohighlight">\(N\)</span> elements of equal
+length.  The time instant <span class="math notranslate nohighlight">\(t_k\)</span> is the time point at beginning of the <span class="math notranslate nohighlight">\(k\text{-th}\)</span> element.
+The discrete time points are <span class="math notranslate nohighlight">\(\forall k \in \{ i \in \mathbb{N}_\geq : i &lt; N \} = \mathbb{I}_{\geq,N}\)</span>
+given as <span class="math notranslate nohighlight">\(t_k = t_0 + hk\)</span>, where <span class="math notranslate nohighlight">\(h:=\frac{t_f-t_0}{N}\)</span>.
+Notice that <span class="math notranslate nohighlight">\(t_f = t_0 + Nh\)</span>. We define the sequence of discrete time points as
+<span class="math notranslate nohighlight">\(\mathbb{T}_d := \{ t \in \mathbb{T} : \forall k \in \mathbb{I}_{\geq,N},\, t = t_0 + hk \}\)</span>.</p>
+<p>Our implementation assumes that <span class="math notranslate nohighlight">\(u(t)\)</span> is piecewise constant, that is, for all
+<span class="math notranslate nohighlight">\(t \in \mathbb{T}_d\)</span>, we have <span class="math notranslate nohighlight">\(u(t_k) = u_k\)</span>, where <span class="math notranslate nohighlight">\(u_k\)</span> is constant. This means that
+within a single time element, <span class="math notranslate nohighlight">\(u\)</span> can be considered a fixed variable, effectively a parameter.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If an input signal in the DAE needs to be smoother than piecewise constant, a
+straightforward way of achieving this is to parameterize <span class="math notranslate nohighlight">\(u\)</span> and introduce its
+parameters as the new input variables. For instance, a piecewise linear signal can be
+described for element <span class="math notranslate nohighlight">\(k\)</span> as</p>
+<div class="math notranslate nohighlight" id="equation-rst-formulation-2">
+<span class="eqno">(7)<a class="headerlink" href="#equation-rst-formulation-2" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{rl}
+u_k(t) &amp;= a + \frac{b}{h}(t - t_k), \\
+u_k(t_{k+1}) &amp;= u_{k+1}(t_{k+1}), \\
+a &amp;\in [u_{\min}, u_{\max}],\, b \in \left[\dat u_{\min},\dat u_{\max}\right],
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tilde u_k = \col(a,b)\)</span> is the new input vector, and the boundary condition at
+time point <span class="math notranslate nohighlight">\(t_{k+1}\)</span> acts as an equality constraint that ensures zero
+order continuity between elements.</p>
+</div>
+<div class="enumerable admonition" id="def:integral">
+<p class="admonition-title"><span class="caption-number">Definition 1 </span>  (DAE Integral)</p>
+<p>An integral map <span class="math notranslate nohighlight">\(F_I(x,z,p,t)\)</span> is the solution to the unconstrained, semi-explicit DAE
+problem at the end of a time interval.</p>
+<div class="math notranslate nohighlight" id="equation-def-integral">
+<span class="eqno">(8)<a class="headerlink" href="#equation-def-integral" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+ F_I : \mathbb{R}^{n_x} \times \mathbb{R}^{n_z} \times \mathbb{R}^{n_p} \times \mathbb{R}
+ \to \mathbb{R}^{n_x} \times \mathbb{R}^{n_z} \times \mathbb{R}^{n_q} \\
+ (x_0,z_0,p, t_0) \mapsto (x_f, z_f, q_f) := \left(\int_{t_0}^{t_f}\dat x\, dt, z(t_f), \int_{t_0}^{t_f} \dat q\, dt \right)\\
+ \quad \text{subject to:}\\
+ \quad\quad \forall t \in [t_0,t_f]:\quad
+ \left\{
+ \begin{array}{ll}
+ \dat{x} &amp;= f_e(x,z,p,t), \\
+ 0 &amp;= f_a(x,z,p,t), \\
+ \dat{q} &amp;= f_q(x,z,p,t),
+ \end{array} \right.\\
+ \quad\quad x(t_0) = x_0,\, q(t_0) = 0,\, z(t_0) \stackrel{?}{=} z_0,\, t_f = t_0 + h,\, h = \text{given},
+ \end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(z_0\)</span> is the initial guess of the algebraic variable. Note that the codomain is a
+3-tuple, so we may use the tuple selector notation to extract an element of the tuple,
+for instance <span class="math notranslate nohighlight">\(F_I(x_0,z_0,p,t_0)_{\langle 1\rangle} = (x_f,z_f,q_f)_{\langle 1 \rangle} = x_f\)</span>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In our shooting-based implementations, we assume that the constrained DAE IVP may be
+reduced to a semi-explicit DAE of index-1, that is, <span class="math notranslate nohighlight">\(x_i\)</span> may be reduced to be part of
+<span class="math notranslate nohighlight">\(x_e\)</span>, and that <span class="math notranslate nohighlight">\(f_a(\cdot)\)</span> is solvable with respect to z.</p>
+</div>
+<div class="section" id="shooting-approaches">
+<h3>Shooting approaches<a class="headerlink" href="#shooting-approaches" title="Permalink to this headline">¶</a></h3>
+<p>In the <strong>single-shooting approach</strong>, the OCP is formulated by applying the integral map successively in
+a composition-like manner. Let the <span class="math notranslate nohighlight">\(k \in \mathbb{I}_{\geq,N}\)</span> be the
+indices for the time elements of length <span class="math notranslate nohighlight">\(h = t_{k+1} - t_k\)</span>, where <span class="math notranslate nohighlight">\(u_k = u(t_k)\,\, \forall t_k \in \mathbb{T}_d\)</span>
+and <span class="math notranslate nohighlight">\(p_k := \col(u_k,d,p)\)</span>. Introduce the <em>Lagrange term</em> as a quadrature state
+<span class="math notranslate nohighlight">\(\dat q_L := \phi_L(x,z,u,p,d,t)\)</span>, which becomes part the quadrature state vector.
+The sum of this quadrature state for all elements is equal to the <em>Lagrange integral term</em>,</p>
+<div class="math notranslate nohighlight" id="equation-eq-obj-quad">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-obj-quad" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\Phi_L(x,z,u,p,d,t) = \sum_{k \in \mathbb{I}_{&gt;,N}} q_{L}(t_k).
+\end{equation}\]</div>
+<p>State variables are evaluated by repeatedly applying integrals as specified in
+<a class="reference internal" href="#def:integral"><span class="std std-numref">Definition 1</span></a>, that is,
+<span class="math notranslate nohighlight">\(F_I(x_0, z_0, p_0, t_0) = (x_1, z_1, q_1) =: F_{I,1}\)</span>;
+<span class="math notranslate nohighlight">\(F_I(F_{I,1 \langle 1\rangle}, F_{I,1 \langle 2 \rangle} ,p_1, t_1) = F_{I,2}\)</span>, and so on.</p>
+<div class="enumerable admonition" id="prob:nlpss">
+<p class="admonition-title"><span class="caption-number">Problem 4 </span>  (Single shooting)</p>
+<div class="math notranslate nohighlight" id="equation-prob-nlpss">
+<span class="eqno">(10)<a class="headerlink" href="#equation-prob-nlpss" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+\text{NLP}_{\text{SS}}:\quad
+\begin{array}{l}
+\begin{array}{l}
+ \text{minimize:}\\
+ u_{k \in \mathbb{I}_{\geq, N}}
+\end{array}
+\overbrace{\sum_{k \in \mathbb{I}_{&gt;,N}} q_{L}(t_k)}^{\Phi_L(\cdot)} + \Phi_M(p,d,t_f)\\
+\quad\text{subject to:}\\
+\quad\quad \forall k \in \mathbb{I}_{\geq, N} :
+\left\{ \begin{array}{l}
+F_I(F_{I,k \langle 1 \rangle}, F_{I,k \langle 2 \rangle}, p_k, t_k) = F_{I,k+1} \in \mathcal{X} \times \mathcal{Z} \times \overline{\mathbb{R}}^{n_q},\\
+f_y(F_{I,k \langle 1 \rangle}, F_{I,k \langle 2 \rangle}, u_k, p, d, t_k) \in \mathcal{Y},\\
+u_k \in \mathcal{U},
+ \end{array}\right.\\
+\quad\quad  p = \text{given},\, F_{I,0} = (x(t_0), z(t_0), q(t_0)) = (x_0, z_0, 0),
+\end{array}
+\end{array}
+\end{equation}\end{split}\]</div>
+</div>
+<p><a class="reference internal" href="#prob:nlpss"><span class="std std-numref">Problem 4</span></a> is equivalent to <a class="reference internal" href="#prob:nlp"><span class="std std-numref">Problem 1</span></a> and can be achieved by rearranging
+terms and expressions. The decision variables of <a class="reference internal" href="#prob:nlpss"><span class="std std-numref">Problem 4</span></a> are the discretized
+inputs <span class="math notranslate nohighlight">\(u_k\)</span>. Let <span class="math notranslate nohighlight">\(u_D := \row_{k \in \mathbb{I}_{\geq,N}}(u_k) \in \mathbb{R}^{n_u \times N}\)</span>
+be the horizontal concatenation of all the discretized <span class="math notranslate nohighlight">\(u_k\)</span>.
+The argument that minimizes the single shooting problem is indicated with <span class="math notranslate nohighlight">\(\star\)</span> and is
+<span class="math notranslate nohighlight">\(\vek(u_D^\star) \in \arg \min \text{NLP}_\text{SS}\)</span>.
+The piecewise constant input is <span class="math notranslate nohighlight">\(u^\star(t) : \mathbb{T} \to \{u \in \mathbb{R}^{n_u} : u(t) = u_D^\star \col_{k \in \mathbb{I}_{\geq, N}}( (t_k \leq t &lt; t_{k+1}) ) \}\)</span>,
+where <span class="math notranslate nohighlight">\((t_k \leq t &lt; t_{k+1}) \in \{0, 1\}\)</span>, which ensures to switch on and off the appropriate
+<span class="math notranslate nohighlight">\(u_k^\star\)</span> for its valid time interval. State and output trajectories can be obtained
+by solving the corresponding <a class="reference internal" href="#prob:cdaeivp"><span class="std std-numref">Problem 2</span></a> with <span class="math notranslate nohighlight">\(u(t) = u^\star(t)\)</span>.</p>
+<p>The <strong>multi-shooting approach</strong> also uses integral maps, but not as compositions.
+Let <span class="math notranslate nohighlight">\(u_k = u(t_k),\, x_k = x(t_k),\, z_k = z(t_k)\,\, \forall t_k \in \mathbb{T}_d\)</span> be decisions variables.
+The state variables at the boundary of time elements are explicitly “seamed” together
+by defining equality constraints, where the integral map must be equal to decision
+variables, that is,
+<span class="math notranslate nohighlight">\((F_{I,k+1 \langle 1\rangle}, F_{I,k+1 \langle 2\rangle}) = (x_{k+1}, z_{k+1})\)</span> must hold for all <span class="math notranslate nohighlight">\(k\)</span>.
+The multi shooting formulation is stated in <a class="reference internal" href="#prob:nlpms"><span class="std std-numref">Problem 5</span></a>.</p>
+<div class="enumerable admonition" id="prob:nlpms">
+<p class="admonition-title"><span class="caption-number">Problem 5 </span>  (Multi shooting)</p>
+<div class="math notranslate nohighlight" id="equation-prob-nlpms">
+<span class="eqno">(11)<a class="headerlink" href="#equation-prob-nlpms" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+\text{NLP}_{\text{MS}}:\quad
+\begin{array}{l}
+\begin{array}{l}
+ \text{minimize:}\\
+ \forall k \in \mathbb{I}_{\geq, N},\, u_k,x_k,z_k
+\end{array}
+\overbrace{\sum_{k \in \mathbb{I}_{&gt;,N}} q_{L}(t_k)}^{\Phi_L(\cdot)} + \Phi_M(p,d,t_f)\\
+\quad\text{subject to:}\\
+\quad\quad \forall k \in \mathbb{I}_{\geq, N} :
+\left\{ \begin{array}{l}
+F_I(x_k, z_k, p_k, t_k) = F_{I,k+1} \in \mathcal{X} \times \mathcal{Z} \times \mathbb{R}^{n_q},\\
+\left(F_{I,k+1 \langle 1 \rangle}, F_{I,k+1 \langle 2 \rangle}\right) = (x_{k+1}, z_{k+1}),\\
+f_y(x_k, z_k, u_k, p, d, t_k) \in \mathcal{Y}, \\
+u_k \in \mathcal{U},
+\end{array}\right.\\
+\quad\quad  p = \text{given},\, x(t_0) = x_0,\, z(t_0) \stackrel{?}{=} z_0,\, q(t_0) = 0,
+\end{array}
+\end{array}
+\end{equation}\end{split}\]</div>
+</div>
+<p>Since the decision variables of <a class="reference internal" href="#prob:nlpms"><span class="std std-numref">Problem 5</span></a> are the discretized <span class="math notranslate nohighlight">\(u_k\)</span>, <span class="math notranslate nohighlight">\(x_k\)</span>, and <span class="math notranslate nohighlight">\(z_k\)</span>, we
+define horizontally stacked discretizations as <span class="math notranslate nohighlight">\(u_D = \row_{k \in \mathbb{I}_{\geq,N}}(u_k),\, x_D = \row_{k \in \mathbb{I}_{\geq,N}}(x_k),\, z_D = \row_{k \in \mathbb{I}_{\geq,N}}(z_k)\)</span>.
+The argument that minimizes the multi shooting problem is indicated with <span class="math notranslate nohighlight">\(\star\)</span> superscript and is
+<span class="math notranslate nohighlight">\(\col(\vek(u_D^\star),\vek(x_D^\star),\vek(z_D^\star)) \in \arg \min \text{NLP}_{\text{MS}}\)</span>.
+The state and output trajectories can be obtained by solving the <a class="reference internal" href="#prob:cdaeivp"><span class="std std-numref">Problem 2</span></a> in
+two different manners:</p>
+<ol class="arabic simple">
+<li><p>In a similar fashion as can be done with single shooting by using <span class="math notranslate nohighlight">\(u^\star(t)\,\, \forall t \in \mathbb{T}_d\)</span>;</p></li>
+<li><p>For each <span class="math notranslate nohighlight">\(k \in \mathbb{I}_{\geq,N}\)</span> use <span class="math notranslate nohighlight">\(u_k^\star, x_k^\star, z_k^\star\)</span> to solve <a class="reference internal" href="#prob:cdaeivp"><span class="std std-numref">Problem 2</span></a> for a total of <span class="math notranslate nohighlight">\(N\)</span> number of times.</p></li>
+</ol>
+<p>If the element time range is sufficiently short, one may directly use <span class="math notranslate nohighlight">\(u_k^\star, x_k^\star, z_k^\star\)</span>
+without solving <a class="reference internal" href="#prob:cdaeivp"><span class="std std-numref">Problem 2</span></a> at all.</p>
+</div>
+<div class="section" id="collocation">
+<h3>Collocation<a class="headerlink" href="#collocation" title="Permalink to this headline">¶</a></h3>
+<p>The collocation methods are a subclass of implicit Runge-Kutta methods, see
+<span id="id13">[<a class="reference internal" href="zbibliography.html#id17" title="Ernst Hairer, Syvert P. Nørsett, and Gerhard Wanner. Solving Ordinary Differential Equations I. Springer-Verlag, 2 edition, 1993. ISBN 978-3-540-78862-1. doi:10.1007/978-3-540-78862-1.">13</a>]</span> and <span id="id14">[<a class="reference internal" href="zbibliography.html#id18" title="Ernst Hairer and Gerhard Wanner. Solving Ordinary Differential Equations II. Springer-Verlag, 2 edition, 2010. ISBN 978-3-642-05221-7. doi:10.1007/978-3-642-05221-7.">14</a>]</span>. “For ordinary
+differential equations it consists in searching for a polynomial of degree <span class="math notranslate nohighlight">\(d\)</span> whose
+derivative coincides (‘co-locates’) at <span class="math notranslate nohighlight">\(d\)</span> given points with the vector field of the
+differential equation” <span id="id15">[<a class="reference internal" href="zbibliography.html#id17" title="Ernst Hairer, Syvert P. Nørsett, and Gerhard Wanner. Solving Ordinary Differential Equations I. Springer-Verlag, 2 edition, 1993. ISBN 978-3-540-78862-1. doi:10.1007/978-3-540-78862-1.">13</a>]</span>. In the case of OCP, this amounts
+to applying the collocation method for each time element. In addition, the state
+variables are “seamed” together at the boundary of time elements in a similar fashion
+as was done in multi shooting. In Theorem 7.7 (p. 212) <span id="id16">[<a class="reference internal" href="zbibliography.html#id17" title="Ernst Hairer, Syvert P. Nørsett, and Gerhard Wanner. Solving Ordinary Differential Equations I. Springer-Verlag, 2 edition, 1993. ISBN 978-3-540-78862-1. doi:10.1007/978-3-540-78862-1.">13</a>]</span> it is shown
+that the collocation method is equivalent to a <span class="math notranslate nohighlight">\(d\text{-stage}\)</span> implicit Runge-Kutta
+method. We will relate the collocation equations to the Butcher tableau
+<a class="reference internal" href="#equation-eq-butcher">Eq. (13)</a> and show how the discretization is implemented.</p>
+<p>Suppose <span class="math notranslate nohighlight">\(\dat x = f(x,t) \in \mathbb{R}^n\)</span> is to be integrated from <span class="math notranslate nohighlight">\(t_n\)</span> to <span class="math notranslate nohighlight">\(t_{n+1}\)</span>, with <span class="math notranslate nohighlight">\(h = t_{n+1}-t_n\)</span>.
+The implicit Runge-Kutta setup is</p>
+<div class="math notranslate nohighlight" id="equation-eq-rk">
+<span class="eqno">(12)<a class="headerlink" href="#equation-eq-rk" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+ \begin{array}{l}
+ x_{n+1} = x_n + h \sum_{i=1}^{d} b_i k_i,\\
+ k_i = f\left(x_n + h \sum_{j=1}^{d} a_{i,j} k_j, t_n + c_i h\right)\, \forall i \in \mathbb{I}_{&gt;,d},
+ \end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(a_{ij},b_i,c_i\)</span> are given coefficients from a chosen discretization scheme, e.g. Gauss-Legendre, see
+Sec. IV.5 <span id="id17">[<a class="reference internal" href="zbibliography.html#id18" title="Ernst Hairer and Gerhard Wanner. Solving Ordinary Differential Equations II. Springer-Verlag, 2 edition, 2010. ISBN 978-3-642-05221-7. doi:10.1007/978-3-642-05221-7.">14</a>]</span> and the Butcher tableau in <a class="reference internal" href="#equation-eq-butcher">Eq. (13)</a>.</p>
+<div class="math notranslate nohighlight" id="equation-eq-butcher">
+<span class="eqno">(13)<a class="headerlink" href="#equation-eq-butcher" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}
+{c|cccc}
+c_1 &amp; a_{1,1} &amp; a_{1,2} &amp; \cdots &amp; a_{1,d}\\
+c_2 &amp; a_{2,1} &amp; a_{2,2} &amp; \cdots &amp; a_{2,d}\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+c_d&amp; a_{d,1} &amp; a_{d,2} &amp; \cdots &amp; a_{d,d}\\
+\hline
+&amp; b_1 &amp; b_2 &amp; \cdots &amp; b_d
+\end{array} =\quad
+\begin{array}
+{c|c}
+\tau_{\text{colloc}} &amp; A \\
+\hline
+&amp;\boldsymbol{b}^T
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tau_{\text{colloc}}\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{b}\)</span> are column vectors.</p>
+<p>The equations in <a class="reference internal" href="#equation-eq-rk">Eq. (12)</a> can be expressed in matrix form.
+Let <span class="math notranslate nohighlight">\(K = \row_{i \in \mathbb{I}_{&gt;,d}}(k_i)\)</span>, so <span class="math notranslate nohighlight">\(K\)</span> is an <span class="math notranslate nohighlight">\(n \times d\)</span> matrix. The summations can be written</p>
+<div class="math notranslate nohighlight" id="equation-rst-formulation-3">
+<span class="eqno">(14)<a class="headerlink" href="#equation-rst-formulation-3" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+\sum_{i=1}^d b_i k_i &amp;= K\boldsymbol{b},\\
+\sum_{j=1}^d A_{[i,j]} k_i &amp;= KA^T,
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where we use the coefficients <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{b}\)</span> from the Butcher tableau.
+The ‘co-locating’ derivatives <span class="math notranslate nohighlight">\(k_i\)</span> at time instants <span class="math notranslate nohighlight">\(t_{n,i} = t_n + c_i h\)</span>, have state variables <span class="math notranslate nohighlight">\(x(t_n + c_i h) = x_{n,i}\)</span>.
+Define the state collocation matrix <span class="math notranslate nohighlight">\(X_c := \row_{i\in\mathbb{I}_{&gt;,d}}(x_{n,i}) \in \mathbb{R}^{n \times d}\)</span>;
+and by including the initial state: <span class="math notranslate nohighlight">\(X_e := \row(x_n, X_c)\)</span>. If we collect the expressions
+<span class="math notranslate nohighlight">\(x_{n,i} = x_n + h\sum_{j=1}^d a_{i,j}k_j\)</span> in matrix form, we get</p>
+<div class="math notranslate nohighlight" id="equation-rst-formulation-4">
+<span class="eqno">(15)<a class="headerlink" href="#equation-rst-formulation-4" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+X_e = \rephorz_d(x_n) + hKA^T.
+\end{equation}\]</div>
+<p>By rearranging terms, we see that</p>
+<div class="math notranslate nohighlight" id="equation-eq-colloc-dot">
+<span class="eqno">(16)<a class="headerlink" href="#equation-eq-colloc-dot" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+X_e  \col(-1_{1\times d}, I_d) = hKA^T,\\
+C := \col(-1_{1\times d}, I_d)A^{-T},\\
+hK = X_e C,
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(K(\cdot)\)</span> are state derivative expressions at collocation time points, arranged column-wise.
+By using this result, the state <span class="math notranslate nohighlight">\(x_{n+1} = x_n + hK\boldsymbol{b}\)</span> can be written as</p>
+<div class="math notranslate nohighlight" id="equation-eq-colloc-tf">
+<span class="eqno">(17)<a class="headerlink" href="#equation-eq-colloc-tf" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+x_{n+1} = x_n + X_e Cb,\\
+x_{n+1} = X_e\left[ Cb + \col(1, 0_{d \times 1})\right],\\
+x_{n+1} = X_e \boldsymbol{d}.
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>In the special case where the variable to be integrated does not explicitly appear in
+<span class="math notranslate nohighlight">\(f(\cdot)\)</span>, it is a quadrature. The quadrature differential <span class="math notranslate nohighlight">\(\dat q = f_q(x)\)</span> has integral from <span class="math notranslate nohighlight">\(t_n\)</span>
+to <span class="math notranslate nohighlight">\(t_{n+1}\)</span> with <span class="math notranslate nohighlight">\(q(t_n)=0\)</span> expressed as</p>
+<div class="math notranslate nohighlight" id="equation-eq-colloc-qf">
+<span class="eqno">(18)<a class="headerlink" href="#equation-eq-colloc-qf" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+q_f = \row_{i \in \mathbb{I}_{&gt;,d}}(\dat q(t_{n,i}))\boldsymbol{b}h.
+\end{equation}\]</div>
+<p>The results of <a class="reference internal" href="#equation-eq-colloc-dot">Eq. (16)</a>, <a class="reference internal" href="#equation-eq-colloc-tf">Eq. (17)</a>, and <a class="reference internal" href="#equation-eq-colloc-qf">Eq. (18)</a> are
+used to establish the necessary expressions to formulate the collocation-based
+transcriptions of the OCP to NLP.  For each element <span class="math notranslate nohighlight">\(k\)</span> in <span class="math notranslate nohighlight">\(\mathbb{I}_{\geq,N}\)</span> we
+define state elements <span class="math notranslate nohighlight">\(X_{e,k} \in \mathbb {R}^{n_x \times d+1}\)</span>.  Further let
+<span class="math notranslate nohighlight">\(K_k(X_{e,k},u_k,p,\tau_{\text{colloc}})\)</span> be the matrix with ODE expressions as
+columns for all collocation points of element <span class="math notranslate nohighlight">\(k\)</span>.  We use the same quadrature state
+<span class="math notranslate nohighlight">\(q_L\)</span> as defined in <a class="reference internal" href="#equation-eq-obj-quad">Eq. (9)</a>.  Let <span class="math notranslate nohighlight">\(x_{k,0}\)</span> be the state at time point
+<span class="math notranslate nohighlight">\(t_k\)</span>.  The decision variables for the collocation problem are <span class="math notranslate nohighlight">\(u_k\)</span> and
+<span class="math notranslate nohighlight">\(X_{e,k}\)</span>. The collocated OCP is stated in <a class="reference internal" href="#prob:nlpcolloc"><span class="std std-numref">Problem 6</span></a>.</p>
+<div class="enumerable admonition" id="prob:nlpcolloc">
+<p class="admonition-title"><span class="caption-number">Problem 6 </span>  (Collocation)</p>
+<div class="math notranslate nohighlight" id="equation-prob-nlpcolloc">
+<span class="eqno">(19)<a class="headerlink" href="#equation-prob-nlpcolloc" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+\text{NLP}_{\text{colloc}}:\quad
+\begin{array}{l}
+\begin{array}{l}
+ \text{minimize:}\\
+ \forall k \in \mathbb{I}_{\geq, N},\, u_k,X_{e,k}
+\end{array}
+\overbrace{\sum_{k \in \mathbb{I}_{&gt;,N}} q_{L}(t_k)}^{\Phi_L(\cdot)} + \Phi_M(p,d,t_f)\\
+\quad\text{subject to:}\\
+\quad\quad \forall k \in \mathbb{I}_{\geq, N} :
+\left\{ \begin{array}{l}
+hK_k(X_{e,k},u_k,p,t) = X_{e,k} C,\\
+q_{L}(t_{k+1}) = \row_{i \in \mathbb{I}_{&gt;,d}}(\dat q_L(t_{k,i}))\boldsymbol{b}h, \\
+X_{e,k}\boldsymbol{d} = x_{k+1,0}, \\
+f_y(x_{k,i}, u_k, p, d, t_{k,i}) \in \mathcal{Y}\quad \forall i \in \mathbb{I}_{\geq,d+1}, \\
+X_{e,k} \in \mathcal{X}^{d+1},\\
+u_k \in \mathcal{U},
+\end{array}\right.\\
+\quad\quad  p = \text{given},\, x(t_0) = x_{1,0},\, q(t_0) = 0,
+\end{array}
+\end{array}
+\end{equation}\end{split}\]</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>casadi provides helper functions to acquire collocation coefficients.
+The coefficients <span class="math notranslate nohighlight">\(\boldsymbol{b}\)</span>, <span class="math notranslate nohighlight">\(C\)</span>, <span class="math notranslate nohighlight">\(\boldsymbol{d}\)</span> can be obtained from <code class="docutils literal notranslate"><span class="pre">casadi::collocation_coeff</span></code>,
+while <span class="math notranslate nohighlight">\(\tau_{\text{colloc}}\)</span> are provided by <code class="docutils literal notranslate"><span class="pre">casadi::collocation_points</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The formulation above requires that <span class="math notranslate nohighlight">\(A\)</span> is invertible. This is true for at least
+<em>Radau</em> and <em>Gauss-Legendre</em> collocation coefficients, which are the one supported by
+<code class="docutils literal notranslate"><span class="pre">casadi::collocation_coeff</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We only show the theory for explicit ODE, since the algebraic state variables are not
+available in our collocation implementation.</p>
+</div>
+<p>Further reading on collocation can be found in <span id="id18">[<a class="reference internal" href="zbibliography.html#id17" title="Ernst Hairer, Syvert P. Nørsett, and Gerhard Wanner. Solving Ordinary Differential Equations I. Springer-Verlag, 2 edition, 1993. ISBN 978-3-540-78862-1. doi:10.1007/978-3-540-78862-1.">13</a>, <a class="reference internal" href="zbibliography.html#id18" title="Ernst Hairer and Gerhard Wanner. Solving Ordinary Differential Equations II. Springer-Verlag, 2 edition, 2010. ISBN 978-3-642-05221-7. doi:10.1007/978-3-642-05221-7.">14</a>]</span>, see especially Eq. 3.1, Def. 4.7, Th. 7.7.</p>
+</div>
+</div>
+<div class="section" id="nonlinear-programming-problem-nlp">
+<h2>Nonlinear programming problem (NLP)<a class="headerlink" href="#nonlinear-programming-problem-nlp" title="Permalink to this headline">¶</a></h2>
+<p>Now that we have described discretization approaches for the OCP, we briefly revisit
+<a class="reference internal" href="#prob:nlp"><span class="std std-numref">Problem 1</span></a>. There are several ways of instantiating an NLP solver in casadi, see
+<a class="reference external" href="https://web.casadi.org/python-api/#nlp">Casadi nlpsol</a>. In any case, <code class="docutils literal notranslate"><span class="pre">casadi::nlpsol</span></code> are formulated with five main constructs:</p>
+<ol class="arabic simple">
+<li><p>Decision variables <span class="math notranslate nohighlight">\(\chi\)</span>;</p></li>
+<li><p>Parameters <span class="math notranslate nohighlight">\(\rho\)</span>;</p></li>
+<li><p>Objective function <span class="math notranslate nohighlight">\(F(\chi,\rho)\)</span>;</p></li>
+<li><p>Constraint function <span class="math notranslate nohighlight">\(g(\chi,\rho)\)</span>;</p></li>
+<li><p>Bounds <span class="math notranslate nohighlight">\(\chi_{\{\min,\max\}}\)</span> and <span class="math notranslate nohighlight">\(g_{\{\min,\max\}}\)</span>;</p></li>
+</ol>
+<p>The NLP formulation on <em>casadi form</em> is stated in <a class="reference internal" href="#prob:nlp_revisit"><span class="std std-numref">Problem 7</span></a>.</p>
+<div class="enumerable admonition" id="prob:nlp_revisit">
+<p class="admonition-title"><span class="caption-number">Problem 7 </span>  (Nonlinear programming problem (casadi))</p>
+<div class="math notranslate nohighlight" id="equation-prob-nlp-revisit">
+<span class="eqno">(20)<a class="headerlink" href="#equation-prob-nlp-revisit" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+ \text{NLP:}\qquad
+ \begin{array}{lc}
+ \begin{array}{l}
+ \text{minimize:} \\
+ \chi(\cdot) \in \mathbb{R}^{n}
+ \end{array}
+ \quad \displaystyle F(\chi,\rho)\\
+ \quad\text{subject to:} \\
+ \qquad\begin{array}{ll}
+ \chi_{\text{min}} \leq \chi \leq \chi_{\text{max}},\\
+ g_{\text{min}} \leq g(\chi,\rho) \leq g_{\text{max}}, \\
+ \rho= \text{given}\, \in \mathbb{R}^{n_p}
+ \end{array}
+ \end{array}
+\end{equation}\end{split}\]</div>
+</div>
+<p>We assume that the <span class="math notranslate nohighlight">\(\chi\)</span> is the argument of the NLP problem, even though strictly
+speaking <span class="math notranslate nohighlight">\(\rho\)</span> also is an argument, that is, we have
+<span class="math notranslate nohighlight">\(\chi^\star := \arg \min \text{NLP}(\chi_0;\rho)\)</span>.
+<span class="math notranslate nohighlight">\(\chi\)</span> generally is a combination of <span class="math notranslate nohighlight">\(u_k, x_k, z_k\, \forall k \in \mathbb{I}_{\geq,N}\)</span>,
+so we use helper functions to unpack this vector into a tuple, see further below.</p>
+<div class="section" id="formulation-strategies-and-extensions">
+<h3>Formulation strategies and extensions<a class="headerlink" href="#formulation-strategies-and-extensions" title="Permalink to this headline">¶</a></h3>
+<p>In some cases, the common optimal control problem formulation has limitations on what
+it can mathematically describe. We extend the NLP formulation to accommodate some
+additional use cases with the following strategies.</p>
+<p><em>Decision parameters</em> as described in <a class="reference internal" href="#def:decideparam"><span class="std std-numref">Definition 2</span></a> are useful for cases where
+parameter determination is a degree of freedom in the optimization problem. A good
+example of this is a variable time horizon problem, <a class="reference internal" href="#def:variable_horizon"><span class="std std-numref">Definition 3</span></a>. We
+introduce the notion of <em>subsystems</em> in <a class="reference internal" href="#def:subsystem"><span class="std std-numref">Definition 4</span></a>, so that we can combine
+different strategies for various parts of a whole problem formulation. In particular,
+this enables us for instance to use single shooting with a short time horizon for one
+subsystem and variable time horizon with collocation for another subsystem. One
+limitation of the subsystem formulation is that we cannot easily support path
+constraints between the subsystems. Path constraints are valid for all time points in
+a time interval. Interconnection between subsystems are still possible with the use of
+<em>point constraints</em>, <a class="reference internal" href="#def:point_constraints"><span class="std std-numref">Definition 5</span></a>. The current implementation allows
+definition of constraints at the time boundaries of the subsystems.</p>
+<div class="enumerable admonition" id="def:decideparam">
+<p class="admonition-title"><span class="caption-number">Definition 2 </span>  (Decision parameters)</p>
+<p>Decision parameters are tunable time-constant parameters</p>
+<div class="math notranslate nohighlight" id="equation-def-decideparam">
+<span class="eqno">(21)<a class="headerlink" href="#equation-def-decideparam" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+v \in \mathcal{V} \subseteq \overline{\mathbb{R}}^{n_v},
+\end{equation}\]</div>
+<p>which are to be determined by the optimization problem. They are added to
+the decision variables of the NLP.</p>
+</div>
+<div class="enumerable admonition" id="def:variable_horizon">
+<p class="admonition-title"><span class="caption-number">Definition 3 </span>  (Variable time horizon)</p>
+<p>In a variable time horizon formulation the final time <span class="math notranslate nohighlight">\(t_f\)</span> is to be decided.
+Suppose <span class="math notranslate nohighlight">\(t_f \in [t_{f,\min},t_{f,\max}]\)</span>, with <span class="math notranslate nohighlight">\(N\)</span> time elements.
+If we assume regular elements lengths, so that <span class="math notranslate nohighlight">\(h = t_{i+1} - t_i\)</span> is equal
+for all elements, we can introduce</p>
+<div class="math notranslate nohighlight" id="equation-def-variable-horizon">
+<span class="eqno">(22)<a class="headerlink" href="#equation-def-variable-horizon" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+h \in [h_{\min}, h_{\max}],
+\end{equation}\]</div>
+<p>with <span class="math notranslate nohighlight">\(h_{\{\min,\max\}}=(t_{\{\min,\max\}}- t_0)/N\)</span> as a decision parameter.
+This new decision parameter can be used by all discretization techniques
+described herein to achieve a non-fixed time horizon.</p>
+</div>
+<div class="enumerable admonition" id="def:subsystem">
+<p class="admonition-title"><span class="caption-number">Definition 4 </span>  (Subsystems)</p>
+<p>A subsystem is a dynamic system of the form given in <a class="reference internal" href="#prob:cdaeivp"><span class="std std-numref">Problem 2</span></a>.  Let <span class="math notranslate nohighlight">\(n_{ss}\)</span>
+be the number of subsystems. For each subsystem <span class="math notranslate nohighlight">\(i\)</span> we have a distinct time horizon
+<span class="math notranslate nohighlight">\(\mathbb{T}_i\)</span> and discretization technique, so that a subsystem’s contribution to the
+combined NLP is</p>
+<div class="math notranslate nohighlight" id="equation-def-subsystem">
+<span class="eqno">(23)<a class="headerlink" href="#equation-def-subsystem" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+ \text{NLP}_i:\qquad
+ \begin{array}{lc}
+ \begin{array}{l}
+ \text{minimize:} \\
+ \chi_i(\cdot) \in \mathbb{R}^{n_i}
+ \end{array}
+ \quad \displaystyle F(\chi_i,\rho)\\
+ \quad\text{subject to:} \\
+ \qquad\begin{array}{ll}
+ \chi_{i,\text{min}} \leq \chi_i \leq \chi_{i,\text{max}},\\
+ g_{i,\text{min}} \leq g(\chi_i,\rho) \leq g_{i,\text{max}}, \\
+ \rho= \text{given}\, \in \mathbb{R}^{n_p}
+ \end{array}
+ \end{array}
+\end{equation}\end{split}\]</div>
+</div>
+<div class="enumerable admonition" id="def:point_constraints">
+<p class="admonition-title"><span class="caption-number">Definition 5 </span>  (Point constraints)</p>
+<p>Let <span class="math notranslate nohighlight">\(x_0 = \col(x_{i}(t_0))\)</span> and <span class="math notranslate nohighlight">\(x_f = \col(x_{i}(t_f))\)</span> be the combined initial and
+terminal state of all <span class="math notranslate nohighlight">\(n_{ss}\)</span> subsystems. A point constraint is given as</p>
+<div class="math notranslate nohighlight" id="equation-def-point-constraints">
+<span class="eqno">(24)<a class="headerlink" href="#equation-def-point-constraints" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+g_{\circ}(x_0, x_f, v, p) \in [g_{\circ, \min},g_{\circ, \max}].
+\end{equation}\]</div>
+</div>
+</div>
+</div>
+<div class="section" id="helper-functions">
+<h2>Helper functions<a class="headerlink" href="#helper-functions" title="Permalink to this headline">¶</a></h2>
+<p>The numerical solution to the nonlinear programming problem is on a form that needs
+processing to be used in a receding horizon fashion. Below we will elaborate on several
+such helper functions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The helper functions are currently only implements for cases where there are no
+algebraic state, that is <span class="math notranslate nohighlight">\(z(t) \in \emptyset\)</span>. Extending them to also include <span class="math notranslate nohighlight">\(z(t)\)</span>
+is straightforward.</p>
+</div>
+<div class="section" id="adding-variable-bounds-add-nlp-variable-bounds">
+<span id="variable-bounds"></span><h3>Adding variable bounds <code class="docutils literal notranslate"><span class="pre">::add_nlp_variable_bounds</span></code><a class="headerlink" href="#adding-variable-bounds-add-nlp-variable-bounds" title="Permalink to this headline">¶</a></h3>
+<p>Let <span class="math notranslate nohighlight">\(\chi \in \mathcal{Z} \subseteq \overline{\mathbb{R}}^n\)</span> be the decision variable vector of the NLP.
+The standard form of the NLP solver is to specify <span class="math notranslate nohighlight">\(\chi_{\min} \leq \chi \leq \chi_{\max}\)</span>.
+Suppose <span class="math notranslate nohighlight">\(\chi = \col(u_1,u_2,\cdots,u_N)\)</span>. Then lower and upper bound can be written as</p>
+<div class="math notranslate nohighlight" id="equation-rst-formulation-5">
+<span class="eqno">(25)<a class="headerlink" href="#equation-rst-formulation-5" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+\chi_{\min} = 1_{N\times 1} \otimes u_{\min} \\
+\chi_{\max} = 1_{N\times 1} \otimes u_{\max},
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{U} = [u_{\min}, u_{\max}]\)</span>.  In cases where <span class="math notranslate nohighlight">\(\chi\)</span> also consists of
+elements of the state <span class="math notranslate nohighlight">\(x_k\)</span>, the <code class="docutils literal notranslate"><span class="pre">::add_nlp_variable_bounds</span></code>, takes care of populating
+<span class="math notranslate nohighlight">\(\chi_{\{\min,\max\}}\)</span> according to the variable ordering and repetitions dictated by
+the chosen discretization technique.</p>
+</div>
+<div class="section" id="time-grid-function-create-solution-timegrid">
+<span id="timegrid"></span><h3>Time grid function <code class="docutils literal notranslate"><span class="pre">::create_solution_timegrid</span></code><a class="headerlink" href="#time-grid-function-create-solution-timegrid" title="Permalink to this headline">¶</a></h3>
+<p>The time grids of the discretized NLP problem depends on the chosen transcription
+approach, and for collocation, also the polynomial degree.
+We declare a function that constructs these time grids for a given method/degree as
+<span class="math notranslate nohighlight">\(T_G : \mathbb{R}_{\geq} \to \mathbb{R}_{\geq}^{1+ N(d+1)} \times \mathbb{R}_{\geq}^N\)</span>,
+where <span class="math notranslate nohighlight">\(N\)</span> is the number of elements and <span class="math notranslate nohighlight">\(d \in \{k \in \mathbb{Z} : k \geq -1\}\)</span>.
+Let <span class="math notranslate nohighlight">\(t_0\)</span> be an initial time and <span class="math notranslate nohighlight">\(h = t_{k+1} - t_k\)</span> the step size. The time grid function is defined as</p>
+<div class="math notranslate nohighlight" id="equation-eq-timegrid">
+<span class="eqno">(26)<a class="headerlink" href="#equation-eq-timegrid" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+T_G(t_0) := (T_x(t_0), T_u(t_0)),
+\end{equation}\]</div>
+<p>with <span class="math notranslate nohighlight">\(T_x\)</span> and <span class="math notranslate nohighlight">\(T_u\)</span> defined as</p>
+<div class="math notranslate nohighlight" id="equation-rst-formulation-6">
+<span class="eqno">(27)<a class="headerlink" href="#equation-rst-formulation-6" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+T_u(t_0) = \col_{k \in \mathbb{I}_{\geq,N}}(t_0 + hk), \\
+T_x(t_0) = \left\{
+  \begin{array}{llr}t_0,&amp;d=-1,&amp;\text{Single shooting};\\
+  T_u,&amp;d=0,&amp;\text{Multi shooting};\\
+  \col(t_0, T_u(t_0) \otimes 1_{d+1 \times 1} + \repvert_N(\col(\tau_\text{colloc,d},1))),&amp;d\geq 1,&amp;\text{Collocation};
+  \end{array}\right. \\
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tau_{\text{colloc},d}\in \mathbb{R}_{&gt;}^d\)</span> is a column vector of Legendre collocation points of degree <span class="math notranslate nohighlight">\(d\)</span>.</p>
+</div>
+<div class="section" id="nlp-tuple-unpacker-create-solution-unpacker">
+<h3>NLP tuple unpacker <code class="docutils literal notranslate"><span class="pre">::create_solution_unpacker</span></code><a class="headerlink" href="#nlp-tuple-unpacker-create-solution-unpacker" title="Permalink to this headline">¶</a></h3>
+<p>The argument of <a class="reference internal" href="#prob:nlp"><span class="std std-numref">Problem 1</span></a> is <span class="math notranslate nohighlight">\(z \in \mathbb{R}^n\)</span>, but when a transcription
+approach has been used, it is necessary to unpack this variable into tuples of
+discretized control inputs and state variables.</p>
+<p><span class="math notranslate nohighlight">\(F_\text{unpack}: \mathbb{R}^n \to \mathbb{R}^{n_u}\times\mathbb{R}^{n_x} \times \mathbb{R}^{n_x \times N(d+1)}\)</span>,
+where <span class="math notranslate nohighlight">\(N\)</span> is the number of elements and <span class="math notranslate nohighlight">\(d \in \{k \in \mathbb{Z} : k \geq -1\}\)</span> is the pseudo-degree.</p>
+<div class="math notranslate nohighlight" id="equation-eq-funpack">
+<span class="eqno">(28)<a class="headerlink" href="#equation-eq-funpack" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+F_{\text{unpack}}(z) = (u_D, x_0, X_e),
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(u_D\)</span> is the inputs <span class="math notranslate nohighlight">\(u_k\)</span> arranged in a matrix and the state elements <span class="math notranslate nohighlight">\(X_e\)</span> are defined as</p>
+<div class="math notranslate nohighlight" id="equation-eq-funpack-x">
+<span class="eqno">(29)<a class="headerlink" href="#equation-eq-funpack-x" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+X_e = \left\{
+  \begin{array}{llr}\{\},&amp;d=-1,&amp;\text{Single shooting};\\
+  x_D,&amp;d=0,&amp;\text{Multi shooting};\\
+  \row(\row_{k\in \mathbb{I}_{\geq,N}}(X_{c,k}),x_{k+1,0}),&amp;d\geq 1,&amp;\text{Collocation},
+  \end{array}\right.
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(X_{c,k}\)</span> are the collocated state variables in element <span class="math notranslate nohighlight">\(k\)</span>.</p>
+</div>
+<div class="section" id="nlp-decision-parameters-create-decision-parameter-extractor">
+<h3>NLP decision parameters <code class="docutils literal notranslate"><span class="pre">::create_decision_parameter_extractor</span></code><a class="headerlink" href="#nlp-decision-parameters-create-decision-parameter-extractor" title="Permalink to this headline">¶</a></h3>
+<p>In some cases <a class="reference internal" href="#prob:nlp"><span class="std std-numref">Problem 1</span></a> consists of decision parameters. Let <span class="math notranslate nohighlight">\(v \in \mathbb{R}^{n_v}\)</span>
+be the decision parameter vector, which is located first in the combined NLP decision
+variable vector <span class="math notranslate nohighlight">\(z = \col(v, s) \in \mathbb{R}^n\)</span>, where <span class="math notranslate nohighlight">\(s \in\mathbb{R}^{n_s}\)</span> is the
+remaining decision variables. Extraction of these decision parameters are achieved with</p>
+<div class="math notranslate nohighlight" id="equation-eq-decideunpack">
+<span class="eqno">(30)<a class="headerlink" href="#equation-eq-decideunpack" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+F_{\text{v}}(z) = \row(I_{n_v}, 0_{n_v \times n_s})z = v.
+\end{equation}\]</div>
+</div>
+<div class="section" id="nlp-subsystem-extractor-create-system-extractor">
+<h3>NLP subsystem extractor <code class="docutils literal notranslate"><span class="pre">::create_system_extractor</span></code><a class="headerlink" href="#nlp-subsystem-extractor-create-system-extractor" title="Permalink to this headline">¶</a></h3>
+<p>When the <a class="reference internal" href="#prob:nlp"><span class="std std-numref">Problem 1</span></a> consists of subsystems using different discretization schemes,
+it is practical to first extract the relevant portion of the the whole problem. Let
+<span class="math notranslate nohighlight">\(m\)</span> be the number of subsystems. Suppose <span class="math notranslate nohighlight">\(z \in \mathbb{R}^n\)</span> is the whole NLP
+problem, so that <span class="math notranslate nohighlight">\(z = \col(v,s_1,\cdots,s_m)\)</span>, where <span class="math notranslate nohighlight">\(v \in \mathbb{R}^{n_v}\)</span> is the
+decision parameters, and <span class="math notranslate nohighlight">\(s_i\)</span> is the vectorized discretization for subsystem <span class="math notranslate nohighlight">\(i\)</span>.</p>
+<p><span class="math notranslate nohighlight">\(F_{\text{extract},i}: \mathbb{R}^n\times \to \mathbb{R}^{n_i}\)</span> is the extractor mapping for subsystem i, so that</p>
+<div class="math notranslate nohighlight" id="equation-eq-sextract">
+<span class="eqno">(31)<a class="headerlink" href="#equation-eq-sextract" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+F_{\text{extract},i}(z) = s_i.
+\end{equation}\]</div>
+<p>This function is typically used as a composition with e.g. the solution unpacker and
+horizon shifter to manipulate a particular subsystem’s discretization only. For instance
+<span class="math notranslate nohighlight">\(F_{\text{unpack}}(F_{\text{extract},1}(z)) = (u_{1,D}, X_{1,0}, X_{1,e})\)</span>.</p>
+</div>
+<div class="section" id="nlp-shifter-create-horizon-shifter">
+<h3>NLP shifter <code class="docutils literal notranslate"><span class="pre">::create_horizon_shifter</span></code><a class="headerlink" href="#nlp-shifter-create-horizon-shifter" title="Permalink to this headline">¶</a></h3>
+<p>The intent of the horizon shifter is to move variables one time element forward.
+The goal is to prepare a solution to be used as “warm” start for a problem that has progressed in time.
+There are slight differences in the operation on each variable type.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(u_k\)</span> is shifted, so that an old <span class="math notranslate nohighlight">\(u_{k+1}\)</span> becomes the new <span class="math notranslate nohighlight">\(u_{k}\)</span>.
+The exception is at the boundary, where the old <span class="math notranslate nohighlight">\(u_{N-1}\)</span> is kept.</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_0\)</span> is unchanged, because it will be overwritten elsewhere.</p></li>
+<li><p><span class="math notranslate nohighlight">\(X_e\)</span> is shifted, so that an old <span class="math notranslate nohighlight">\(x_{k+1}\)</span> becomes the new <span class="math notranslate nohighlight">\(x_{k}\)</span>, and in the case
+of collocation: each collocated element matrix is shifted in a similar fashion.
+The exception is at the boundary, where the old <span class="math notranslate nohighlight">\(x_{N-1}\)</span> or <span class="math notranslate nohighlight">\(X_{e,N-1}\)</span> is kept.</p></li>
+</ul>
+<p>The above features are achieved by implementing a binary linear mapping for a column vector.
+Let <span class="math notranslate nohighlight">\(\chi \in \mathbb{R}^{n_uN + n_x + n_x N(d+1)}\)</span> be the column vectorized domain for <a class="reference internal" href="#prob:nlp"><span class="std std-numref">Problem 1</span></a>, given as
+<span class="math notranslate nohighlight">\(\chi = \col(\vek(u_D),x_0, \vek(X_e))\)</span>, see <a class="reference internal" href="#equation-eq-funpack">Eq. (28)</a> and <a class="reference internal" href="#equation-eq-funpack-x">Eq. (29)</a>.
+Let <span class="math notranslate nohighlight">\(n = n_uN + n_x + n_xN(d+1)\)</span> and <span class="math notranslate nohighlight">\(A_{\ll} = \band(N,1)\)</span> and <span class="math notranslate nohighlight">\(A_{\ll[N,N]} = 1\)</span>;
+<span class="math notranslate nohighlight">\(A_{\ll}\)</span> implements the shift-keep operation.
+The NLP shifter function <span class="math notranslate nohighlight">\(F_{\ll}: \mathbb{R}^n \to \mathbb{R}^n\)</span> is defined as</p>
+<div class="math notranslate nohighlight" id="equation-eq-nlp-shifter">
+<span class="eqno">(32)<a class="headerlink" href="#equation-eq-nlp-shifter" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+F_{\ll}(\chi) := \bdiag(A_{\ll}\otimes I_{n_u}, I_{n_x}, A_{\ll}\otimes I_{n_x(d+1)})\chi.
+\end{equation}\]</div>
+</div>
+<div class="section" id="nlp-trajectory-create-trajectory-function">
+<h3>NLP trajectory <code class="docutils literal notranslate"><span class="pre">::create_trajectory_function</span></code><a class="headerlink" href="#nlp-trajectory-create-trajectory-function" title="Permalink to this headline">¶</a></h3>
+<p>The NLP trajectory function solves a series of semi-explicit DAE of index-1 for a given
+piecewise constant <span class="math notranslate nohighlight">\(u(t),\, \forall t \in \mathbb{T}_d\)</span>.
+The solution is evaluated at regular intervals within each element <span class="math notranslate nohighlight">\(k \in \mathbb{I}_{\geq,N}\)</span>.
+Let <span class="math notranslate nohighlight">\(\mathbb{T}_{k,D} := \left\{ t \in [t_k, t_{k+1}) :\forall i \in \mathbb{I}_{&gt;,d+1}, t = t_k + i\frac{(t_{k+1} - t_k)}{d+1} \right\}\)</span>
+be a sequence of time points as a column vector. The trajectory function is</p>
+<div class="math notranslate nohighlight" id="equation-eq-trajectory">
+<span class="eqno">(33)<a class="headerlink" href="#equation-eq-trajectory" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{l}
+F_{\text{traj}} \to \mathbb{R}_&gt;^{1 + N(d+1)} \times \mathbb{R}^{n_x \times (1 + N(d+1))}  \\
+(u_D, x_0, p, v, t_0) \mapsto (\col_{k \in \mathbb{I}_{&gt;,N}}(\mathbb{T}_{k,D}),
+\row(x_0,\row_{k\in \mathbb{I}_{\geq,N}}(\row_{i \in \mathbb{I}_{&gt;,d}}(x(t_{k,i}))))),\\
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(x(t_{k,i}) = F_I(x_{k,i-1},z_{k,i-1},p_k,t_{k,i-1}; h = t_{k,i} - t_{k,i-1})_{\langle 1 \rangle}\)</span> for each <span class="math notranslate nohighlight">\(i \in \mathbb{I}_{&gt;,d}\)</span>, and <span class="math notranslate nohighlight">\(p_k = \col(u_k,p,v)\)</span>.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id19"><span class="brackets"><a class="fn-backref" href="#id4">1</a></span></dt>
+<dd><p><em>variability</em> in the FMI sense. For the initial value problems we consider, parameters are fixed.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="planner.html" class="btn btn-neutral float-right" title="Path planner for deployment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="usage.html" class="btn btn-neutral float-left" title="MIMIR" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, SINTEF Ocean.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. <jinja2.runtime.BlockReference object at 0x7f6b7fd0d750>
+
+<br /><br />
+<table>
+  <tr>
+    <td width="120" style="vertical-align:middle;text-align:center">
+      <img alt="FHF" style="border-width:0" width="100" src="../_static/FHF-black-txt.png" />
+    </td>
+    <td>
+      This work was funded by <a href="https://www.fhf.no/fhf/about-fhf-english">FHF &ndash; Norwegian Seafood Research Fund</a> with <a href="https://www.fhf.no/prosjekter/prosjektbasen/901350/">Grant No. 901350</a>.<br /><br />
+    </td>
+  </tr>
+  <tr>
+    <td width="32" style="vertical-align:middle;text-align:center">
+      <img alt="Apache License, Version 2.0" style="border-width:0" width="32" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Apache_Feather_Logo.svg" />
+    </td>
+    <td>
+      This work is licensed under the Apache License, Version 2.0 (the "License").
+      You may obtain a copy of the License at
+      <a rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a><br />
+      Unless required by applicable law or agreed to in writing,
+      software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+      WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+      specific language governing permissions and limitations under the License.
+    </td>
+  </tr>
+</table>
+
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

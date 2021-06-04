@@ -1,0 +1,1325 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Path planner for deployment &mdash; mimir  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/eq_fix.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/enumerable.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/icon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="../_static/mathwork.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="A note on library dependencies" href="libraries.html" />
+    <link rel="prev" title="Nonlinear programming formulation" href="formulation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #00457c" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> mimir
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#running-an-algorithm">Running an algorithm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#yaml-config-file">YAML config file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#interacting-with-the-algorithm">Interacting with the algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Build instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#configuration-options-and-targets">Configuration options and targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#linux">Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#prerequisites-debian-based">Prerequisites (debian-based)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#documentation-prerequisites-optional">Documentation prerequisites <em>(optional)</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#building-and-running-debian-based">Building and running (debian-based)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#packaging-into-artifacts">Packaging into artifacts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#windows">Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#documentation-prerequisites-on-windows-optional">Documentation prerequisites on Windows <em>(optional)</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#building-and-running">Building and running</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#packaging-into-installer-and-archive">Packaging into installer and archive</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Creating a new algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Manpage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">MIMIR</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#name">NAME</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#synopsis">SYNOPSIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#description">DESCRIPTION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#options">OPTIONS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#configuration">CONFIGURATION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#environment">ENVIRONMENT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#files">FILES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#example">EXAMPLE</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage.html#yaml-config-file">YAML config file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#notes">NOTES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#see-also">SEE ALSO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#copyright">COPYRIGHT</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Implementation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="formulation.html">Nonlinear programming formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#brief-introduction-to-nonlinear-programming-problems">Brief introduction to nonlinear programming problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#formulating-an-nlp-from-dae-ocp-and-discretization">Formulating an NLP from DAE, OCP and discretization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-formulation-overview">NLP formulation overview</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#receding-horizon">Receding horizon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#mathematical-notation">Mathematical notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#differential-algebraic-equations-daes">Differential-algebraic equations (DAEs)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#the-constrained-dae-initial-value-problem-ivp">The constrained DAE initial value problem (IVP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#optimal-control-problem-ocp">Optimal control problem (OCP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#discretization-of-the-continuous-time-ocp">Discretization of the continuous time OCP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#shooting-approaches">Shooting approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#collocation">Collocation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#nonlinear-programming-problem-nlp">Nonlinear programming problem (NLP)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#formulation-strategies-and-extensions">Formulation strategies and extensions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#helper-functions">Helper functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#adding-variable-bounds-add-nlp-variable-bounds">Adding variable bounds <code class="docutils literal notranslate"><span class="pre">::add_nlp_variable_bounds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#time-grid-function-create-solution-timegrid">Time grid function <code class="docutils literal notranslate"><span class="pre">::create_solution_timegrid</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-tuple-unpacker-create-solution-unpacker">NLP tuple unpacker <code class="docutils literal notranslate"><span class="pre">::create_solution_unpacker</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-decision-parameters-create-decision-parameter-extractor">NLP decision parameters <code class="docutils literal notranslate"><span class="pre">::create_decision_parameter_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-subsystem-extractor-create-system-extractor">NLP subsystem extractor <code class="docutils literal notranslate"><span class="pre">::create_system_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-shifter-create-horizon-shifter">NLP shifter <code class="docutils literal notranslate"><span class="pre">::create_horizon_shifter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-trajectory-create-trajectory-function">NLP trajectory <code class="docutils literal notranslate"><span class="pre">::create_trajectory_function</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Path planner for deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#motivation-and-rationale">Motivation and rationale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#problem-statement-of-the-purse-seine-path-planner">Problem statement of the purse seine path planner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#purse-planner-formulation">Purse planner formulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#notation">Notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sea-current-and-surface-current-water-frame">Sea current and surface current water frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fishing-vessel">Fishing vessel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fish-school">Fish school</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#leadline-sinking-response">Leadline sinking response</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#purse-planner-criteria">Purse planner criteria</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#objective-function-terms">Objective function terms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#nonlinear-programming-problem-for-purse-seine-deployment">Nonlinear programming problem for purse seine deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#receding-horizon">Receding horizon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#discussion-on-solution-strategies-and-improvements">Discussion on solution strategies and improvements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#appendix">Appendix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#regularly-parameterized-paths-and-path-following">Regularly parameterized paths and path following</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regularly-parameterized-paths">Regularly parameterized paths</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#path-tangential-frame-and-arc-length">Path-tangential frame and arc length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#particle-feedback-laws">Particle feedback laws</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#slip-angle">Slip angle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libraries.html">A note on library dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yamlconfig.html">YAML configuration files and schemas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yamlconfig.html#purse-planner-configuration-schema">Purse planner configuration schema</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/library-api.html">Public API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#items-listing">Items listing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/library-api.html#namespaces">Namespaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/namespace_mimir.html">Namespace mimir</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/library-api.html#classes-and-structs">Classes and Structs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classmimir_1_1IAlgorithm.html">Class IAlgorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_private/library-api-private.html">Private API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api_private/library-api-private.html#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_private/library-api-private.html#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_private/library-api-private.html#items-listing">Items listing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#namespaces">Namespaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir.html">Namespace mimir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__algorithm.html">Namespace mimir::algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__control.html">Namespace mimir::control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__detail.html">Namespace mimir::detail</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__program.html">Namespace mimir::program</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#classes-and-structs">Classes and Structs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1algorithm_1_1NlpProblemBuilder.html">Struct NlpProblemBuilder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1algorithm_1_1NlpStructure.html">Struct NlpStructure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Evaluating.html">Struct Evaluating</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvError.html">Struct EvError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvInterrupt.html">Struct EvInterrupt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvKill.html">Struct EvKill</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvReady.html">Struct EvReady</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvRestart.html">Struct EvRestart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvRunningOK.html">Struct EvRunningOK</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvStart.html">Struct EvStart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvStop.html">Struct EvStop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvTimeout.html">Struct EvTimeout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Initializing.html">Struct Initializing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Running.html">Struct Running</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1ShutDown.html">Struct ShutDown</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Standby.html">Struct Standby</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1StateMachine.html">Struct StateMachine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Waiting.html">Struct Waiting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1FishSchool.html">Class FishSchool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1KinematicVessel.html">Class KinematicVessel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1Leadline.html">Class Leadline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1PursePlanner.html">Class PursePlanner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1PursePlannerFormulation.html">Class PursePlannerFormulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1TestAlgorithm.html">Class TestAlgorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1control_1_1CommandListener.html">Template Class CommandListener</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1control_1_1CommandResponder.html">Class CommandResponder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1control_1_1StateNotifier.html">Class StateNotifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1Options.html">Class Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1a3aefdada3944d997af13a71cded2ba72.html">Function mimir::AlgorithmCreator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1detail_1a4edbe193d90ba66d98d42b380008c618.html">Function mimir::detail::NotifierQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1detail_1ab2f8aaf370c0379e1e5ed16cdfd819c3.html">Function mimir::detail::RepWriterQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1detail_1a495352727411b7952358e031d0b4398e.html">Function mimir::detail::ReqReaderQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1a7337f2e8311a587cd0c5683bb0f9c38e.html">Function mimir::program::parse_config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1a61839fde6d16792c4662769b5116da05.html">Function mimir::program::read_doc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1a0322295105de34488b656521c2c13e49.html">Function mimir::program::read_leaf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1afe086b58811123bc3ba0b551d350f38e.html">Function mimir::program::read_list</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1abe1e85d21335ab8c9c36ff4c84f648cf.html">Function mimir::program::read_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1a79d81e727aac93be814fb51da9fef88a.html">Function mimir::SIGTERMHandler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1a60f83e0bee821b6af5a9444be2ebe445.html">Function mimir::transform_severity</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#variables">Variables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/variable_namespacemimir_1a8a483b262641a4af7cfab764663d851a.html">Variable mimir::signaled</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="zbibliography.html">Bibliography</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">mimir</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Path planner for deployment</li>
+    
+    
+
+<li class="wy-breadcrumbs-aside">
+  <a href="https://github.com/sintef-ocean/mimir" class="fa fa-github"> Source on GitHub</a>
+  <a href="https://docs.sintef.io" class="icon icon-home"> docs.sintef.io</a>
+</li>
+
+
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="libraries.html" class="btn btn-neutral float-right" title="A note on library dependencies" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="formulation.html" class="btn btn-neutral float-left" title="Nonlinear programming formulation" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="path-planner-for-deployment">
+<h1>Path planner for deployment<a class="headerlink" href="#path-planner-for-deployment" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="motivation-and-rationale">
+<h2>Motivation and rationale<a class="headerlink" href="#motivation-and-rationale" title="Permalink to this headline">¶</a></h2>
+<p>During the phase before purse seine deployment the purse seine master (“the purser”) needs to acquire and maintain a situational awareness.
+This is a key success factor in purse seining.
+Elements of the situational awareness include a comprehension of the main process components in play.
+A firm comprehension increases the rate of success and the diminishes the probability of disastrous failure due to malpractice.
+Mastery of purse seining is often correlated with experience.
+Regardless of the level of experience, there is a fair amount of burden placed on the purser.
+For this reason, a useful aid would be a tool that could both ease the burden and help acquire the necessary situational awareness.
+Let us for now denote this tool as an <em>on-board decision support system</em> (ODSS) <span id="id1">[<a class="reference internal" href="zbibliography.html#id32" title="Stian Skjong, Lars T. Kyllingstad, Karl-Johan Reite, Joakim Haugen, Jarle Ladstein, and Karl Gunnar Aarsæther. Generic on-board decision support system framework for marine operations. In ASME 2019 38th International Conference on Ocean, Offshore and Arctic Engineering, V07AT06A032. American Society of Mechanical Engineers, June 2019. doi:10.1115/OMAE2019-95146.">28</a>]</span>.</p>
+<p>Modern purse seiners are equipped with sophisticated instruments, which help the captain in executing their job.
+The wheel house has many monitors with diverse and scattered information, from which some are very important during the pre-deployment phase.
+A proficient purser possesses both perceptive and predictive abilities.
+This means that based on the available sensory information about the processes in play, the purser is capable of predicting ahead in time a plausible outcome based on a series of actions.
+These actions are typically, i) to purposefully maneuver the vessel, and ii) to determine an appropriate time point for purse deployment in such a way that the fish is caught as intended.</p>
+<p>The procedure has several similarities with a typical optimal control problem, which help justify our chosen plan of attack in developing a tool in form of an ODSS.
+This is because, in many aspects, the purser is a <em>model predictive controller</em> with the <em>objective</em> to optimally execute a purse seine deployment.
+From the above description it is clear that the following <strong>features</strong> are important:</p>
+<ul class="simple">
+<li><p>Ability to make use of available sensory information;</p></li>
+<li><p>Comprehension of the main process components;</p></li>
+<li><p>Possess predictive capabilities;</p></li>
+<li><p>Devising a set of purposeful actions;</p></li>
+<li><p>Fulfill a well-defined purpose, which has a specific objective.</p></li>
+</ul>
+<p>Coincidentally, these features also signify successful building blocks in an optimal control problem <span id="id2">[<a class="reference internal" href="zbibliography.html#id6" title="John T. Betts. Practical Methods for Optimal Control and Estimation Using Nonlinear Programming. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 2 edition, 2010. ISBN 978-0-898-71688-7. doi:10.1137/1.9780898718577.">6</a>]</span>.
+Our rationale for choosing mathematical optimization as the problem solving approach is mainly due to the likeness of features, but it is not the sole reason.
+One other important justification is the flexibility in problem formulation and, in effect, the possible solution space.
+With this, we mean that there may be user-specific preferences, which have implications for the decision support presented to the user.
+Moreover, the flexibility in problem description also facilitates adaptations and improvements with little additional effort.
+This effort may include better model descriptions based on new data or other tweaks to the mathematical modeling.</p>
+</div>
+<div class="section" id="problem-statement-of-the-purse-seine-path-planner">
+<h2>Problem statement of the purse seine path planner<a class="headerlink" href="#problem-statement-of-the-purse-seine-path-planner" title="Permalink to this headline">¶</a></h2>
+<p>The goal is to create an ODSS for purse seine deployment.
+We proceed by establishing central building blocks for the optimal control problem formulation.
+Specifically, we need to describe in detail the <strong>features</strong> as listed above.
+We pose the formulation as a so-called path planning problem.
+A solution to this problem contains the following:</p>
+<ul class="simple">
+<li><p>A suggested planar path for the fishing vessel to follow;</p></li>
+<li><p>An indicated point in time and space for initiation of purse deployment;</p></li>
+<li><p>Auxiliary information about the involved actors, which helps situational awareness.</p></li>
+</ul>
+<p>Typically, such solutions should be presented to the purser in an informative manner, such as a graphical visualization including a map plot  <a class="footnote-reference brackets" href="#id21" id="id3">1</a> .
+The arrows in <a class="reference internal" href="#fig-overview"><span class="std std-numref">Fig. 4</span></a> indicate information flow and interactions between important elements of the presented decision support.
+Instruments are capable of acquiring relevant environmental data together with vessel-specific measurements in real time.
+We assume that there exists a machine-to-machine application programming interface that are capable of sharing this information, for instance “Ratatosk” <span id="id4">[<a class="reference internal" href="zbibliography.html#id29" title="Karl-Johan Reite, Jarle Ladstein, and Joakim Haugen. Data-driven real-time decision support and its application to hybrid propulsion systems. In ASME 2017 36th International Conference on Ocean, Offshore and Arctic Engineering, V07BT06A024. American Society of Mechanical Engineers, June 2017. doi:10.1115/OMAE2017-61031.">25</a>]</span>  <a class="footnote-reference brackets" href="#id22" id="id5">2</a> .
+Herein, we focus on the mathematical modeling of the <em>Online path planner</em> indicated in <a class="reference internal" href="#fig-overview"><span class="std std-numref">Fig. 4</span></a>.</p>
+<div class="figure align-center" id="id23">
+<span id="fig-overview"></span><a class="reference internal image-reference" href="../_images/overview.png"><img alt="../_images/overview.png" src="../_images/overview.png" style="width: 500.0px; height: 109.0px;" /></a>
+<p class="caption"><span class="caption-number">Fig. 4 </span><span class="caption-text">Main elements in a purse seine deployment process.</span><a class="headerlink" href="#id23" title="Permalink to this image">¶</a></p>
+</div>
+<p>From a path planning perspective, the relevant phases of a purse seine deployment are the pre-deployment positioning and the purse deployment circling <span id="id6">[<a class="reference internal" href="zbibliography.html#id5" title="Menakhem Ben-Yami. Purse seining manual. Oxford Univ. Press, 1994. ISBN 9780852381939.">5</a>]</span>.
+Questions in need of answers are, where is the school, where will it go, what is the current, how should we maneuver the vessel, where and when should we initiate deployment, will the net sink quick and deep enough.
+The path planner problem is stated in <a class="reference internal" href="#prob:deploy"><span class="std std-numref">Problem 8</span></a>.</p>
+<div class="figure align-center" id="id24">
+<span id="fig-purseseine"></span><img alt="../_images/purse.png" src="../_images/purse.png" />
+<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">Purse Seine.</span><a class="headerlink" href="#id24" title="Permalink to this image">¶</a></p>
+</div>
+<div class="enumerable admonition" id="prob:deploy">
+<p class="admonition-title"><span class="caption-number">Problem 8 </span>  (Purse seine path planning)</p>
+<p>Find an ideal vessel trajectory to surround the targeted fish school, subject to:</p>
+<div class="math notranslate nohighlight" id="equation-prob-deploy">
+<span class="eqno">(34)<a class="headerlink" href="#equation-prob-deploy" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+  \bullet &amp; \text{Vessel maneuverability constraints;}\\
+  \bullet &amp; \text{Expected fish school movement;}\\
+  \bullet &amp; \text{Anticipated sinking response;}\\
+  \bullet &amp; \text{Environmental conditions;}\\
+  \bullet &amp; \text{Setting orientation and other user preferences.}
+\end{array}
+\end{equation}\end{split}\]</div>
+</div>
+</div>
+<div class="section" id="purse-planner-formulation">
+<h2>Purse planner formulation<a class="headerlink" href="#purse-planner-formulation" title="Permalink to this headline">¶</a></h2>
+<p>Our hypothesis is that an optimization-based algorithm can conceive a sound course of actions based on predictive capabilities.
+The conception takes form by mathematically describing principal components of the system to a sufficient fidelity.
+Hence, we formalize <a class="reference internal" href="#prob:deploy"><span class="std std-numref">Problem 8</span></a> by utilizing common modeling techniques such as first principles, datasets and engineering cleverness.
+We should arrive at an optimal control problem formulation, which can be efficiently solved using numerical techniques for nonlinear programming problems <span id="id7">[<a class="reference internal" href="zbibliography.html#id4" title="Joel A E Andersson, Joris Gillis, Greg Horn, James B Rawlings, and Moritz Diehl. CasADi – A software framework for nonlinear optimization and optimal control. Mathematical Programming Computation, 11(1):1–36, 2019. doi:10.1007/s12532-018-0139-4.">4</a>, <a class="reference internal" href="zbibliography.html#id6" title="John T. Betts. Practical Methods for Optimal Control and Estimation Using Nonlinear Programming. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 2 edition, 2010. ISBN 978-0-898-71688-7. doi:10.1137/1.9780898718577.">6</a>, <a class="reference internal" href="zbibliography.html#id8" title="Lorenz T. Biegler. Nonlinear Programming: Concepts, Algorithms &amp; Applications to Chemical Processes. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 2010. ISBN 978-0-898-71702-0. doi:10.1137/1.9780898719383.">7</a>]</span>.
+The principal components in need of scrutiny are:</p>
+<ol class="arabic simple">
+<li><p>Fishing vessel;</p></li>
+<li><p>Fish school;</p></li>
+<li><p>Leadline sinking response;</p></li>
+<li><p>Environment’s impact on above components;</p></li>
+<li><p>Criteria for ideal vessel trajectory and deployment initiation.</p></li>
+</ol>
+<p>An important aspect of the formulation is that of timing with respect to the leadline sinking in relation to fish school and vessel trajectories.
+We identify four time points that signify key events of the purse deployment process, namely:</p>
+<ol class="arabic simple">
+<li><p>Deployment initiation at deployment point <span class="math notranslate nohighlight">\(p_d\)</span>, at time point <span class="math notranslate nohighlight">\(t_d\)</span>;</p></li>
+<li><p>Leadline enters waters at collision point <span class="math notranslate nohighlight">\(p_c\)</span>, at time point <span class="math notranslate nohighlight">\(t_s\)</span>;</p></li>
+<li><p>Fish is surrounded, at time point <span class="math notranslate nohighlight">\(t_{pd}\)</span>.</p></li>
+<li><p>Fish arrives at collision point <span class="math notranslate nohighlight">\(p_c\)</span>, at time point <span class="math notranslate nohighlight">\(t_c\)</span>;</p></li>
+</ol>
+<div class="figure align-center" id="id25">
+<span id="fig-overview-points"></span><img alt="../_images/overview_points.png" src="../_images/overview_points.png" />
+<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text">Overview of key time points of the deployment process.</span><a class="headerlink" href="#id25" title="Permalink to this image">¶</a></p>
+</div>
+<p>At these time points, the vessel and the fish school are located at various positions in relation to each other and is indicated in <a class="reference internal" href="#fig-overview-points"><span class="std std-numref">Fig. 6</span></a>.
+The <strong>main objective</strong> of the planner is to determine the deployment time while fulfilling various criteria for a successful deployment.
+In the following sections, we will describe the principal components and combine them with additional descriptions to solve the timing and trajectory planning problem.
+Some descriptions are located in <a class="reference internal" href="#appendix">Appendix</a>.</p>
+<div class="section" id="notation">
+<h3>Notation<a class="headerlink" href="#notation" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>We denote an inertial reference frame with axes <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(y\)</span>, and <span class="math notranslate nohighlight">\(z\)</span> pointing north, east, down as <span class="math notranslate nohighlight">\(\{\text{NED}\}\)</span>.</p></li>
+<li><p>Define a limited time horizon <span class="math notranslate nohighlight">\(\mathbb{T} := \{t \in \mathbb{R} : t_0 \leq t \leq t_f\}\)</span>, where <span class="math notranslate nohighlight">\(t_f&gt;t_0\geq 0\)</span>.</p></li>
+<li><p>The partial derivative of a function <span class="math notranslate nohighlight">\(f(x,y)\)</span> is written with a superscript <span class="math notranslate nohighlight">\(\frac{d f(x)}{dx} = f^x(x,y)\)</span>.</p></li>
+<li><p>If the argument is time, we use the common dot notation, i.e. <span class="math notranslate nohighlight">\(\frac{dx(t)}{dt} = \dat x(t)\)</span>.</p></li>
+<li><p>The orientation space is defined by <span class="math notranslate nohighlight">\(\mathbb{S} \in [-\pi,\pi)\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(I_n\)</span> is the <span class="math notranslate nohighlight">\(n\times n\)</span> identity matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(1_{n\times m}\)</span> is an <span class="math notranslate nohighlight">\(n\text{-by-}m\)</span> matrix of ones.</p></li>
+<li><p><span class="math notranslate nohighlight">\(0_{n\times m}\)</span> is an <span class="math notranslate nohighlight">\(n\text{-by-}m\)</span> matrix of zeros.</p></li>
+<li><p>A block diagonal matrix of other matrices <span class="math notranslate nohighlight">\(X_{i\in \mathbb{I}_{&gt;,s}} \in \mathbb{R}^{m_i\times n_i}\)</span> is defined as
+<span class="math notranslate nohighlight">\(\bdiag_{i \in \mathbb{I}_{&gt;,s}}(X_i) := \bigoplus_{i \in \mathbb{I}_{&gt;,s}} X_i\)</span>, where <span class="math notranslate nohighlight">\(\oplus\)</span> is the direct sum.</p></li>
+<li><p>The symbol <span class="math notranslate nohighlight">\(\otimes\)</span> is the Kronecker product.</p></li>
+<li><p>The vertically stacked matrix of other matrices <span class="math notranslate nohighlight">\(X_{i \in \mathbb{I}_{&gt;,s}} \in \mathbb{R}^{m_i \times n}\)</span> is denoted
+<span class="math notranslate nohighlight">\(\col_{i \in \mathbb{I}_{&gt;,s}}(X_i) := \bdiag_{i\in \mathbb{I}_{&gt;,s}}(X_i) \cdot (1_{s \times 1} \otimes I_n)\)</span>.</p></li>
+<li><p>The horizontally stacked matrix of other matrices <span class="math notranslate nohighlight">\(X_{i \in \mathbb{I}_{&gt;,s}} \in \mathbb{R}^{m \times n_i}\)</span> is denoted
+<span class="math notranslate nohighlight">\(\row_{i \in \mathbb{I}_{&gt;,s}}(X_i) := \col_{i\in \mathbb{I}_{&gt;,s}}(X_i^T)^T\)</span>.</p></li>
+</ul>
+</div>
+<div class="section" id="sea-current-and-surface-current-water-frame">
+<h3>Sea current and surface current water frame<a class="headerlink" href="#sea-current-and-surface-current-water-frame" title="Permalink to this headline">¶</a></h3>
+<p>Suppose the sea current is given by <span class="math notranslate nohighlight">\(v_c(p,t): \mathbb{R}^3 \times \mathbb{R} \to \mathbb{R}^3\)</span>, where <span class="math notranslate nohighlight">\(p\)</span> is a position in <span class="math notranslate nohighlight">\(\{\text{NED}\}\)</span>.
+We assume that the current is slowly-varying and can be approximated in a region of interest by a vertical vector field, which is independent of planar position.
+The sea current is thus assumed constant in each depth layer for a limited time horizon,
+and is approximated by <span class="math notranslate nohighlight">\(w_c(p_z; t_0) \approx v_c(p,t)\, \forall t \in \mathbb{T}\)</span>.</p>
+<p>We will make use of a reference frame that moves with the surface current,
+denoted <em>water frame</em>, <span class="math notranslate nohighlight">\(\{\text{WF}\}\)</span>, with axes aligned with <span class="math notranslate nohighlight">\(\{\text{NED}\}\)</span>.
+The constant planar surface current can be written in polar form as</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-0">
+<span class="eqno">(35)<a class="headerlink" href="#equation-rst-planner-0" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+w_c(0; t_0) = W \begin{bmatrix}\cos(\alpha)\\ \sin(\alpha)\\ 0\end{bmatrix},
+\end{equation}\end{split}\]</div>
+<p>where the origin of the water frame in <span class="math notranslate nohighlight">\(\{\text{NED}\}\)</span> is written as an initial value problem</p>
+<div class="math notranslate nohighlight" id="equation-eq-water-ivp">
+<span class="eqno">(36)<a class="headerlink" href="#equation-eq-water-ivp" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+\dot p_w (t) &amp;= W \begin{bmatrix}\cos(\alpha)\\ \sin(\alpha)\end{bmatrix},\\
+p_w(t_0) &amp;= \begin{bmatrix}0\\ 0\end{bmatrix}.
+\end{array} \qquad \forall \, t \in \mathbb{T}
+\end{equation}\end{split}\]</div>
+<p>Notice that the initial value of the water frame is always set to the origin.</p>
+</div>
+<div class="section" id="fishing-vessel">
+<h3>Fishing vessel<a class="headerlink" href="#fishing-vessel" title="Permalink to this headline">¶</a></h3>
+<p>We need a dynamic model that has enough fidelity to allow us to devise maneuverable paths.
+The fishing vessel is described as a planar kinematic vehicle under the influence of
+sea current. The planar position of the vessel on the <span class="math notranslate nohighlight">\(xy\text{-plane}\)</span> of
+<span class="math notranslate nohighlight">\(\{\text{NED}\}\)</span> is <span class="math notranslate nohighlight">\(p_v(t) \in \mathbb{R}^2\)</span>. Define <span class="math notranslate nohighlight">\(U_v&gt;0\)</span> as the speed in water.
+Let <span class="math notranslate nohighlight">\(\psi_v(t) \in \mathbb{R}\)</span> be the heading of the vessel, that is, the angle
+between the vessel’s body frame and <span class="math notranslate nohighlight">\(\{\text{NED}\}\)</span>.  Further, let <span class="math notranslate nohighlight">\(r_v(t)\)</span> be the
+rate of turn. Define <span class="math notranslate nohighlight">\(x_v(t) = \col(p_v,\psi_v,r_v) \in \mathbb{R}^4\)</span>
+as the vessel state vector. We state the dynamic model as a constrained
+initial value problem with ordinary differential equations (ODEs) in <a class="reference internal" href="#equation-eq-vessel-ivp">Eq. (37)</a>.</p>
+<div class="math notranslate nohighlight" id="equation-eq-vessel-ivp">
+<span class="eqno">(37)<a class="headerlink" href="#equation-eq-vessel-ivp" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+ \dot p_v (t) &amp;= U_v \begin{bmatrix}\cos(\psi_v)\\ \sin(\psi_v)\end{bmatrix} + W\begin{bmatrix} \cos(\alpha)\\ \sin(\alpha) \end{bmatrix}, \\
+ \dot \psi_v (t) &amp;= r_v, \\
+ \dot r_v (t) &amp;= u_r, \\
+ p_v (t_0) &amp;= p_{v,0}, \quad \psi_v (t_0) = \psi_{v,0}, \quad r_v (t_0) = r_{v,0}, \\
+ u_r (t) &amp; \in \mathcal{U}_v := [u_{r,\min}, u_{r,\max}], \\
+ x_v(t) &amp;\in \mathcal{X}_v \subseteq \mathbb{R}^4,
+\end{array} \qquad \forall \, t \in \mathbb{T}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(u_r(t)\)</span> is a constrained control input, and given initial conditions <span class="math notranslate nohighlight">\(p_{v,0}\)</span>,
+<span class="math notranslate nohighlight">\(\psi_{v,0}\)</span>, <span class="math notranslate nohighlight">\(r_{v,0}\)</span>. Remark that the state vector is constrained, and especially
+the rate of turn may be bounded to retain realistic maneuvers.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This dynamic model is currently not used in the optimization problem. We use instead trajectories from a path following algorithm, described in <a class="reference internal" href="#path-following">Path following</a>.</p>
+</div>
+</div>
+<div class="section" id="fish-school">
+<h3>Fish school<a class="headerlink" href="#fish-school" title="Permalink to this headline">¶</a></h3>
+<p>A purse seine master uses a multi-beam sonar to evaluate a fish school size and biomass <span id="id8">[<a class="reference internal" href="zbibliography.html#id33" title="Sindre Vatnehol, Hector Pe na, and Egil Ona. Estimating the volumes of fish schools from observations with multi-beam sonars. ICES Journal of Marine Science, 74(3):813-821, 12 2016. doi:10.1093/icesjms/fsw186.">29</a>]</span>.
+Fish schools takes many different shapes and its geometry changes based on complex internal and external factors,
+such as vessel disturbance, sea currents, and individual-level behavior <span id="id9">[<a class="reference internal" href="zbibliography.html#id14" title="François Gerlotto and Jorge Paramo. The three-dimensional morphology and internal structure of clupeid schools as observed using vertical scanning multibeam sonar. Aquatic Living Resources, 16(3):113-122, 2003. Acoustics in Fisheries and Aquatic Ecology. Part 2. doi:https://doi.org/10.1016/S0990-7440(03)00027-5.">12</a>]</span>.
+However, once a fish school has been singled out for targeting, its extent, center of mass,
+depth, direction, and speed are the most relevant attributes when devising a deployment path.
+A sonar can typically provide intermittent estimates of this type of information as a datagram <span id="id10">[<a class="reference internal" href="zbibliography.html#id20" title="Joakim Haugen and Lars Imsland. Optimization-based motion planning for trawling. Journal of Marine Science and Technology, 24(3):984–995, September 2019. doi:10.1007/s00773-018-0600-0.">16</a>]</span>.
+To secure a computationally efficient model, we deliberately describe the model with limited inter-connectivity with external factors.
+In particular, we assume that the vessel does not influence the fish school movements in our planning description.
+Let <span class="math notranslate nohighlight">\(p_s(t) \in \mathbb{R}^2\)</span> in the <span class="math notranslate nohighlight">\(\{\text{NED}\}\)</span> frame be a point mass representing the fish school.
+The dynamic fish school model is a constant planar velocity model under influence of sea current.
+Define <span class="math notranslate nohighlight">\(U_s&gt;0\)</span> as the speed in water and <span class="math notranslate nohighlight">\(\psi_s \in \mathbb{S}\)</span> the fish heading.
+The dynamic fish school model at depth <span class="math notranslate nohighlight">\(z_s\)</span> is an ODE with given initial conditions as described in <a class="reference internal" href="#equation-eq-fish-ivp">Eq. (38)</a>.</p>
+<div class="math notranslate nohighlight" id="equation-eq-fish-ivp">
+<span class="eqno">(38)<a class="headerlink" href="#equation-eq-fish-ivp" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+ \begin{array}{ll}
+ \dot p_s (t) &amp;= U_s \begin{bmatrix}\cos(\psi_s)\\ \sin(\psi_s)\end{bmatrix} + \begin{bmatrix} I_2 &amp; 0_{2\times 1} \end{bmatrix} w_c(z_s; t_0), \\
+ p_s (t_0) &amp; = p_{s,0},
+ \end{array} \qquad \forall \, t \in \mathbb{T}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(p_{s,0}\)</span>, <span class="math notranslate nohighlight">\(\psi_s\)</span>, <span class="math notranslate nohighlight">\(z_s\)</span>, <span class="math notranslate nohighlight">\(U_s\)</span> are given values. It is straightforward to expand <span class="math notranslate nohighlight">\(\psi_s\)</span> to become non-constant, as to allow a turning fish school.
+Note that <span class="math notranslate nohighlight">\(V_s\)</span> and <span class="math notranslate nohighlight">\(\chi_s\)</span> are the school speed and course over ground,
+which can be obtained using <a class="reference internal" href="#equation-eq-chi-of-beta">Eq. (81)</a>, <a class="reference internal" href="#equation-eq-voft">Eq. (82)</a>, and <a class="reference internal" href="#equation-eq-beta-of-t">Eq. (83)</a>.</p>
+</div>
+<div class="section" id="leadline-sinking-response">
+<h3>Leadline sinking response<a class="headerlink" href="#leadline-sinking-response" title="Permalink to this headline">¶</a></h3>
+<p>Comprehension of the sinking response of the purse seine is an important part of the deployment planning.
+There exists high-fidelity models that are capable of modeling the sinking response of a purse seine under influence of sea currents <span id="id11">[<a class="reference internal" href="zbibliography.html#id25" title="Hyun Young Kim, Chun Woo Lee, Jong Keun Shin, Hyung Seok Kim, Bong Jin Cha, and Gun Ho Lee. Dynamic simulation of the behavior of purse seine gear and sea-trial verification. Fisheries Research, 88(1–3):109–119, 2007. doi:10.1016/j.fishres.2007.08.007.">22</a>]</span>.
+The sinking dynamics is highly influenced by gear configuration, such as mesh size, lead weights, twine thickness, and more.
+Unfortunately, such models are too computationally demanding to be used in our setup.
+A study using multivariate regression models <span id="id12">[<a class="reference internal" href="zbibliography.html#id36" title="Cheng Zhou, Liuxiong Xu, Hao Tang, and Xuefang Wang. In-situ dynamics of tuna purse seine deployment in various operations and currents. Fisheries Science, 81(3):1003–1011, November 2015. doi:10.1007/s12562-015-0918-z.">32</a>]</span> conclude that differences in sinking depths are caused by current speeds, shooting duration, included angle of currents, and shooting angle.
+We choose a practical approach where a simple, but adaptable model is used to estimate the leadline sinking response.
+The leadline is the bottom sinking part of a purse seine, see <a class="reference internal" href="#fig-purseseine"><span class="std std-numref">Fig. 5</span></a>.
+Let <span class="math notranslate nohighlight">\(z_l(t) \in \mathbb{R}\)</span> be the depth at a point somewhere along the leadline in <span class="math notranslate nohighlight">\(\{\text{NED}\}\)</span> frame.
+The leadline is modeled as a first-order response, which depends on a time constant
+<span class="math notranslate nohighlight">\(\tau_l&gt;0\)</span> and set-point depth <span class="math notranslate nohighlight">\(z_{l,d}&gt;0\)</span>, as defined in <a class="reference internal" href="#equation-eq-leadline">Eq. (39)</a>.</p>
+<div class="math notranslate nohighlight" id="equation-eq-leadline">
+<span class="eqno">(39)<a class="headerlink" href="#equation-eq-leadline" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+ \begin{array}{ll}
+ \begin{array}{l}
+ \dot z_{l}(t) = \frac{1}{\tau_l}(z_l - z_{l,d})\\
+ z_l(t_s) = 0.
+ \end{array} &amp; \text{for} \, t_s \le t \le t_{s,f}
+ \end{array}
+\end{equation}\end{split}\]</div>
+<p>Note the time <span class="math notranslate nohighlight">\(t_s&gt;t_0\)</span>, which is the time point at which the leadline point enters the water.
+This overly simplistic model can be made somewhat dependent on the sea current.
+For instance, by letting the time constant <span class="math notranslate nohighlight">\(\tau_l = \tau_l(w_c(p_z; t_0))\)</span> and set-point <span class="math notranslate nohighlight">\(z_{l,d}(w_c(p_z; t_0))\)</span>
+be evaluated constants for a given sea current profile,
+the sinking response may display various responses, albeit only with linear dynamics.</p>
+<p>Due to the simplicity of the model, we may exploit the explicit solution to
+<a class="reference internal" href="#equation-eq-leadline">Eq. (39)</a> instead of numerically integrating. The solution is</p>
+<div class="math notranslate nohighlight" id="equation-eq-leadline-of-t">
+<span class="eqno">(40)<a class="headerlink" href="#equation-eq-leadline-of-t" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+z_{l}(t) = \left(1-e^{-(t-t_s)/\tau_l}\right)z_{l,d}.
+\end{equation}\]</div>
+<p>It should be noted that based on our datasets of sinking responses and current
+profiles, we have not been able to establish a consistent correlation between current
+speeds and sinking depths. We suspect that there are other unobserved phenomena
+affecting the sinking response, for instance the operation of the purse winches.</p>
+</div>
+<div class="section" id="purse-planner-criteria">
+<h3>Purse planner criteria<a class="headerlink" href="#purse-planner-criteria" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="#prob:deploy"><span class="std std-numref">Problem 8</span></a> states that we need to “find an ideal vessel trajectory to surround the fish school”.
+The definition of an <em>ideal trajectory</em> is debatable.
+In our proposed path planner, we add both constraint expressions and objective function terms, which result in a vessel trajectory that meets certain criteria.
+We make the criteria adjustable through configurable parameters.
+The purpose of having tunable parameters is – to some extent – to accommodate individual preferences in what is perceived as an <em>ideal trajectory</em>.
+The configurable parameters are not only for the algorithm implementer, but also for the purse seine master practitioner.
+Below we define these expressions and terms, and specify which criterion they intend to meet.</p>
+<div class="enumerable admonition" id="ass:speed">
+<p class="admonition-title"><span class="caption-number">Assumption 1 </span>  (Vessel speed in water is constant)</p>
+<p>The vessel speed in water is assumed to be constant</p>
+<div class="math notranslate nohighlight" id="equation-ass-speed">
+<span class="eqno">(41)<a class="headerlink" href="#equation-ass-speed" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+U_v(t) = U_v\quad \forall t \in \mathbb{T}.
+\end{equation}\]</div>
+<p>The speed is user configurable. Constant speed simplifies timing estimates.
+Note that this can be relaxed with little additional effort, especially in the pre-deployment phase.</p>
+</div>
+<div class="enumerable admonition" id="crit:ellipse">
+<p class="admonition-title"><span class="caption-number">Criterion 1 </span>  (Ellipse in water frame)</p>
+<p>The <em>ideal deployment trajectory</em> follows an ellipse as defined by <a class="reference internal" href="#equation-eq-p-ellipse">Eq. (60)</a>.
+The placement of the ellipse is a key task of the purse planner.
+The ellipse parameter vector <span class="math notranslate nohighlight">\(\theta_e\)</span> contains both initial conditions,
+user parameters, configuration parameters, and decision parameters.
+We declare the elements of <span class="math notranslate nohighlight">\(\theta_e\)</span> as follows</p>
+<div class="math notranslate nohighlight" id="equation-crit-ellipse">
+<span class="eqno">(42)<a class="headerlink" href="#equation-crit-ellipse" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{lll}
+p_{e,0} &amp;= p_{s,0} &amp; \text{School initial position; initial condition}\\
+\vartheta &amp;= \psi_{s,w} &amp; \text{School direction in water frame; initial condition}\\
+\col(L_x, L_y) &amp;= &amp; \text{Ellipse translation; decision parameters}\\
+\col(R_x, R_y) &amp;= &amp; \text{Ellipse radii; user parameters}\\
+d_o &amp;= &amp; \text{Setting orientation; configuration parameter}.
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>Note that <span class="math notranslate nohighlight">\(\psi_{s,w}\)</span> is evaluated as <span class="math notranslate nohighlight">\(\{NED\}\)</span> velocity minus water surface velocity, using equations defined in <a class="reference internal" href="#slip-angle">Slip angle</a>.</p>
+</div>
+<div class="enumerable admonition" id="crit:collision">
+<p class="admonition-title"><span class="caption-number">Criterion 2 </span>  (Collision point)</p>
+<p>The collision point <span class="math notranslate nohighlight">\(p_c\)</span> is the anticipated point at which the purse deployment
+intersects the fish trajectory. Let <span class="math notranslate nohighlight">\(p_{p}(\varpi_c)\)</span> be a particle on the ellipse defined in <a class="reference internal" href="#crit:ellipse"><span class="std std-numref">Criterion 1</span></a>
+and <span class="math notranslate nohighlight">\(p_{s,c}(\tau_c)\)</span> a particle along the fish trajectory.
+The fish trajectory is the solution to <a class="reference internal" href="#equation-eq-fish-ivp">Eq. (38)</a>,
+which is parameterized as <a class="reference internal" href="#equation-eq-p-line">Eq. (61)</a>, with <span class="math notranslate nohighlight">\(\theta_l = \col(p_{s,0}, V_{s,w},\psi_{s,w})\)</span>,
+where <span class="math notranslate nohighlight">\(V_{s,w}\)</span> and <span class="math notranslate nohighlight">\(\psi_{s,w}\)</span> is speed and orientation of the
+constant fish velocity in water frame.
+The overall objective is <span class="math notranslate nohighlight">\(\min_{\varpi_c,\tau_c} \|p_{p}(\varpi_c) - p_{s,c}(\tau_c)\|\)</span>.
+By letting both particles collaborate to solve the objective, we use
+mutual particle projections <a class="reference internal" href="#equation-eq-particle-projection">Eq. (68)</a>, with <span class="math notranslate nohighlight">\(\sigma_c(t)\)</span> and <span class="math notranslate nohighlight">\(\sigma_{\tau}(t)\)</span>
+defined according to <a class="reference internal" href="#equation-eq-particle-error">Eq. (63)</a>, so that the closed-loop dynamics of the
+parametrization variables is an initial value problem</p>
+<div class="math notranslate nohighlight" id="equation-crit-collision">
+<span class="eqno">(43)<a class="headerlink" href="#equation-crit-collision" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+\dot \varpi_c &amp;= \frac{\gamma \sigma_c}{\|p_{p}^{\varpi_c}(\varpi_c)\|}\\
+\dot \tau_c &amp;= \frac{\gamma \sigma_{\tau}}{\|p_{s,c}^{\tau_c}(\tau_c)\|}\\
+\varpi_c(t_0) &amp;= 0,\, \tau_c(t_0) = 0.
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>With sufficiently large <span class="math notranslate nohighlight">\(t=t_{\text{end}}\)</span>, both <span class="math notranslate nohighlight">\(\varpi_c\)</span> and <span class="math notranslate nohighlight">\(\tau_c\)</span> have converged so that the objective is fulfilled.
+The collision point <span class="math notranslate nohighlight">\(p_c = p_{p}(\varpi_c(t_{\text{end}}))\)</span>.</p>
+</div>
+<div class="enumerable admonition" id="crit:deployment">
+<p class="admonition-title"><span class="caption-number">Criterion 3 </span>  (Deployment point)</p>
+<p>The deployment point <span class="math notranslate nohighlight">\(p_d\)</span> is point at which the purse deployment is initiated.
+A user parameter <span class="math notranslate nohighlight">\(D_s\)</span> is the arc length along the ellipse from the deployment point to the collision point.
+We can use the <a class="reference internal" href="#arc-length-control-objective">Arc length control objective</a> <a class="reference internal" href="#equation-eq-arcobjective">Eq. (78)</a>, with <span class="math notranslate nohighlight">\(p_d\)</span> as particle 1 and <span class="math notranslate nohighlight">\(p_c\)</span> as particle 2
+to find the deployment point.
+We substitute our particles in <a class="reference internal" href="#equation-eq-arcobjective">Eq. (78)</a> and restate the initial value problem as</p>
+<div class="math notranslate nohighlight" id="equation-crit-deployment">
+<span class="eqno">(44)<a class="headerlink" href="#equation-crit-deployment" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+  \dot s_d &amp;= -k_d(s_d - (s_c - D_s))\\
+  \dot \varpi_d &amp;= \frac{\dot s_d}{\|p_p^\varpi(\varpi_d)\|}\\
+  \dot s_c &amp;= U_{p,c}(t) = \gamma \sigma_c(t) \\
+  &amp; \varpi_d(t_0) = \varpi_c(t_0) = 0,\, s_d(t_0) = 0,\, s_c(t_0)=0,
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(k_d &gt; 0\)</span> and we notice that <span class="math notranslate nohighlight">\(\dot \varpi_c\)</span> is defined in <a class="reference internal" href="#equation-crit-collision">Eq. (43)</a> and therefore skipped in the restatement.
+The particle speed diminishes when <span class="math notranslate nohighlight">\(s_d - s_c \to D_s\)</span>
+and we obtain the deployment point <span class="math notranslate nohighlight">\(p_d = p_p(\varpi_d(t_{\text{end}}))\)</span>.
+Notice that <span class="math notranslate nohighlight">\(s_d &lt; s_c\)</span>, i.e. <span class="math notranslate nohighlight">\(\varpi_d &lt; \varpi_c\)</span>, and indicates that the deployment occurs <em>before</em> collision, which is what we want.</p>
+</div>
+<div class="enumerable admonition" id="crit:surround">
+<p class="admonition-title"><span class="caption-number">Criterion 4 </span>  (Fish surrounded)</p>
+<p>The point at which the fish is surrounded is chosen as half a circumference from the collision point.
+This means that <span class="math notranslate nohighlight">\(\varpi_{pd} = \varpi_c + \pi\)</span> because the parametrization is given in radians.
+The point <span class="math notranslate nohighlight">\(p_{pd} = p_p(\varpi_{pd})\)</span> can be evaluated once <span class="math notranslate nohighlight">\(\varpi_c(t_{\text{end}})\)</span> is known.
+We also approximate the arc length from the collision point using arc length dynamics <a class="reference internal" href="#equation-eq-arc">Eq. (66)</a></p>
+<div class="math notranslate nohighlight" id="equation-crit-surround">
+<span class="eqno">(45)<a class="headerlink" href="#equation-crit-surround" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+\dot s_{pd} &amp;= k_{pd}(\varpi_c + \pi - \varpi_{pd})\\
+\dot \varpi_{pd} &amp;= \frac{\dot s_{pd}}{\|p_{p}^\varpi(\varpi_{pd})\|},
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>since ellipse circumference does not have an analytic solution and we need it for timing evaluation purposes.</p>
+</div>
+<div class="enumerable admonition" id="crit:timing">
+<p class="admonition-title"><span class="caption-number">Criterion 5 </span>  (Timing evaluations)</p>
+<p>We need to estimate key time points to determine ellipse placement in relation to the fish trajectory.
+Since the ellipse is defined in water frame and the vessel speed in water is constant as per <a class="reference internal" href="#ass:speed"><span class="std std-numref">Assumption 1</span></a>,
+it is simple to determine several of the requested time points. The timings are</p>
+<div class="math notranslate nohighlight" id="equation-crit-timing">
+<span class="eqno">(46)<a class="headerlink" href="#equation-crit-timing" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{lll}
+t_d &amp; &amp; \text{Deployment initiation}\\
+t_s &amp;= t_d + D_s/U_v,&amp; \text{Leadline in water at collision point}\\
+t_c &amp;= \tau_c,&amp; \text{Fish arrives at collision point}\\
+t_{pd} &amp;= t_s + s_{pd}/U_v, &amp; \text{Fish is surrounded}\\
+t_{s,\Delta} &amp;= t_c - t_s, &amp; \text{Duration of leadline sinking before fish arrives}.
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>For given ambient conditions and ellipse parametrization all except <span class="math notranslate nohighlight">\(t_d\)</span> are easily evaluated with the help of the previous criteria.
+<span class="math notranslate nohighlight">\(t_d\)</span> is related to the pre-deployment positioning of the vessel and is found based on <a class="reference internal" href="#crit:t_deployment"><span class="std std-numref">Criterion 7</span></a>, <a class="reference internal" href="#crit:predeploy"><span class="std std-numref">Criterion 6</span></a>, and <a class="reference internal" href="#equation-eq-t-d-def">Eq. (56)</a>.</p>
+</div>
+<div class="enumerable admonition" id="crit:predeploy">
+<p class="admonition-title"><span class="caption-number">Criterion 6 </span>  (Pre-deployment positioning)</p>
+<p>There is an algorithm that creates a trajectory for pre-deployment positioning.
+We make use of a path following controller to converge to and follow the ellipse in <a class="reference internal" href="#crit:ellipse"><span class="std std-numref">Criterion 1</span></a>,
+which is described in <a class="reference internal" href="#path-following">Path following</a> using <a class="reference internal" href="#equation-eq-pathfollow-varpi">Eq. (72)</a>,
+<a class="reference internal" href="#equation-eq-pathfollow-tildechi">Eq. (76)</a>, <a class="reference internal" href="#equation-eq-pathfollow-chid">Eq. (74)</a>, <a class="reference internal" href="#equation-eq-pathfollow-chi">Eq. (77)</a>.
+The initial value problem for the path following algorithm is</p>
+<div class="math notranslate nohighlight" id="equation-crit-predeploy">
+<span class="eqno">(47)<a class="headerlink" href="#equation-crit-predeploy" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+\dot p_v &amp;= V_v(t)\begin{bmatrix}\cos \chi_v\\ \sin \chi_v\end{bmatrix},\\
+\dot \varpi_v &amp;= \frac{V_v(t)\cos \chi_r(e_v) + \gamma \sigma_v(t)}{\| p_p^\varpi(\varpi_v)\|},\\
+\dot \chi_v &amp;= \omega_{\max} \frac{\tilde \chi_v}{\sqrt{\tilde \chi_v^2 + \Delta_{\dot \chi}^2}},\\
+p_v(t_0) &amp;= p_{v,0},\, \varpi_v(t_0) = \varpi_0(t_{\text{end}}),\, \chi_v(t_0) = \chi_{v,0},
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\varpi_0(t_{\text{end}})\)</span> is given by <a class="reference internal" href="#crit:presolve"><span class="std std-numref">Criterion 8</span></a>, and <span class="math notranslate nohighlight">\(\chi_{v,0}\)</span> is calculated with <a class="reference internal" href="#equation-eq-chi-of-t0">Eq. (84)</a>,
+and <span class="math notranslate nohighlight">\(V_v(t)\)</span> is evaluated using <a class="reference internal" href="#equation-eq-voft">Eq. (82)</a>.</p>
+</div>
+<div class="enumerable admonition" id="crit:t_deployment">
+<p class="admonition-title"><span class="caption-number">Criterion 7 </span>  (Deployment initiation)</p>
+<p>We consider the pre-deployment positioning as finished when the vessel enters within a radius
+<span class="math notranslate nohighlight">\(R_{\text{deploy}}\)</span> of the calculated deployment point <span class="math notranslate nohighlight">\(p_d\)</span>. This criterion is stated as</p>
+<div class="math notranslate nohighlight" id="equation-crit-t-deployment">
+<span class="eqno">(48)<a class="headerlink" href="#equation-crit-t-deployment" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\| p_v(t_d) - p_w(t_d) - p_d \| \leq R_{\text{deploy}},
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(R_{\text{deploy}} &gt; 0\)</span> is the deployment vicinity radius and <span class="math notranslate nohighlight">\(p_v(t)\)</span> is the vessel <span class="math notranslate nohighlight">\(\{\text{NED}\}\)</span> position.</p>
+</div>
+<div class="enumerable admonition" id="crit:presolve">
+<p class="admonition-title"><span class="caption-number">Criterion 8 </span>  (Pre-solve vessel particle projection)</p>
+<p>It is recommended by <span id="id13">[<a class="reference internal" href="zbibliography.html#id9" title="M. Breivik and T. I. Fossen. Guidance laws for autonomous underwater vehicles. In A. V. Inzartsev (Ed.), Underwater Vehicles, pages 51-76. IN-TECH Education and Publishing, 2009.">8</a>]</span> to presolve <span class="math notranslate nohighlight">\(\varpi(t_0)\)</span> for the path following
+algorithm of <a class="reference internal" href="#crit:predeploy"><span class="std std-numref">Criterion 6</span></a>. This is achieved with <a class="reference internal" href="#particle-projection">Particle projection</a> from
+<a class="reference internal" href="#equation-eq-particle-projection">Eq. (68)</a>:</p>
+<div class="math notranslate nohighlight" id="equation-crit-presolve">
+<span class="eqno">(49)<a class="headerlink" href="#equation-crit-presolve" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+  \dot \varpi_0 &amp;= \frac{\gamma \sigma_0(t)}{\| p_p^\varpi(\varpi_0)},\\
+  \varpi_0(t_0) &amp;= 0,
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma_0(t)\)</span> is evaluated by <a class="reference internal" href="#equation-eq-particle-error">Eq. (63)</a> using <span class="math notranslate nohighlight">\(p(t) = p_v(t_0)\)</span>.
+The value of <span class="math notranslate nohighlight">\(\varpi_0\)</span> at <span class="math notranslate nohighlight">\(t=t_{\text{end}}\)</span> is the point on the ellipse, which is closest to the vessel.
+It is important to include this in the formulation, because an initial transient of <span class="math notranslate nohighlight">\(\varpi\)</span>
+for the path following algorithm has impact on the pre-deployment closed-loop response.
+This is especially true if <span class="math notranslate nohighlight">\(\varpi(t_0)\)</span> is far from the particle projection and is avoided with this criterion.
+Note also that this implies that the initial condition for <span class="math notranslate nohighlight">\(\varpi\)</span> in the pre-deployment path following algorithm
+now becomes “free” in the sense that it is to be found by the optimization problem.</p>
+</div>
+<div class="enumerable admonition" id="crit:sink_margin">
+<p class="admonition-title"><span class="caption-number">Criterion 9 </span>  (Sink margin)</p>
+<p>Sink margin is the surplus leadline depth beyond the indicated fish school depth.
+The depth response is calculated at the collision point, where we use <a class="reference internal" href="#equation-eq-leadline-of-t">Eq. (40)</a>
+with a sinking duration of <span class="math notranslate nohighlight">\(t_{s,\Delta} = t_c - t_s\)</span>, which is the time difference between
+fish arrival and vessel crossing at the collision point.
+Let <span class="math notranslate nohighlight">\(z_{\min}\)</span> be the user-specified minimal surplus margin so that the following
+constraint must be satisfied</p>
+<div class="math notranslate nohighlight" id="equation-crit-sink-margin">
+<span class="eqno">(50)<a class="headerlink" href="#equation-crit-sink-margin" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+z_l(t_{s,f}) - z_s \geq z_{\min},
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{s,f} = t_s + t_{s,\Delta}\)</span> and <span class="math notranslate nohighlight">\(z_s\)</span> is fish depth.</p>
+</div>
+<div class="enumerable admonition" id="crit:fish_margin">
+<p class="admonition-title"><span class="caption-number">Criterion 10 </span>  (Fish trapped margin)</p>
+<p>At the time point the vessel has completed the deployment ellipse, we need to ensure that the fish is inside the ellipse.
+We make use of the path-tangential frame at <span class="math notranslate nohighlight">\(p_{pd} = p_p(\varpi_{pd}(t_{\text{end}}))\)</span> and
+calculate the cross track error of the fish position at time point <span class="math notranslate nohighlight">\(t_{pd}\)</span>.
+The fish is inside the ellipse for positive <span class="math notranslate nohighlight">\(\epsilon_{\text{trap}}\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-1">
+<span class="eqno">(51)<a class="headerlink" href="#equation-rst-planner-1" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{bmatrix}\sigma_{\text{trap}}\\ \epsilon_{\text{trap}}\end{bmatrix} = d_o R^T
+(\chi_{pd})(p_s(t_{pd}) - p_w(t_{pd}) - p_p(\varpi_{pd})),
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\chi_{pd}\)</span> is the ellipse tangent at <span class="math notranslate nohighlight">\(p_p(\varpi_{pd})\)</span> and <span class="math notranslate nohighlight">\(d_o\)</span> is setting orientation.</p>
+<p>Suppose the user requests a minimal trap margin <span class="math notranslate nohighlight">\(\epsilon_{\min}\)</span>.
+We can write this constraint as</p>
+<div class="math notranslate nohighlight" id="equation-crit-fish-margin">
+<span class="eqno">(52)<a class="headerlink" href="#equation-crit-fish-margin" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+\epsilon_{\text{trap}} - \epsilon_{\min} + s_{\epsilon} &amp;\geq 0,\\
+s_{\epsilon} &amp;\geq 0,
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(s_{\epsilon}\)</span> is a slack variable to avoid infeasible solutions.</p>
+</div>
+<div class="section" id="objective-function-terms">
+<h4>Objective function terms<a class="headerlink" href="#objective-function-terms" title="Permalink to this headline">¶</a></h4>
+<p>The objective function has the terms listed in <a class="reference internal" href="#tab-obj"><span class="std std-numref">Table 2</span></a>, which are to be minimized.</p>
+<table class="docutils align-default" id="tab-obj">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">Objection function terms</span><a class="headerlink" href="#tab-obj" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 69%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Term</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\rho_{\text{deploy}}t_d\)</span></p></td>
+<td><p>Find a minimal deployment time point that meets our criteria</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\rho_{\Delta}s_a s_b\)</span></p></td>
+<td><p>Ensure a non-negative sink duration, <span class="math notranslate nohighlight">\(t_{s,\Delta} = \max(0, t_c -t_s)\)</span>,</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>which is implemented using constraint qualifications as described in <span id="id14">[<a class="reference internal" href="zbibliography.html#id8" title="Lorenz T. Biegler. Nonlinear Programming: Concepts, Algorithms &amp; Applications to Chemical Processes. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA, 2010. ISBN 978-0-898-71702-0. doi:10.1137/1.9780898719383.">7</a>]</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\rho_{\text{trap}}s_{\epsilon}\)</span></p></td>
+<td><p>The fish trap slack is heavily penalized and exists to avoid some infeasible solutions.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Currently, all objective terms are terminal objectives, so the optimization problems is cast as a <em>Mayer problem</em>, with</p>
+<div class="math notranslate nohighlight" id="equation-eq-mayer">
+<span class="eqno">(53)<a class="headerlink" href="#equation-eq-mayer" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\Phi_M(\mathcal{Z},\theta) = \rho_{\text{deploy}}t_d + \rho_{\Delta} s_a s_b + \rho_{\text{trap}}s_{\epsilon},
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> and <span class="math notranslate nohighlight">\(\theta\)</span> will be defined further below.</p>
+</div>
+</div>
+<div class="section" id="nonlinear-programming-problem-for-purse-seine-deployment">
+<h3>Nonlinear programming problem for purse seine deployment<a class="headerlink" href="#nonlinear-programming-problem-for-purse-seine-deployment" title="Permalink to this headline">¶</a></h3>
+<p>The criteria we defined in the previous section consists of both initial value problems
+and constraint expressions,
+which are valid in various time intervals or at specific time points only.
+We are motivated to collect the initial value problems into two subsystems,
+each using their own discretization technique and time horizon.
+Some of the states are stable and does not have control inputs;
+they are fully defined by initial conditions and parameters.
+From these state trajectories we are only interested in their terminal value, which we denote <span class="math notranslate nohighlight">\(t_{\text{end}}\)</span>.
+For the pre-deployment response from <a class="reference internal" href="#crit:predeploy"><span class="std std-numref">Criterion 6</span></a>, on the other hand, we are
+interested in finding the unknown final time <span class="math notranslate nohighlight">\(t_d\)</span>.</p>
+<p>The <em>casadi form</em> of a nonlinear programming formulation defines parameters as
+entities that are constant for one optimization problem, but may be changed from one solution evaluation to the next.
+We collect both user parameters and initial conditions into the parameter vector as follows:</p>
+<div class="math notranslate nohighlight" id="equation-eq-theta">
+<span class="eqno">(54)<a class="headerlink" href="#equation-eq-theta" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\theta = \col(U_v, p_{v,0}, V_s, p_{s,0}, \chi_{s}, \psi_{s,w}, W, \alpha, z_s, \tau_l, z_{l,d}, D_s, R_x, R_y, z_{\min}, \epsilon_{\min})
+\end{equation}\]</div>
+<p>Note that fixed parameters, such <span class="math notranslate nohighlight">\(d_o\)</span> are not exposed as part of <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
+<p>We define Subsystem 1 as initial value problems with horizon <span class="math notranslate nohighlight">\(t_1 \in [t_0, t_{\text{end}}] =: \mathbb{T}_1\)</span>,
+which are given by <a class="reference internal" href="#crit:collision"><span class="std std-numref">Criterion 2</span></a>, <a class="reference internal" href="#crit:deployment"><span class="std std-numref">Criterion 3</span></a>, <a class="reference internal" href="#crit:surround"><span class="std std-numref">Criterion 4</span></a>, and <a class="reference internal" href="#crit:presolve"><span class="std std-numref">Criterion 8</span></a>.
+We collect the state variables as <span class="math notranslate nohighlight">\(x_1 = \col(\varpi_0, \varpi_c, \tau_c, \varpi_d, \varpi_{pd}, s_c, s_d, s_{pd})\)</span>.</p>
+<p>Subsystem 2 are the closed-loop vessel trajectory <a class="reference internal" href="#crit:predeploy"><span class="std std-numref">Criterion 6</span></a>,
+fish trajectory <a class="reference internal" href="#equation-eq-fish-ivp">Eq. (38)</a>, and water frame <a class="reference internal" href="#equation-eq-water-ivp">Eq. (36)</a>.
+The state variables are collected as <span class="math notranslate nohighlight">\(x_2 = \col(\varpi_v, p_v, \chi_v, p_w, p_s)\)</span>.
+We make use of the non-fixed time horizon formulation,
+where the discretization is divided into <span class="math notranslate nohighlight">\(N_2\)</span> time elements each with a step size of <span class="math notranslate nohighlight">\(h_2\)</span>.
+The step size is a decision parameter with a step size range</p>
+<div class="math notranslate nohighlight" id="equation-eq-stepsize">
+<span class="eqno">(55)<a class="headerlink" href="#equation-eq-stepsize" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+h_2 \in [h_{\min}, h_{\max}],
+\end{equation}\]</div>
+<p>with <span class="math notranslate nohighlight">\(h_{\{\min,\max\}} = t_{d, \{\min,\max\}}/N_2\)</span>.
+The final time of Subsystem 2 is given as</p>
+<div class="math notranslate nohighlight" id="equation-eq-t-d-def">
+<span class="eqno">(56)<a class="headerlink" href="#equation-eq-t-d-def" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+t_d = t_0 + N_2 h_2,
+\end{equation}\]</div>
+<p>so that the time interval is <span class="math notranslate nohighlight">\(t_2 \in [t_0, t_d] =: \mathbb{T}_2\)</span>.
+<a class="reference internal" href="#crit:t_deployment"><span class="std std-numref">Criterion 7</span></a> is the constraint that dictates <span class="math notranslate nohighlight">\(t_d\)</span>.</p>
+<p>By assembling the equations from the preceding section,
+we are ready to formalize <a class="reference internal" href="#prob:deploy"><span class="std std-numref">Problem 8</span></a> as an optimal control problem in <a class="reference internal" href="#prob:ocp_deploy"><span class="std std-numref">Problem 9</span></a>.
+We collect decision parameters into the vector <span class="math notranslate nohighlight">\(\nu \in \mathcal{V} \subset \mathbb{R}^6\)</span> as</p>
+<div class="math notranslate nohighlight" id="equation-eq-v-opt">
+<span class="eqno">(57)<a class="headerlink" href="#equation-eq-v-opt" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+\nu = \begin{bmatrix} L_x\\ L_y\\ s_a\\ s_b\\ s_{\epsilon}\\ h_2\end{bmatrix} &amp;\in
+\begin{matrix}
+[0, L_{x,\max}]\\
+[-L_{y,\max},L_{y,\max}]\\
+[0,\infty]\\
+[0,\infty]\\
+[0,\infty]\\
+[h_{\min}, h_{\max}]
+\end{matrix}
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>Define <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> as <span class="math notranslate nohighlight">\(\col(\nu, x_1, x_2)\)</span>.
+The optimization problem is transcribed into a nonlinear programming problem using hybrid discretization,
+which implies separate discretization schemes for Subsystems 1 and 2.
+We can do this because they are loosely coupled through parameters and initial/terminal states only.</p>
+<div class="enumerable admonition" id="prob:ocp_deploy">
+<p class="admonition-title"><span class="caption-number">Problem 9 </span>  (Purse seine OCP)</p>
+<div class="math notranslate nohighlight" id="equation-prob-ocp-deploy">
+<span class="eqno">(58)<a class="headerlink" href="#equation-prob-ocp-deploy" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+ \begin{array}{lc}
+ \begin{array}{l}
+ \text{minimize:} \\
+ \nu\in \mathcal{V}
+ \end{array}
+ \quad \Phi_M(\mathcal{Z},\theta)\\
+ \quad\text{subject to:}\qquad      \forall\, t_1 \in \mathbb{T}_1, t_2\in\mathbb{T}_2 \\
+ \end{array}
+\end{equation}\end{split}\]</div>
+<p><a class="reference internal" href="#crit:ellipse"><span class="std std-numref">Criterion 1</span></a>, <a class="reference internal" href="#crit:sink_margin"><span class="std std-numref">Criterion 9</span></a>, <a class="reference internal" href="#crit:fish_margin"><span class="std std-numref">Criterion 10</span></a>, <a class="reference internal" href="#crit:timing"><span class="std std-numref">Criterion 5</span></a>, <a class="reference internal" href="#crit:t_deployment"><span class="std std-numref">Criterion 7</span></a>, <a class="reference internal" href="#equation-eq-v-opt">Eq. (57)</a>;
+Subsystem 1: <a class="reference internal" href="#crit:collision"><span class="std std-numref">Criterion 2</span></a>, <a class="reference internal" href="#crit:deployment"><span class="std std-numref">Criterion 3</span></a>, <a class="reference internal" href="#crit:surround"><span class="std std-numref">Criterion 4</span></a>, <a class="reference internal" href="#crit:presolve"><span class="std std-numref">Criterion 8</span></a>;
+Subsystem 2: <a class="reference internal" href="#crit:predeploy"><span class="std std-numref">Criterion 6</span></a>, <a class="reference internal" href="#equation-eq-fish-ivp">Eq. (38)</a>, <a class="reference internal" href="#equation-eq-water-ivp">Eq. (36)</a>.</p>
+</div>
+<p>The argument that minimizes <a class="reference internal" href="#prob:ocp_deploy"><span class="std std-numref">Problem 9</span></a> is <span class="math notranslate nohighlight">\(\nu^\star\)</span>.
+The corresponding vessel and fish trajectories are <span class="math notranslate nohighlight">\(p_v^\star(t)\)</span> and <span class="math notranslate nohighlight">\(p_s^\star(t)\)</span>
+and can be found by solving an initial value problem of Subsystem 2 with a desired time horizon
+and <span class="math notranslate nohighlight">\(L_x^\star\)</span> and <span class="math notranslate nohighlight">\(L_y^\star\)</span> from <span class="math notranslate nohighlight">\(\nu^\star\)</span>.
+These functions can be used as decision support to the purse seine master by visualizing them in a graphical user interface.</p>
+</div>
+<div class="section" id="receding-horizon">
+<h3>Receding horizon<a class="headerlink" href="#receding-horizon" title="Permalink to this headline">¶</a></h3>
+<p>A solution to <a class="reference internal" href="#prob:ocp_deploy"><span class="std std-numref">Problem 9</span></a> has limited validity because the ambient conditions or user preferences will change.
+We therefore solve <a class="reference internal" href="#prob:ocp_deploy"><span class="std std-numref">Problem 9</span></a> on a regular interval with updated initial conditions in a receding horizon fashion.
+Typically, solutions from overlapping time intervals are used as warm start for the decision variables in the NLP,
+because it can speed up solution times considerably.</p>
+</div>
+<div class="section" id="discussion-on-solution-strategies-and-improvements">
+<h3>Discussion on solution strategies and improvements<a class="headerlink" href="#discussion-on-solution-strategies-and-improvements" title="Permalink to this headline">¶</a></h3>
+<p>The NLP resulting from discretization of <a class="reference internal" href="#prob:ocp_deploy"><span class="std std-numref">Problem 9</span></a> has few decision variables,
+but they are strongly connected to the system dynamics. As a result the computation of the Hessian of the Lagrangian is costly with many numerical evaluations.
+It is advisable to use hessian approximation, which speeds up solution times by an order of magnitude.</p>
+<p>We have had best success in solving the problem using single shooting for both subsystems.
+There may be opportunities in using multi shooting or collocation with good initial guesses for state trajectories and Lagrange multipliers.
+We have not investigated this yet.</p>
+<p>Unfortunately, the initial guesses of the decision parameters have impact on whether the optimization problem finds a solution or not.
+Decision parameters <span class="math notranslate nohighlight">\(L_x\)</span> and <span class="math notranslate nohighlight">\(h_2\)</span> are especially important, but for both these it is relatively straightforward to
+provide initial guesses based on some distance and geometry interpretations.
+Mechanisms for this is not yet implemented.</p>
+<p>The optimization problem sometimes arrives at infeasible solutions.
+Therefore it may be constructive to provide a set of candidate guesses for key decision parameters,
+so that the algorithm can try various initial guesses.</p>
+<p>The pre-deployment positioning currently does respect keeping distance to the fish school as it converges toward the deployment point.
+This is fine when the vessel is already located on the “right” side in relation to the fish school.
+A future improvement would be to extend Subsystem 2 with a control scheme that takes into account the distance between the vessel and fish school.</p>
+</div>
+</div>
+<div class="section" id="appendix">
+<h2>Appendix<a class="headerlink" href="#appendix" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="regularly-parameterized-paths-and-path-following">
+<h3>Regularly parameterized paths and path following<a class="headerlink" href="#regularly-parameterized-paths-and-path-following" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="regularly-parameterized-paths">
+<h4>Regularly parameterized paths<a class="headerlink" href="#regularly-parameterized-paths" title="Permalink to this headline">¶</a></h4>
+<p>A planar parametric curve parameterized by a scalar variable <span class="math notranslate nohighlight">\(\varpi \in \mathbb{R}\)</span>
+belongs to a one-dimensional manifold defined as <span id="id15">[<a class="reference internal" href="zbibliography.html#id9" title="M. Breivik and T. I. Fossen. Guidance laws for autonomous underwater vehicles. In A. V. Inzartsev (Ed.), Underwater Vehicles, pages 51-76. IN-TECH Education and Publishing, 2009.">8</a>]</span>:</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-2">
+<span class="eqno">(59)<a class="headerlink" href="#equation-rst-planner-2" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\mathcal{P} := \{ p \in \mathbb{R}^2 : p = p_p(\varpi)\, \forall\, \varpi \in \mathbb{R} \}.
+\end{equation}\]</div>
+<p>Below we define some specific curves used in our formulation.</p>
+<div class="section" id="ellipse">
+<h5>Ellipse<a class="headerlink" href="#ellipse" title="Permalink to this headline">¶</a></h5>
+<p>A rotated and translated ellipse can be defined as follows</p>
+<div class="math notranslate nohighlight" id="equation-eq-p-ellipse">
+<span class="eqno">(60)<a class="headerlink" href="#equation-eq-p-ellipse" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+p_e(\varpi;\theta_e) = p_{e,0} + \underbrace{\begin{bmatrix}\cos(\vartheta)&amp; -\sin(\vartheta)\\
+  \sin(\vartheta)&amp; \cos(\vartheta)\end{bmatrix}}_{R(\vartheta)}
+  \begin{bmatrix}L_x + R_x \cos(d_o \varpi)\\ L_y + R_y \sin(d_o \varpi) \end{bmatrix},
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\theta_e := \col(p_{e,0}, \vartheta, L_x, L_y, R_x, R_y, d_o)\)</span> is a parameter
+vector that dictates all aspects of the ellipse, see <a class="reference internal" href="#fig-ellipse"><span class="std std-numref">Fig. 7</span></a>. The
+orientation for increasing <span class="math notranslate nohighlight">\(\varpi\)</span> is determined by <span class="math notranslate nohighlight">\(d_o \in \{-1, 1\}\)</span> and
+<span class="math notranslate nohighlight">\(\varpi\)</span> is given in radians.</p>
+<div class="figure align-center" id="id26">
+<span id="fig-ellipse"></span><img alt="../_images/ellipse.png" src="../_images/ellipse.png" />
+<p class="caption"><span class="caption-number">Fig. 7 </span><span class="caption-text">Ellipse path with translation and rotation.</span><a class="headerlink" href="#id26" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="straight-line">
+<h5>Straight line<a class="headerlink" href="#straight-line" title="Permalink to this headline">¶</a></h5>
+<p>The solution to an initial value problem of a constant velocity particle,
+such as <a class="reference internal" href="#equation-eq-fish-ivp">Eq. (38)</a> is</p>
+<div class="math notranslate nohighlight" id="equation-eq-p-line">
+<span class="eqno">(61)<a class="headerlink" href="#equation-eq-p-line" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+p_l(\varpi;\theta_l) = p_{l,0} + \varpi V \begin{bmatrix}\cos(\chi)\\ \sin(\chi)\end{bmatrix},
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\theta_l := \col(p_{l,0}, V, \chi)\)</span>. Notice that for this parametrization,
+<span class="math notranslate nohighlight">\(\varpi\)</span> is a time variable in seconds, with <span class="math notranslate nohighlight">\(\varpi = 0\)</span> being the initial
+condition.</p>
+</div>
+</div>
+<div class="section" id="path-tangential-frame-and-arc-length">
+<h4>Path-tangential frame and arc length<a class="headerlink" href="#path-tangential-frame-and-arc-length" title="Permalink to this headline">¶</a></h4>
+<div class="figure align-center" id="id27">
+<span id="fig-parametrizations"></span><img alt="../_images/parametrizations.png" src="../_images/parametrizations.png" />
+<p class="caption"><span class="caption-number">Fig. 8 </span><span class="caption-text">Path-tangential frame and symbols relating to steering on or to regularly parameterized paths.</span><a class="headerlink" href="#id27" title="Permalink to this image">¶</a></p>
+</div>
+<p>In the following, it is useful to confer <a class="reference internal" href="#fig-parametrizations"><span class="std std-numref">Fig. 8</span></a>.
+The material is taken from <span id="id16">[<a class="reference internal" href="zbibliography.html#id19" title="Joakim Haugen. Guidance algorithms for planar path-based motion control scenarios. Master's thesis, Norwegian University of Science and Technology, Trondheim, Norway, June 2010.">15</a>]</span>.
+Consider a planar particle <span class="math notranslate nohighlight">\(p_p(\varpi) = \col(x_p(\varpi), y_p(\varpi))\)</span>, which is
+constrained to move along a curve. We define a <em>path-tangential frame</em> as a
+reference frame with origin <span class="math notranslate nohighlight">\(p_p(\varpi)\)</span> and x-axis aligned with the tangent of the
+curve. This frame is rotated an angle <span class="math notranslate nohighlight">\(\chi_p(\varpi)\)</span> relative some stationary
+reference frame using the right-hand screw rule, given by</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-3">
+<span class="eqno">(62)<a class="headerlink" href="#equation-rst-planner-3" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\chi_p(\varpi) = \arctan2(y_p^\varpi(\varpi),x_p^\varpi(\varpi)).
+\end{equation}\]</div>
+<p>Consider a particle <span class="math notranslate nohighlight">\(p(t) \in \mathbb{R}^2\)</span>, which may change with time <span class="math notranslate nohighlight">\(t\)</span>.
+The error between <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(p_p\)</span> can be expressed in the path-tangential frame as</p>
+<div class="math notranslate nohighlight" id="equation-eq-particle-error">
+<span class="eqno">(63)<a class="headerlink" href="#equation-eq-particle-error" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{bmatrix}\sigma(t)\\ e(t)\end{bmatrix} = \underbrace{\begin{bmatrix}\cos \chi_p &amp; -\sin \chi_p\\ \sin \chi_p &amp; \cos \chi_p \end{bmatrix}^T}_{R^T(\chi_p)}(p(t) - p_p(\varpi)),
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma(t)\)</span> is denoted the <em>along-track error</em> and <span class="math notranslate nohighlight">\(e(t)\)</span> as the <em>cross-track error</em>.</p>
+<p>The time rate of change of <span class="math notranslate nohighlight">\(p_p(\varpi)\)</span> is</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-4">
+<span class="eqno">(64)<a class="headerlink" href="#equation-rst-planner-4" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+\dat x_p(\varpi) &amp;= \frac{dx_p}{d\varpi}\frac{d\varpi}{dt} = x_p^\varpi \dot \varpi,\\
+\dat y_p(\varpi) &amp;= \frac{dy_p}{d\varpi}\frac{d\varpi}{dt} = y_p^\varpi \dot \varpi,\\
+\dat p_p(\varpi) &amp;:= \col(\dat x_p, \dat y_p),
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where we have used the chain rule.
+The speed of a particle is defined as <span class="math notranslate nohighlight">\(U_p(t) := \|\dat p_p(\varpi)\|\)</span>,
+which also can be written as</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-5">
+<span class="eqno">(65)<a class="headerlink" href="#equation-rst-planner-5" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+U_p(t) = \|\col(\dat x_p, \dat y_p)\| = \|\col(x_p^\varpi \dat \varpi, y_p^\varpi \dat \varpi)\| = \underbrace{\|\col(x_p^\varpi,y_p^\varpi)\|}_{\|p_p^\varpi(\varpi)\|}\dat \varpi.
+\end{equation}\]</div>
+<p>The arc length between two points is the distance a particle needs to travel when moving from one point to another.
+If the particle is constrained to move along a curve, we can show that the time derivative of the arc length is, see e.g. <span id="id17">[<a class="reference internal" href="zbibliography.html#id19" title="Joakim Haugen. Guidance algorithms for planar path-based motion control scenarios. Master's thesis, Norwegian University of Science and Technology, Trondheim, Norway, June 2010.">15</a>]</span></p>
+<div class="math notranslate nohighlight" id="equation-eq-arc">
+<span class="eqno">(66)<a class="headerlink" href="#equation-eq-arc" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+\dot s(\varpi) &amp;= \frac{d}{dt}\left(\int_a^\varpi \|p_p^\theta(\theta)\|d\theta\right)\\
+&amp;= \|p_p^\varpi(\varpi)\|\dot \varpi\\
+&amp;= U_p(t),
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>which confirms that the arc length is the integral of the particle speed.
+Notice that the arc length increases for increasing parametrization variable <span class="math notranslate nohighlight">\(\varpi\)</span>.</p>
+</div>
+<div class="section" id="particle-feedback-laws">
+<h4>Particle feedback laws<a class="headerlink" href="#particle-feedback-laws" title="Permalink to this headline">¶</a></h4>
+<p>We introduce virtual particles, which we can manipulate to achieve various objectives.
+Usually, the dynamic response of the parametrization variable <span class="math notranslate nohighlight">\(\varpi\)</span> is designed to
+solve an objective using simple feedback laws. We will cover several such cases in the following.</p>
+<div class="section" id="particle-projection">
+<h5>Particle projection<a class="headerlink" href="#particle-projection" title="Permalink to this headline">¶</a></h5>
+<p>It is possible to find the point on a curve, which locally minimizes the distance to a point not necessarily located on the curve.
+The minimization problem</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-6">
+<span class="eqno">(67)<a class="headerlink" href="#equation-rst-planner-6" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\min_\varpi \|p(t) - p_p(\varpi)\|,
+\end{equation}\]</div>
+<p>has a local minimum when <span class="math notranslate nohighlight">\(\sigma(t) = 0\)</span>. A simple proportional feedback law achieves this:</p>
+<div class="math notranslate nohighlight" id="equation-eq-particle-projection">
+<span class="eqno">(68)<a class="headerlink" href="#equation-eq-particle-projection" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\dat \varpi = \frac{\gamma \sigma(t)}{\|p_p^\varpi(\varpi)\|},
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\gamma &gt; 0\)</span> is the feedback gain. With sufficiently large <span class="math notranslate nohighlight">\(\gamma\)</span>,
+the particle will quickly converge to and be the particle projection of <span class="math notranslate nohighlight">\(p(t)\)</span> as it changes with time.</p>
+</div>
+<div class="section" id="path-following">
+<h5>Path following<a class="headerlink" href="#path-following" title="Permalink to this headline">¶</a></h5>
+<p>The path following algorithm for regularly parameterized paths as described in <span id="id18">[<a class="reference internal" href="zbibliography.html#id9" title="M. Breivik and T. I. Fossen. Guidance laws for autonomous underwater vehicles. In A. V. Inzartsev (Ed.), Underwater Vehicles, pages 51-76. IN-TECH Education and Publishing, 2009.">8</a>]</span>
+uses particle projection and lookahead distance to steer a particle <span class="math notranslate nohighlight">\(p(t)\)</span> onto a one-dimensional manifold.
+We restate the algorithm here, because we will use it in the path planner formulation.</p>
+<p>Let <span class="math notranslate nohighlight">\(p(t) \in \mathbb{R}^2\)</span> represent the planar position of a particle in a
+stationary reference frame. Let <span class="math notranslate nohighlight">\(V(t)\)</span> be the velocity magnitude of the particle, so
+that</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-7">
+<span class="eqno">(69)<a class="headerlink" href="#equation-rst-planner-7" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+  \dat p(t) = V(t)\begin{bmatrix}\cos \chi(t)\\\sin \chi(t)\end{bmatrix},
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\chi(t)\)</span> is the particle course – the angle between the x-axis and the particle velocity vector.</p>
+<p>Define <span class="math notranslate nohighlight">\(p_p(\varpi) \in \mathbb{R}^2\)</span> as a virtual path-constrained particle for which we want <span class="math notranslate nohighlight">\(p(t)\)</span> to converge to an move along.
+The path following objective is therefore</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-8">
+<span class="eqno">(70)<a class="headerlink" href="#equation-rst-planner-8" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\lim_{t\to\infty}\|p(t) - p_p(\varpi(t))\| = 0,
+\end{equation}\]</div>
+<p>where we are free to define the dynamics of <span class="math notranslate nohighlight">\(\varpi(t)\)</span>.
+Notice that this objective also can be stated using <a class="reference internal" href="#equation-eq-particle-error">Eq. (63)</a> as</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-9">
+<span class="eqno">(71)<a class="headerlink" href="#equation-rst-planner-9" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\lim_{t\to\infty}\begin{bmatrix}\sigma(t)\\ e(t)\end{bmatrix} = 0.
+\end{equation}\end{split}\]</div>
+<p>The dynamics of <span class="math notranslate nohighlight">\(\varpi\)</span> is designed as a combination of particle projection feedback
+<a class="reference internal" href="#equation-eq-particle-projection">Eq. (68)</a> and a steering law for the orientation of <span class="math notranslate nohighlight">\(p(t)\)</span>, given as</p>
+<div class="math notranslate nohighlight" id="equation-eq-pathfollow-varpi">
+<span class="eqno">(72)<a class="headerlink" href="#equation-eq-pathfollow-varpi" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\dat \varpi = \frac{V(t) \cos \chi_r(e) + \gamma \sigma(t)}{\|p_p^\varpi(\varpi)\|},
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\chi_r(e)\)</span> is a path-relative steering angle defined as</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-10">
+<span class="eqno">(73)<a class="headerlink" href="#equation-rst-planner-10" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\chi_r(e) = \arctan\left(\frac{-e(t)}{\Delta}\right) \in (-\pi/2, \pi/2),
+\end{equation}\]</div>
+<p>with <span class="math notranslate nohighlight">\(\Delta &gt; 0\)</span>, see <a class="reference internal" href="#fig-parametrizations"><span class="std std-numref">Fig. 8</span></a>.</p>
+<p>The desired orientation of the particle velocity vector is</p>
+<div class="math notranslate nohighlight" id="equation-eq-pathfollow-chid">
+<span class="eqno">(74)<a class="headerlink" href="#equation-eq-pathfollow-chid" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\chi_d(e,\varpi) = \chi_p(\varpi) + \chi_r(e;\Delta).
+\end{equation}\]</div>
+<p>The control objective of the particle course is to drive <span class="math notranslate nohighlight">\(\lim_{t\to\infty}\chi(t)-\chi_d(e,\varpi) = 0\)</span>.
+The course error is defined as</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-11">
+<span class="eqno">(75)<a class="headerlink" href="#equation-rst-planner-11" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\tilde \chi = \chi_d - \chi, \, \in (\pi, \pi],
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tilde \chi\)</span> is to be within the indicated domain, and can be ensured using <span id="id19">[<a class="reference internal" href="zbibliography.html#id9" title="M. Breivik and T. I. Fossen. Guidance laws for autonomous underwater vehicles. In A. V. Inzartsev (Ed.), Underwater Vehicles, pages 51-76. IN-TECH Education and Publishing, 2009.">8</a>, <a class="reference internal" href="zbibliography.html#id19" title="Joakim Haugen. Guidance algorithms for planar path-based motion control scenarios. Master's thesis, Norwegian University of Science and Technology, Trondheim, Norway, June 2010.">15</a>]</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-pathfollow-tildechi">
+<span class="eqno">(76)<a class="headerlink" href="#equation-eq-pathfollow-tildechi" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+\tilde \chi &amp;= \arctan2(\sin(\tilde\chi), \cos(\tilde\chi))\\
+\sin\tilde\chi &amp;= \sin(\chi_d - \chi) = \sin \chi_d \cos \chi - \cos \chi_d \sin \chi,\\
+\cos\tilde\chi &amp;= \cos(\chi_d - \chi) = \cos \chi_d \cos \chi + \sin \chi_d \sin \chi.
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>The course rate controller is given as</p>
+<div class="math notranslate nohighlight" id="equation-eq-pathfollow-chi">
+<span class="eqno">(77)<a class="headerlink" href="#equation-eq-pathfollow-chi" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\dot \chi = \omega_{\max} \frac{\tilde \chi}{\sqrt{\tilde \chi^2 + \Delta_{\dat \chi}^2}},
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\omega_{\max}&gt;0\)</span> is maximal rate of turn and <span class="math notranslate nohighlight">\(\Delta_{\dat \chi}&gt;0\)</span> is a rendezvous tuning parameter.
+This control scheme guarantees that the particle converges to the curve and is proven in <span id="id20">[<a class="reference internal" href="zbibliography.html#id9" title="M. Breivik and T. I. Fossen. Guidance laws for autonomous underwater vehicles. In A. V. Inzartsev (Ed.), Underwater Vehicles, pages 51-76. IN-TECH Education and Publishing, 2009.">8</a>, <a class="reference internal" href="zbibliography.html#id31" title="Roger Skjetne, Ulrik Jørgensen, and Andrew R. Teel. Line-of-sight path-following along regularly parametrized curves solved as a generic maneuvering problem. In 2011 50th IEEE Conference on Decision and Control and European Control Conference, volume, 2467–2474. 2011. doi:10.1109/CDC.2011.6161364.">27</a>]</span>.</p>
+</div>
+<div class="section" id="arc-length-control-objective">
+<h5>Arc length control objective<a class="headerlink" href="#arc-length-control-objective" title="Permalink to this headline">¶</a></h5>
+<p>Suppose <span class="math notranslate nohighlight">\(p_p(\varpi_1)\)</span> and <span class="math notranslate nohighlight">\(p_p(\varpi_2)\)</span> are path-constrained particles, denoted
+1 and 2. Let the control objective be to obtain a desired arc length between the
+particles, by manipulating the speed of particle 1. Let <span class="math notranslate nohighlight">\(S\)</span> be the desired delta arc
+length and <span class="math notranslate nohighlight">\(s_{\{1,2\}}\)</span> the arc lengths of the particles. The proportional feedback law
+for <span class="math notranslate nohighlight">\(s_1\)</span> together with the dynamics for particle parametrizations gives us the
+following initial value problem</p>
+<div class="math notranslate nohighlight" id="equation-eq-arcobjective">
+<span class="eqno">(78)<a class="headerlink" href="#equation-eq-arcobjective" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+  \dot s_1 &amp;= -k_d(s_1 - (s_2 - S))\\
+  \dot \varpi_1 &amp;= \frac{\dot s_1}{\|p_p^\varpi(\varpi_1)\|}\\
+  \dot s_2 &amp;= U_{p,2}(t)\\
+  \dot \varpi_2 &amp;= \frac{U_{p,2}(t)}{\|p_p^\varpi(\varpi_2)\|}\\
+  &amp; \varpi_1(t_0) =\varpi_2(t_0) = \varpi_0,\, s_1(t_0) = 0,\, s_2(t_0)=0,
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(k_d\)</span> is the feedback gain and <span class="math notranslate nohighlight">\(U_{p,2}(t)\)</span> is the speed of particle 2.
+Note that for <span class="math notranslate nohighlight">\(k_d &gt; 0\)</span>, we obtain <span class="math notranslate nohighlight">\(s_1 &lt; s_2\)</span>, and vice versa.</p>
+</div>
+</div>
+<div class="section" id="slip-angle">
+<h4>Slip angle<a class="headerlink" href="#slip-angle" title="Permalink to this headline">¶</a></h4>
+<p>We make a clear distinction between course and heading, where course is the planar
+orientation of the velocity vector in <span class="math notranslate nohighlight">\(\{\text{NED}\}\)</span>, whereas heading is the planar
+orientation of the body frame. We need expressions to relate them to each other and
+achieve this using geometric relations.</p>
+<p>We consider a particle <span class="math notranslate nohighlight">\(p(t) \in \mathbb{R}^2\)</span>, which is written in polar form as</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-12">
+<span class="eqno">(79)<a class="headerlink" href="#equation-rst-planner-12" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+  \dot p = V(t) \begin{bmatrix}\cos\chi(t)\\\sin\chi(t)\end{bmatrix},
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(V(t)\)</span> and <span class="math notranslate nohighlight">\(\chi(t)\)</span> are the magnitude and orientation of the velocity vector of the particle.
+Suppose the vector is given as a linear combination of two velocity vectors</p>
+<div class="math notranslate nohighlight" id="equation-rst-planner-13">
+<span class="eqno">(80)<a class="headerlink" href="#equation-rst-planner-13" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+  \dot p = U_v \begin{bmatrix}\cos\psi(t)\\\sin\psi(t)\end{bmatrix} + W \begin{bmatrix}\cos\alpha\\\sin\alpha\end{bmatrix},
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\psi\)</span> is heading.
+Let <span class="math notranslate nohighlight">\(\beta\)</span> denote the <em>slip angle</em> between the heading and course, that is</p>
+<div class="math notranslate nohighlight" id="equation-eq-chi-of-beta">
+<span class="eqno">(81)<a class="headerlink" href="#equation-eq-chi-of-beta" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\chi = \psi + \beta.
+\end{equation}\]</div>
+<p>We can find formulas for <span class="math notranslate nohighlight">\(V(t)\)</span> and <span class="math notranslate nohighlight">\(\chi(t)\)</span>, which are expressed in terms of the above variables.</p>
+<p>The formula for <span class="math notranslate nohighlight">\(V(t)\)</span> is</p>
+<div class="math notranslate nohighlight" id="equation-eq-voft">
+<span class="eqno">(82)<a class="headerlink" href="#equation-eq-voft" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{equation}
+\begin{array}{ll}
+  V(t) &amp;= \sqrt{(U_v\cos(\psi) + W\cos(\alpha))^2 + (U_v\sin(\psi) + W\sin(\alpha))^2}\\
+       &amp;= \sqrt{U_v^2 + W^2 + 2U_vW(\cos(\psi(t) - \alpha))}\\
+       &amp;= \sqrt{U_v^2 + W^2 + 2U_vW(\cos(\chi(t) - \beta(t) - \alpha))}
+\end{array}
+\end{equation}\end{split}\]</div>
+<p>We use the geometric relation in <a class="reference internal" href="#fig-geometri"><span class="std std-numref">Fig. 9</span></a> to establish an expression for <span class="math notranslate nohighlight">\(\beta\)</span>.
+It can be seen that <span class="math notranslate nohighlight">\(W\sin(\alpha - \chi) = \ell\)</span>, <span class="math notranslate nohighlight">\(U_v\sin(\beta) = \ell\)</span>,
+which gives <span class="math notranslate nohighlight">\(\sin(\beta) = \frac{W}{U_v}\sin(\alpha - \chi)\)</span>.
+The expression for <span class="math notranslate nohighlight">\(\beta(t)\)</span> is thus</p>
+<div class="math notranslate nohighlight" id="equation-eq-beta-of-t">
+<span class="eqno">(83)<a class="headerlink" href="#equation-eq-beta-of-t" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\beta(t) = \arcsin\left(\frac{W}{U_v}\sin(\alpha - \chi(t)) \right).
+\end{equation}\]</div>
+<p>When we are given <span class="math notranslate nohighlight">\(\psi(t_0)\)</span>, we can calculate <span class="math notranslate nohighlight">\(V(t_0)\)</span> and</p>
+<div class="math notranslate nohighlight" id="equation-eq-chi-of-t0">
+<span class="eqno">(84)<a class="headerlink" href="#equation-eq-chi-of-t0" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\chi(t_0) = \arctan2(U_v\sin \psi(t_0) + W\sin \alpha, U_v \cos \psi(t_0) + W \sin \alpha)).
+\end{equation}\]</div>
+<p>With these variables given, we can evaluate <span class="math notranslate nohighlight">\(\beta(t)\)</span> for all <span class="math notranslate nohighlight">\(t\)</span> and also calculate
+<span class="math notranslate nohighlight">\(\psi(t)\)</span> using the solution to the differential equations of <span class="math notranslate nohighlight">\(\dat p(t), \dat \chi(t)\)</span>.</p>
+<div class="figure align-center" id="id28">
+<span id="fig-geometri"></span><img alt="../_images/geometry.png" src="../_images/geometry.png" />
+<p class="caption"><span class="caption-number">Fig. 9 </span><span class="caption-text">Geometric relations between two velocity vectors.</span><a class="headerlink" href="#id28" title="Permalink to this image">¶</a></p>
+</div>
+<dl class="footnote brackets">
+<dt class="label" id="id21"><span class="brackets"><a class="fn-backref" href="#id3">1</a></span></dt>
+<dd><p>The sibling project codenamed “Balder” takes care of graphical visualization</p>
+</dd>
+<dt class="label" id="id22"><span class="brackets"><a class="fn-backref" href="#id5">2</a></span></dt>
+<dd><p>Data collection and sharing is achieved with a supporting software named “Ratatosk”</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="libraries.html" class="btn btn-neutral float-right" title="A note on library dependencies" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="formulation.html" class="btn btn-neutral float-left" title="Nonlinear programming formulation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, SINTEF Ocean.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. <jinja2.runtime.BlockReference object at 0x7f6b7ee01d50>
+
+<br /><br />
+<table>
+  <tr>
+    <td width="120" style="vertical-align:middle;text-align:center">
+      <img alt="FHF" style="border-width:0" width="100" src="../_static/FHF-black-txt.png" />
+    </td>
+    <td>
+      This work was funded by <a href="https://www.fhf.no/fhf/about-fhf-english">FHF &ndash; Norwegian Seafood Research Fund</a> with <a href="https://www.fhf.no/prosjekter/prosjektbasen/901350/">Grant No. 901350</a>.<br /><br />
+    </td>
+  </tr>
+  <tr>
+    <td width="32" style="vertical-align:middle;text-align:center">
+      <img alt="Apache License, Version 2.0" style="border-width:0" width="32" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Apache_Feather_Logo.svg" />
+    </td>
+    <td>
+      This work is licensed under the Apache License, Version 2.0 (the "License").
+      You may obtain a copy of the License at
+      <a rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a><br />
+      Unless required by applicable law or agreed to in writing,
+      software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+      WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+      specific language governing permissions and limitations under the License.
+    </td>
+  </tr>
+</table>
+
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

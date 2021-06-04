@@ -1,0 +1,643 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>YAML configuration files and schemas &mdash; mimir  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/eq_fix.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/enumerable.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/icon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/mathwork.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Public API" href="../api/library-api.html" />
+    <link rel="prev" title="A note on library dependencies" href="libraries.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #00457c" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> mimir
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#running-an-algorithm">Running an algorithm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#yaml-config-file">YAML config file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#interacting-with-the-algorithm">Interacting with the algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Build instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#configuration-options-and-targets">Configuration options and targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#linux">Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#prerequisites-debian-based">Prerequisites (debian-based)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#documentation-prerequisites-optional">Documentation prerequisites <em>(optional)</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#building-and-running-debian-based">Building and running (debian-based)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#packaging-into-artifacts">Packaging into artifacts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#windows">Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#documentation-prerequisites-on-windows-optional">Documentation prerequisites on Windows <em>(optional)</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#building-and-running">Building and running</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html#packaging-into-installer-and-archive">Packaging into installer and archive</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Creating a new algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Manpage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">MIMIR</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#name">NAME</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#synopsis">SYNOPSIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#description">DESCRIPTION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#options">OPTIONS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#configuration">CONFIGURATION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#environment">ENVIRONMENT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#files">FILES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#example">EXAMPLE</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage.html#yaml-config-file">YAML config file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#notes">NOTES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#see-also">SEE ALSO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#copyright">COPYRIGHT</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Implementation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="formulation.html">Nonlinear programming formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#brief-introduction-to-nonlinear-programming-problems">Brief introduction to nonlinear programming problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#formulating-an-nlp-from-dae-ocp-and-discretization">Formulating an NLP from DAE, OCP and discretization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-formulation-overview">NLP formulation overview</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#receding-horizon">Receding horizon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#mathematical-notation">Mathematical notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#differential-algebraic-equations-daes">Differential-algebraic equations (DAEs)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#the-constrained-dae-initial-value-problem-ivp">The constrained DAE initial value problem (IVP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#optimal-control-problem-ocp">Optimal control problem (OCP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#discretization-of-the-continuous-time-ocp">Discretization of the continuous time OCP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#shooting-approaches">Shooting approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#collocation">Collocation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#nonlinear-programming-problem-nlp">Nonlinear programming problem (NLP)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#formulation-strategies-and-extensions">Formulation strategies and extensions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="formulation.html#helper-functions">Helper functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#adding-variable-bounds-add-nlp-variable-bounds">Adding variable bounds <code class="docutils literal notranslate"><span class="pre">::add_nlp_variable_bounds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#time-grid-function-create-solution-timegrid">Time grid function <code class="docutils literal notranslate"><span class="pre">::create_solution_timegrid</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-tuple-unpacker-create-solution-unpacker">NLP tuple unpacker <code class="docutils literal notranslate"><span class="pre">::create_solution_unpacker</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-decision-parameters-create-decision-parameter-extractor">NLP decision parameters <code class="docutils literal notranslate"><span class="pre">::create_decision_parameter_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-subsystem-extractor-create-system-extractor">NLP subsystem extractor <code class="docutils literal notranslate"><span class="pre">::create_system_extractor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-shifter-create-horizon-shifter">NLP shifter <code class="docutils literal notranslate"><span class="pre">::create_horizon_shifter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulation.html#nlp-trajectory-create-trajectory-function">NLP trajectory <code class="docutils literal notranslate"><span class="pre">::create_trajectory_function</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="planner.html">Path planner for deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="planner.html#motivation-and-rationale">Motivation and rationale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="planner.html#problem-statement-of-the-purse-seine-path-planner">Problem statement of the purse seine path planner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="planner.html#purse-planner-formulation">Purse planner formulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#notation">Notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#sea-current-and-surface-current-water-frame">Sea current and surface current water frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#fishing-vessel">Fishing vessel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#fish-school">Fish school</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#leadline-sinking-response">Leadline sinking response</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#purse-planner-criteria">Purse planner criteria</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="planner.html#objective-function-terms">Objective function terms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#nonlinear-programming-problem-for-purse-seine-deployment">Nonlinear programming problem for purse seine deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#receding-horizon">Receding horizon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#discussion-on-solution-strategies-and-improvements">Discussion on solution strategies and improvements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="planner.html#appendix">Appendix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="planner.html#regularly-parameterized-paths-and-path-following">Regularly parameterized paths and path following</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="planner.html#regularly-parameterized-paths">Regularly parameterized paths</a></li>
+<li class="toctree-l4"><a class="reference internal" href="planner.html#path-tangential-frame-and-arc-length">Path-tangential frame and arc length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="planner.html#particle-feedback-laws">Particle feedback laws</a></li>
+<li class="toctree-l4"><a class="reference internal" href="planner.html#slip-angle">Slip angle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libraries.html">A note on library dependencies</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">YAML configuration files and schemas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#purse-planner-configuration-schema">Purse planner configuration schema</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/library-api.html">Public API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/library-api.html#items-listing">Items listing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/library-api.html#namespaces">Namespaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/namespace_mimir.html">Namespace mimir</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/library-api.html#classes-and-structs">Classes and Structs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/classmimir_1_1IAlgorithm.html">Class IAlgorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_private/library-api-private.html">Private API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api_private/library-api-private.html#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_private/library-api-private.html#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api_private/library-api-private.html#items-listing">Items listing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#namespaces">Namespaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir.html">Namespace mimir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__algorithm.html">Namespace mimir::algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__control.html">Namespace mimir::control</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__detail.html">Namespace mimir::detail</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/namespace_mimir__program.html">Namespace mimir::program</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#classes-and-structs">Classes and Structs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1algorithm_1_1NlpProblemBuilder.html">Struct NlpProblemBuilder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1algorithm_1_1NlpStructure.html">Struct NlpStructure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Evaluating.html">Struct Evaluating</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvError.html">Struct EvError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvInterrupt.html">Struct EvInterrupt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvKill.html">Struct EvKill</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvReady.html">Struct EvReady</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvRestart.html">Struct EvRestart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvRunningOK.html">Struct EvRunningOK</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvStart.html">Struct EvStart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvStop.html">Struct EvStop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1EvTimeout.html">Struct EvTimeout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Initializing.html">Struct Initializing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Running.html">Struct Running</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1ShutDown.html">Struct ShutDown</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Standby.html">Struct Standby</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1StateMachine.html">Struct StateMachine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/structmimir_1_1Waiting.html">Struct Waiting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1FishSchool.html">Class FishSchool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1KinematicVessel.html">Class KinematicVessel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1Leadline.html">Class Leadline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1PursePlanner.html">Class PursePlanner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1PursePlannerFormulation.html">Class PursePlannerFormulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1TestAlgorithm.html">Class TestAlgorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1control_1_1CommandListener.html">Template Class CommandListener</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1control_1_1CommandResponder.html">Class CommandResponder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1control_1_1StateNotifier.html">Class StateNotifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/classmimir_1_1Options.html">Class Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1a3aefdada3944d997af13a71cded2ba72.html">Function mimir::AlgorithmCreator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1detail_1a4edbe193d90ba66d98d42b380008c618.html">Function mimir::detail::NotifierQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1detail_1ab2f8aaf370c0379e1e5ed16cdfd819c3.html">Function mimir::detail::RepWriterQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1detail_1a495352727411b7952358e031d0b4398e.html">Function mimir::detail::ReqReaderQos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1a7337f2e8311a587cd0c5683bb0f9c38e.html">Function mimir::program::parse_config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1a61839fde6d16792c4662769b5116da05.html">Function mimir::program::read_doc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1a0322295105de34488b656521c2c13e49.html">Function mimir::program::read_leaf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1afe086b58811123bc3ba0b551d350f38e.html">Function mimir::program::read_list</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1_1program_1abe1e85d21335ab8c9c36ff4c84f648cf.html">Function mimir::program::read_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1a79d81e727aac93be814fb51da9fef88a.html">Function mimir::SIGTERMHandler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/function_namespacemimir_1a60f83e0bee821b6af5a9444be2ebe445.html">Function mimir::transform_severity</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api_private/library-api-private.html#variables">Variables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api_private/variable_namespacemimir_1a8a483b262641a4af7cfab764663d851a.html">Variable mimir::signaled</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="zbibliography.html">Bibliography</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">mimir</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>YAML configuration files and schemas</li>
+    
+    
+
+<li class="wy-breadcrumbs-aside">
+  <a href="https://github.com/sintef-ocean/mimir" class="fa fa-github"> Source on GitHub</a>
+  <a href="https://docs.sintef.io" class="icon icon-home"> docs.sintef.io</a>
+</li>
+
+
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="../api/library-api.html" class="btn btn-neutral float-right" title="Public API" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="libraries.html" class="btn btn-neutral float-left" title="A note on library dependencies" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="yaml-configuration-files-and-schemas">
+<h1>YAML configuration files and schemas<a class="headerlink" href="#yaml-configuration-files-and-schemas" title="Permalink to this headline">¶</a></h1>
+<p>YAML Ain’t Markup Language (YAML) is a human-readable data serialization language, which
+we use to configure the algorithms in this project, <a class="reference external" href="https://github.com/jbeder/yaml-cpp">yaml-cpp</a>. The application expects the user to
+adhere to a very specific layout of the configuration file.
+For some advanced algorithms like <a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1PursePlanner.html#_CPPv4N5mimir9algorithm12PursePlannerE" title="mimir::algorithm::PursePlanner"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">mimir::algorithm::PursePlanner</span></code></a>,
+care must be taken when specifying the configuration.
+To help the practitioner, we make use of <em>schemas</em> to dynamically validate the configuration files, forked from <a class="reference external" href="https://github.com/LazyMechanic/yavl-cpp-cmake">yavl-cpp-cmake</a>.
+The YAML validation ensures that the provided YAML structure contains the expected entries, as well as data types.
+A data type can be one of: <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">double</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">bool</span></code>, <code class="docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="docutils literal notranslate"><span class="pre">int64</span></code>,
+<code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">uint</span></code>, <code class="docutils literal notranslate"><span class="pre">int16</span></code>, <code class="docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="docutils literal notranslate"><span class="pre">int8</span></code>, <code class="docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="docutils literal notranslate"><span class="pre">enum</span></code>.</p>
+<p>Under normal circumstances the schema is internal to the program, but for
+<a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1PursePlanner.html#_CPPv4N5mimir9algorithm12PursePlannerE" title="mimir::algorithm::PursePlanner"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">mimir::algorithm::PursePlanner</span></code></a> it is dynamic in nature, because the
+settings are propagated to transitive dependencies and changes depending on chosen
+low-level algorithms (e.g. linear solver). The user needs to expand the schema, which
+currently resides within the same YAML document as the configuration itself.  Below, we
+present a simple YAML file and its schema, so that a practitioner can grasp the concept
+when populating the required schema according settings of transitive dependencies.</p>
+<p>The YAML in <a class="reference internal" href="#code-yaml"><span class="std std-numref">Listing 1</span></a> has schema <a class="reference internal" href="#code-schema"><span class="std std-numref">Listing 2</span></a>.</p>
+<div class="literal-block-wrapper docutils container" id="code-yaml">
+<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">(YAML snippet)</span><a class="headerlink" href="#code-yaml" title="Permalink to this code">¶</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">settings</span><span class="p">:</span>
+  <span class="nt">plot</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="nt">time_step_ms</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3000</span>
+  <span class="nt">nlp</span><span class="p">:</span>
+    <span class="nt">vars</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">3</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+</div>
+<a class="reference internal image-reference" href="../_images/yavl-example.svg"><img alt="../_images/yavl-example.svg" class="align-center" height="82" src="../_images/yavl-example.svg" width="437" /></a>
+<div class="literal-block-wrapper docutils container" id="code-schema">
+<div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">(Schema for YAML snippet)</span><a class="headerlink" href="#code-schema" title="Permalink to this code">¶</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">map</span><span class="p">:</span>
+  <span class="nt">settings</span><span class="p">:</span>
+    <span class="nt">map</span><span class="p">:</span>
+      <span class="nt">plot</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">bool</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>
+      <span class="nt">time_step_ms</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">int32</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>
+      <span class="nt">nlp</span><span class="p">:</span>
+    <span class="nt">map</span><span class="p">:</span>
+      <span class="nt">vars</span><span class="p">:</span>
+        <span class="nt">list</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+</div>
+<a class="reference internal image-reference" href="../_images/yavl-schema.svg"><img alt="../_images/yavl-schema.svg" class="align-center" height="82" src="../_images/yavl-schema.svg" width="846" /></a>
+<div class="section" id="purse-planner-configuration-schema">
+<h2>Purse planner configuration schema<a class="headerlink" href="#purse-planner-configuration-schema" title="Permalink to this headline">¶</a></h2>
+<p>The schema for the <a class="reference internal" href="../api_private/classmimir_1_1algorithm_1_1PursePlanner.html#_CPPv4N5mimir9algorithm12PursePlannerE" title="mimir::algorithm::PursePlanner"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">mimir::algorithm::PursePlanner</span></code></a> is given in
+<a class="reference internal" href="#code-planner-schema"><span class="std std-numref">Listing 3</span></a>.  We split each root map of <a class="reference internal" href="#fig-schema-root"><span class="std std-numref">Fig. 10</span></a> into separate
+diagrams, as shown in <a class="reference internal" href="#fig-schema-initial-condition"><span class="std std-numref">Fig. 11</span></a>, <a class="reference internal" href="#fig-schema-parameters"><span class="std std-numref">Fig. 12</span></a>,
+<a class="reference internal" href="#fig-schema-inputs"><span class="std std-numref">Fig. 13</span></a>, <a class="reference internal" href="#fig-schema-outputs"><span class="std std-numref">Fig. 14</span></a>, <a class="reference internal" href="#fig-schema-settings"><span class="std std-numref">Fig. 15</span></a>, including also
+<a class="reference internal" href="#fig-schema-formulation"><span class="std std-numref">Fig. 16</span></a> and <a class="reference internal" href="#fig-schema-discretization"><span class="std std-numref">Fig. 17</span></a>.</p>
+<div class="figure align-center" id="id1">
+<span id="fig-schema-root"></span><a class="reference internal image-reference" href="../_images/schema_root.svg"><img alt="../_images/schema_root.svg" height="123" src="../_images/schema_root.svg" width="250" /></a>
+<p class="caption"><span class="caption-number">Fig. 10 </span><span class="caption-text">Schema root entries.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id2">
+<span id="fig-schema-initial-condition"></span><a class="reference internal image-reference" href="../_images/schema_initial_condition.svg"><img alt="../_images/schema_initial_condition.svg" height="42" src="../_images/schema_initial_condition.svg" width="482" /></a>
+<p class="caption"><span class="caption-number">Fig. 11 </span><span class="caption-text">Schema initial condition.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id3">
+<span id="fig-schema-parameters"></span><a class="reference internal image-reference" href="../_images/schema_parameters.svg"><img alt="../_images/schema_parameters.svg" height="733" src="../_images/schema_parameters.svg" width="882" /></a>
+<p class="caption"><span class="caption-number">Fig. 12 </span><span class="caption-text">Schema parameters.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id4">
+<span id="fig-schema-inputs"></span><a class="reference internal image-reference" href="../_images/schema_inputs.svg"><img alt="../_images/schema_inputs.svg" height="253" src="../_images/schema_inputs.svg" width="774" /></a>
+<p class="caption"><span class="caption-number">Fig. 13 </span><span class="caption-text">Schema inputs.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id5">
+<span id="fig-schema-outputs"></span><a class="reference internal image-reference" href="../_images/schema_outputs.svg"><img alt="../_images/schema_outputs.svg" height="384" src="../_images/schema_outputs.svg" width="703" /></a>
+<p class="caption"><span class="caption-number">Fig. 14 </span><span class="caption-text">Schema outputs.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id6">
+<span id="fig-schema-settings"></span><a class="reference internal image-reference" href="../_images/schema_settings.svg"><img alt="../_images/schema_settings.svg" src="../_images/schema_settings.svg" width="100%" /></a>
+<p class="caption"><span class="caption-number">Fig. 15 </span><span class="caption-text">Schema settings.</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id7">
+<span id="fig-schema-formulation"></span><a class="reference internal image-reference" href="../_images/schema_formulation.svg"><img alt="../_images/schema_formulation.svg" height="311" src="../_images/schema_formulation.svg" width="1235" /></a>
+<p class="caption"><span class="caption-number">Fig. 16 </span><span class="caption-text">Schema for formulation settings.</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id8">
+<span id="fig-schema-discretization"></span><a class="reference internal image-reference" href="../_images/schema_shoot.svg"><img alt="../_images/schema_shoot.svg" height="260" src="../_images/schema_shoot.svg" width="1054" /></a>
+<p class="caption"><span class="caption-number">Fig. 17 </span><span class="caption-text">Schema for discretization settings, shooting.</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
+</div>
+<div class="literal-block-wrapper docutils container" id="code-planner-schema">
+<div class="code-block-caption"><span class="caption-number">Listing 3 </span><span class="caption-text">(Schema for Purse planner configuration)</span><a class="headerlink" href="#code-planner-schema" title="Permalink to this code">¶</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">map</span><span class="p">:</span>
+  <span class="nt">initial_condition</span><span class="p">:</span>       <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> x0</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> list</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}}</span>
+  <span class="nt">parameters</span><span class="p">:</span>
+    <span class="nt">map</span><span class="p">:</span>
+      <span class="nt">setting_speed_U_v</span><span class="p">:</span>   <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> id</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">setting_radii</span><span class="p">:</span>       <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> id</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> list</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}}</span>
+      <span class="nt">aim_distance_D_s</span><span class="p">:</span>    <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> id</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">fish_margin_d_f</span><span class="p">:</span>     <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> id</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">leadline_tau_ll_z_d</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> id</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> list</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}}</span>
+      <span class="nt">sink_margin_z_min</span><span class="p">:</span>   <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> id</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">current_surface</span><span class="p">:</span>     <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> list</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}}</span>
+      <span class="nt">current_fish</span><span class="p">:</span>        <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> list</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}}</span>
+      <span class="nt">fish_velocity_over_ground</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> list</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}}</span>
+      <span class="nt">fish_depth_z_s</span><span class="p">:</span>      <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> id</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+  <span class="nt">inputs</span><span class="p">:</span>
+    <span class="nt">map</span><span class="p">:</span>
+      <span class="nt">GPS_origin</span><span class="p">:</span>          <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">],</span><span class="nt"> default</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> list</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}}</span>
+      <span class="nt">vessel_pos_info</span><span class="p">:</span>     <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">vessel_gyro_info</span><span class="p">:</span>    <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">fish_pos_info</span><span class="p">:</span>       <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">fish_relative_pos</span><span class="p">:</span>   <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">keep_solution</span><span class="p">:</span>       <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+  <span class="nt">outputs</span><span class="p">:</span>
+    <span class="nt">map</span><span class="p">:</span>
+      <span class="nt">id</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>
+      <span class="nt">trajectory_vessel</span><span class="p">:</span>   <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">trajectory_vessel_rot</span><span class="p">:</span>   <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">trajectory_fish</span><span class="p">:</span>     <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">nlp_config</span><span class="p">:</span>          <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">nlp_stats</span><span class="p">:</span>           <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">vessel_speed</span><span class="p">:</span>        <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">vessel_course_rate</span><span class="p">:</span>  <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">deploy_position</span><span class="p">:</span>     <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">collide_position</span><span class="p">:</span>    <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+      <span class="nt">collide_time</span><span class="p">:</span>        <span class="p p-Indicator">{</span><span class="nt"> map</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> topic</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+  <span class="nt">settings</span><span class="p">:</span>
+    <span class="nt">map</span><span class="p">:</span>
+      <span class="nt">plot</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">bool</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>
+      <span class="nt">time_step_ms</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">int32</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>
+      <span class="nt">nlp</span><span class="p">:</span>
+    <span class="nt">map</span><span class="p">:</span>
+      <span class="nt">formulation</span><span class="p">:</span>
+        <span class="nt">map</span><span class="p">:</span>
+          <span class="nt">heading_rot_max</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>  <span class="c1"># Rate of turn vessel heading [rad/s]</span>
+          <span class="nt">heading_acc_max</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>  <span class="c1"># Heading acceleration [rad/s^2]</span>
+          <span class="nt">deploy_clockwise</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">bool</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>   <span class="c1"># Clockwise: true, Counter-clockwise: false</span>
+          <span class="nt">decision_parameters</span><span class="p">:</span>
+            <span class="nt">map</span><span class="p">:</span>
+              <span class="nt">ellipse</span><span class="p">:</span>
+                <span class="nt">map</span><span class="p">:</span>
+                  <span class="nt">along</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> list</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}</span> <span class="c1"># min, max along-track placement</span>
+                  <span class="nt">across</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nt"> list</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="p p-Indicator">}</span> <span class="c1"># min, max cross-track placement</span>
+          <span class="nt">subsystem</span><span class="p">:</span>
+            <span class="nt">map</span><span class="p">:</span>
+              <span class="nt">x_1</span><span class="p">:</span>
+                <span class="nt">map</span><span class="p">:</span>
+                  <span class="nt">gamma</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>           <span class="c1"># Gain for path constrained particle</span>
+                  <span class="nt">k_d</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>             <span class="c1"># Prop. feedback deployment arc length</span>
+                  <span class="nt">k_pd</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>            <span class="c1"># Prop. feedback post deploy arc length &gt;&gt;k_d</span>
+                  <span class="nt">Delta_chi</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>       <span class="c1"># Rendezvous for tilde chi (should be &lt; 1)</span>
+                  <span class="nt">Delta</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>           <span class="c1"># Lookahead distance, large is conservative</span>
+                  <span class="nt">deploy_vicinity</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="c1"># Max. dist. between vehicle and deploy point</span>
+                  <span class="nt">omega_max</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>       <span class="c1"># Max-ish rate of turn (might be violated)</span>
+          <span class="nt">objective</span><span class="p">:</span>
+            <span class="nt">map</span><span class="p">:</span>
+              <span class="nt">terminal</span><span class="p">:</span>
+                <span class="nt">map</span><span class="p">:</span>
+                  <span class="nt">time_penalty</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>    <span class="c1"># Minimize time to arrive at deploy</span>
+                  <span class="nt">tdiff_penalty</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>   <span class="c1"># MPCC dual variable to enforce max(t_diff,0)</span>
+                  <span class="nt">fish_trap_slack</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">double</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="c1"># Penalize slack for fish dist. at deployed</span>
+      <span class="nt">with_callback</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">bool</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>
+      <span class="nt">solver</span><span class="p">:</span>
+        <span class="nt">map</span><span class="p">:</span>
+          <span class="nt">name</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>
+          <span class="nt">options</span><span class="p">:</span>
+            <span class="nv">*ipopt-schema</span>
+      <span class="nt">discretization</span><span class="p">:</span>
+        <span class="nt">x_1</span><span class="p">:</span>
+          <span class="nv">*shoot-schema</span>
+        <span class="nt">x_2</span><span class="p">:</span>
+          <span class="nv">*shoot-schema</span>
+      <span class="nt">integrator</span><span class="p">:</span>
+    <span class="nt">map</span><span class="p">:</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>
+      <span class="nt">options</span><span class="p">:</span>
+        <span class="nt">map</span><span class="p">:</span>
+          <span class="nt">print_stats</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">bool</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>
+          <span class="c1">#abstol: [double: ]</span>
+          <span class="nt">collocation_scheme</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">string</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>      <span class="c1"># collocation</span>
+          <span class="nt">interpolation_order</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">uint</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span>       <span class="c1"># collocation</span>
+          <span class="nt">number_of_finite_elements</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">uint</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">]</span> <span class="c1"># collocation</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../api/library-api.html" class="btn btn-neutral float-right" title="Public API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="libraries.html" class="btn btn-neutral float-left" title="A note on library dependencies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, SINTEF Ocean.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. <jinja2.runtime.BlockReference object at 0x7f6b7f219fd0>
+
+<br /><br />
+<table>
+  <tr>
+    <td width="120" style="vertical-align:middle;text-align:center">
+      <img alt="FHF" style="border-width:0" width="100" src="../_static/FHF-black-txt.png" />
+    </td>
+    <td>
+      This work was funded by <a href="https://www.fhf.no/fhf/about-fhf-english">FHF &ndash; Norwegian Seafood Research Fund</a> with <a href="https://www.fhf.no/prosjekter/prosjektbasen/901350/">Grant No. 901350</a>.<br /><br />
+    </td>
+  </tr>
+  <tr>
+    <td width="32" style="vertical-align:middle;text-align:center">
+      <img alt="Apache License, Version 2.0" style="border-width:0" width="32" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Apache_Feather_Logo.svg" />
+    </td>
+    <td>
+      This work is licensed under the Apache License, Version 2.0 (the "License").
+      You may obtain a copy of the License at
+      <a rel="license" href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a><br />
+      Unless required by applicable law or agreed to in writing,
+      software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+      WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+      specific language governing permissions and limitations under the License.
+    </td>
+  </tr>
+</table>
+
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

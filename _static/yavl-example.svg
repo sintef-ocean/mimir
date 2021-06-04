@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="82px" preserveAspectRatio="none" style="width:437px;height:82px;background:#FFFFFF;" version="1.1" viewBox="0 0 437 82" width="437px" zoomAndPan="magnify"><defs/><g><rect height="20.2969" rx="5" ry="5" style="stroke:#00000000;stroke-width:1.5;fill:none;" width="88" x="10" y="30.5"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="56" x="15" y="45.4951">settings</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="93" y="45.4951"/><line style="stroke:#000000;stroke-width:1.0;" x1="76" x2="76" y1="30.5" y2="50.7969"/><rect fill="none" height="20.2969" rx="5" ry="5" style="stroke:#000000;stroke-width:1.5;" width="88" x="10" y="30.5"/><rect height="60.8906" rx="5" ry="5" style="stroke:#00000000;stroke-width:1.5;fill:none;" width="152" x="135" y="10"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="26" x="140" y="24.9951">plot</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="28" x="246" y="24.9951">true</text><line style="stroke:#000000;stroke-width:1.0;" x1="241" x2="241" y1="10" y2="30.2969"/><line style="stroke:#000000;stroke-width:1.0;" x1="135" x2="287" y1="30.2969" y2="30.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="96" x="140" y="45.292">time_step_ms</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="36" x="246" y="45.292">3000</text><line style="stroke:#000000;stroke-width:1.0;" x1="241" x2="241" y1="30.2969" y2="50.5938"/><line style="stroke:#000000;stroke-width:1.0;" x1="135" x2="287" y1="50.5938" y2="50.5938"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="21" x="140" y="65.5889">nlp</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="0" x="258" y="65.5889"/><line style="stroke:#000000;stroke-width:1.0;" x1="241" x2="241" y1="50.5938" y2="70.8906"/><rect fill="none" height="60.8906" rx="5" ry="5" style="stroke:#000000;stroke-width:1.5;" width="152" x="135" y="10"/><rect height="20.2969" rx="5" ry="5" style="stroke:#00000000;stroke-width:1.5;fill:none;" width="101" x="324" y="50.5"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="28" x="329" y="65.4951">vars</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="53" x="367" y="65.4951">[1, 2, 3]</text><line style="stroke:#000000;stroke-width:1.0;" x1="362" x2="362" y1="50.5" y2="70.7969"/><rect fill="none" height="20.2969" rx="5" ry="5" style="stroke:#000000;stroke-width:1.5;" width="101" x="324" y="50.5"/><path d="M275,60.5 L288,60.5 C297.3071,60.5 307.1808,60.5 316.7933,60.5 " fill="none" style="stroke:#000000;stroke-width:1.0;stroke-dasharray:3.0,3.0;"/><path d="M316.7933,63.5549 L319.0844,60.5 L316.7933,57.4451 L324.4305,60.5 L316.7933,63.5549 " fill="#000000" style="stroke:#000000;stroke-width:1.0;"/><ellipse cx="275" cy="60.5" fill="#000000" rx="3" ry="3" style="stroke:#000000;stroke-width:1.0;stroke-dasharray:3.0,3.0;"/><path d="M86,40.5 L99,40.5 C108.241,40.5 117.9128,40.5 127.5334,40.5 " fill="none" style="stroke:#000000;stroke-width:1.0;stroke-dasharray:3.0,3.0;"/><path d="M127.5334,43.5781 L129.842,40.5 L127.5334,37.4219 L135.2288,40.5 L127.5334,43.5781 " fill="#000000" style="stroke:#000000;stroke-width:1.0;"/><ellipse cx="86" cy="40.5" fill="#000000" rx="3" ry="3" style="stroke:#000000;stroke-width:1.0;stroke-dasharray:3.0,3.0;"/><!--MD5=[e43c522c81882fa57620c9a6bc06c16d]
+@startyaml
+<style>
+ yamlDiagram {
+   node {
+     BackGroundColor transparent
+     LineColor black
+   }
+   arrow {
+     LineColor black
+   }
+ }
+ </style>
+settings:
+  plot: true
+  time_step_ms: 3000
+  nlp:
+    vars: [1, 2, 3]
+ @endyaml
+
+PlantUML version 1.2021.7(Sun May 23 12:40:07 GMT 2021)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: ANSI_X3.4-1968
+Language: en
+Country: US
+--></g></svg>
